@@ -1,0 +1,63 @@
+/*
+ * public-style.css
+ * Custom stylesheet untuk halaman publik SMA IT Al-Fadhilah Pekanbaru.
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/* ── Variabel Warna Sekolah ─────────────────────────────────────── */
+:root {
+    --color-navy:      #1F4172;
+    --color-blue-light:#EBF3FA;
+    --color-accent:    #2563EB;
+}
+
+/* ── Global ─────────────────────────────────────────────────────── */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #2d2d2d;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Navbar ──────────────────────────────────────────────────────── */
+#navbarUtama {
+    border-bottom: 1px solid rgba(31, 65, 114, 0.08);
+    transition: box-shadow 0.25s ease;
+}
+
+#navbarUtama .nav-link {
+    color: #2d2d2d;
+    border-radius: 6px;
+    transition: color 0.2s, background-color 0.2s;
+    font-size: 0.95rem;
+}
+
+#navbarUtama .nav-link:hover {
+    color: var(--color-navy);
+    background-color: var(--color-blue-light);
+}
+
+#navbarUtama .nav-link.active {
+    color: var(--color-accent) !important;
+}
+
+/* ── Social Icon Hover ───────────────────────────────────────────── */
+.social-icon {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.social-icon:hover {
+    transform: translateY(-3px);
+    opacity: 0.88;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+footer address {
+    font-size: 0.9rem;
+    line-height: 1.75;
+}
