@@ -29,7 +29,7 @@
                 <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
 
                     <!-- Instagram -->
-                    <a href="#"
+                    <a href="https://www.instagram.com/smait_fadhilah"
                        class="d-flex align-items-center justify-content-center rounded-circle text-white text-decoration-none social-icon"
                        style="width: 42px; height: 42px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);"
                        aria-label="Instagram SMA IT Al-Fadhilah"
@@ -39,7 +39,7 @@
                     </a>
 
                     <!-- Facebook -->
-                    <a href="#"
+                    <a href="https://www.facebook.com/smaitfadhilahpku"
                        class="d-flex align-items-center justify-content-center rounded-circle text-white text-decoration-none social-icon"
                        style="width: 42px; height: 42px; background-color: #1877F2;"
                        aria-label="Facebook SMA IT Al-Fadhilah"
@@ -49,7 +49,7 @@
                     </a>
 
                     <!-- TikTok -->
-                    <a href="#"
+                    <a href="https://www.tiktok.com/@smait_fadhilah?_r=1&_t=zs-94mushdzhmr"
                        class="d-flex align-items-center justify-content-center rounded-circle text-white text-decoration-none social-icon"
                        style="width: 42px; height: 42px; background-color: #010101;"
                        aria-label="TikTok SMA IT Al-Fadhilah"
