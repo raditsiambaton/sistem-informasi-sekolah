@@ -32,11 +32,9 @@ require_once 'includes/header_public.php';
                 </h1>
 
                 <p class="lead mb-4" style="color: #475569; font-size: 1.05rem; line-height: 1.8;">
-                    Sekolah Islam Terpadu berbasis Tahfiz Al-Qur'an yang membentuk generasi
-                    berakhlak mulia, berprestasi akademis, dan berjiwa mandiri. Kami mengintegrasikan
-                    kurikulum nasional dengan nilai-nilai Islam dalam lingkungan belajar yang kondusif
-                    di jantung Kota Pekanbaru, Riau.
-                </p>
+                    Sekolah Islam yang memadukan kecerdasan intelektual, emosional, dan spiritual melalui integrasi kurikulum nasional, 
+                    kurikulum Kementerian Agama (Kemenag), serta kekhasan pendidikan Islam terpadu. Perpaduan ini dirancang untuk mewujudkan 
+                    generasi berjiwa pemimpin islami, berprestasi, serta berguna bagi masyarakat, agama, dan bangsa.
 
                 <div class="d-flex flex-wrap gap-3">
                     <a href="spmb.php"
@@ -126,9 +124,8 @@ require_once 'includes/header_public.php';
                             </h3>
                         </div>
                         <p class="mb-0 fst-italic ps-5" style="color:#334155; line-height:1.8; border-left: 3px solid #2563EB; padding-left: 1rem !important;">
-                            "Menjadi lembaga pendidikan Islam terpadu yang unggul dalam membentuk
-                            generasi Qur'ani, berprestasi, dan berakhlakul karimah sebagai bekal
-                            kehidupan dunia dan akhirat."
+                            "Mencetak pemimpin masa depan yang religius serta mewujudkan warga sekolah yang peduli terhadap ibadah, 
+                            akademik, dan lingkungan."
                         </p>
                     </div>
 
@@ -146,12 +143,15 @@ require_once 'includes/header_public.php';
 
                         <?php
                         $misi = [
-                            'Menyelenggarakan program Tahfiz Al-Qur\'an yang terstruktur dan terintegrasi dengan kurikulum akademik nasional.',
-                            'Membangun lingkungan belajar yang islami, disiplin, dan kondusif bagi pengembangan potensi seluruh peserta didik.',
-                            'Mengembangkan kompetensi tenaga pendidik yang profesional, berdedikasi, dan berlandaskan nilai-nilai Islam.',
-                            'Menjalin kemitraan strategis dengan orang tua, masyarakat, dan instansi terkait untuk mendukung mutu pendidikan.',
-                            'Mempersiapkan lulusan yang siap melanjutkan ke perguruan tinggi terbaik dan berkontribusi positif bagi masyarakat.',
-                        ];
+                            'Menerapkan konsep keislaman di dalam keseharian.',
+                            'Memadupadankan kurikulum dinas dengan nilai-nilai Al-Quran.',
+                            'Menjadikan peserta didik berguna bagi masyarakat.',
+                            'Membangun mental pemimpin sejak dini.',
+                            'Memberikan pendidikan berupa sains dan keterampilan (skill) sebagai persiapan ke jenjang pendidikan yang lebih tinggi.',
+                            'Menciptakan lingkungan dan suasana sekolah yang agamis.',
+                            'Mengembangkan seluruh komponen sekolah secara optimal, baik di bidang akademik maupun nonakademik..',
+                            'Meningkatkan mutu pendidikan yang mengintegrasikan sistem nilai, agama, dan budaya dengan ilmu pengetahuan dan teknologi.',
+                        ];  
                         ?>
                         <ul class="list-unstyled mb-0 ps-1">
                             <?php foreach ($misi as $i => $item): ?>

@@ -191,34 +191,40 @@ require_once 'includes/header_public.php';
         <?php
         $syarat = [
             [
-                'kode'    => 'Kartu A',
-                'judul'   => 'Fotokopi Ijazah / SKHU SMP/MTs',
-                'detail'  => 'Fotokopi Ijazah atau Surat Keterangan Hasil Ujian (SKHU) yang telah dilegalisir oleh sekolah asal, sebanyak 2 lembar.',
-                'icon'    => 'bi-file-earmark-text-fill',
+                'no'     => 1,
+                'judul'  => 'Mengisi Formulir Pendaftaran',
+                'detail' => 'Mengisi formulir pendaftaran calon murid baru secara lengkap dan valid.',
+                'icon'   => 'bi-pencil-square',
             ],
             [
-                'kode'    => 'Kartu B',
-                'judul'   => 'Fotokopi Rapor Semester 1–6',
-                'detail'  => 'Fotokopi rapor SMP/MTs semester 1 sampai dengan semester 6 yang telah dilegalisir oleh Kepala Sekolah, sebanyak 1 rangkap.',
-                'icon'    => 'bi-journal-text',
+                'no'     => 2,
+                'judul'  => 'Surat Keterangan Lulus (Menyusul jika belum ada)',
+                'detail' => 'Surat Keterangan Lulus (SKL) resmi dari SMP/MTs sederajat asal siswa.',
+                'icon'   => 'bi-file-earmark-check-fill',
             ],
             [
-                'kode'    => 'Kartu C',
-                'judul'   => 'Fotokopi Akta Kelahiran & KK',
-                'detail'  => 'Fotokopi Akta Kelahiran dan Kartu Keluarga (KK) yang masih berlaku dan terbaca jelas, masing-masing sebanyak 2 lembar.',
-                'icon'    => 'bi-person-vcard-fill',
+                'no'     => 3,
+                'judul'  => 'Fotokopi Rapor Kelas IX SMP/MTs (1 Rangkap)',
+                'detail' => 'Fotokopi buku rapor kelas IX semester ganjil/genap yang telah dilegalisir.',
+                'icon'   => 'bi-journal-bookmark-fill',
             ],
             [
-                'kode'    => 'Kartu D',
-                'judul'   => 'Pas Foto Terbaru',
-                'detail'  => 'Pas foto berwarna terbaru ukuran 3×4 cm sebanyak 4 lembar dan 2×3 cm sebanyak 2 lembar, latar belakang merah, berseragam.',
-                'icon'    => 'bi-person-square',
+                'no'     => 4,
+                'judul'  => 'Fotokopi Akta Kelahiran dan Kartu Keluarga (KK) (Masing-masing 2 lembar)',
+                'detail' => 'Fotokopi akta kelahiran dan kartu keluarga yang masih berlaku dan terbaca jelas.',
+                'icon'   => 'bi-person-vcard-fill',
             ],
             [
-                'kode'    => 'Kartu E',
-                'judul'   => 'Surat Keterangan Berkelakuan Baik',
-                'detail'  => 'Surat Keterangan Berkelakuan Baik dari Kepala Sekolah asal yang menyatakan calon siswa tidak pernah melakukan pelanggaran berat selama di SMP/MTs.',
-                'icon'    => 'bi-patch-check-fill',
+                'no'     => 5,
+                'judul'  => 'Fotokopi KTP Kedua Orang Tua (Masing-masing 2 lembar)',
+                'detail' => 'Fotokopi KTP ayah dan ibu atau wali calon peserta didik baru.',
+                'icon'   => 'bi-card-heading',
+            ],
+            [
+                'no'     => 6,
+                'judul'  => 'Fotokopi Kartu Indonesia Pintar (KIP) (Jika ada)',
+                'detail' => 'Bagi calon siswa yang memiliki kartu program bantuan pendidikan KIP dari pemerintah.',
+                'icon'   => 'bi-award-fill',
             ],
         ];
         ?>
@@ -230,7 +236,7 @@ require_once 'includes/header_public.php';
                     <i class="bi bi-folder2-open fs-5"></i>
                     <span class="fw-bold">Daftar Dokumen yang Diperlukan</span>
                     <span class="badge bg-white ms-auto fw-bold" style="color:#1F4172;">
-                        <?= count($syarat) ?> Dokumen
+                        6 Dokumen
                     </span>
                 </div>
             </div>
@@ -251,7 +257,7 @@ require_once 'includes/header_public.php';
                                 <div class="d-flex align-items-center gap-2 mb-1">
                                     <span class="badge rounded-pill small fw-bold px-2"
                                           style="background:#1F4172; color:#fff;">
-                                        <?= $s['kode'] ?>
+                                        Dokumen <?= $s['no'] ?>
                                     </span>
                                     <span class="fw-semibold" style="color:#1F4172;">
                                         <?= htmlspecialchars($s['judul']) ?>
@@ -299,50 +305,56 @@ require_once 'includes/header_public.php';
                   style="background:#F0FDF4; color:#16A34A; letter-spacing:0.06em; font-size:0.78rem;">
                 <i class="bi bi-currency-exchange me-1"></i> TRANSPARAN
             </span>
-            <h2 class="fw-bold" style="color:#1F4172;">Rincian Biaya</h2>
+            <h2 class="fw-bold" style="color:#1F4172;">Biaya Pendidikan</h2>
             <p class="text-muted mx-auto" style="max-width:520px;">
-                Rincian biaya pendaftaran dan masuk sekolah disajikan secara
+                Rincian biaya pendidikan calon peserta didik baru disajikan secara
                 transparan agar orang tua dapat mempersiapkan dengan baik.
             </p>
         </div>
 
         <?php
-        $biaya = [
+        $biaya_pendidikan = [
             [
-                'nama'  => 'Biaya Pajak Pijat',
-                'ket'   => 'Biaya administrasi dan pajak pengelolaan sarana kebugaran sekolah',
-                'icon'  => 'bi-receipt',
-                'warna' => '#2563EB',
+                'no'         => 1,
+                'nama'       => 'Pembangunan',
+                'laki'       => 'Rp 1.500.000',
+                'perempuan'  => 'Rp 1.500.000',
+                'catatan_p'  => '',
+                'keterangan' => 'Sekali Bayar',
             ],
             [
-                'nama'  => 'Biaya Kendaraan',
-                'ket'   => 'Biaya operasional transportasi dan antar-jemput siswa selama setahun',
-                'icon'  => 'bi-bus-front-fill',
-                'warna' => '#0369A1',
+                'no'         => 2,
+                'nama'       => 'Seragam 5 Stel',
+                'laki'       => 'Rp 1.550.000',
+                'perempuan'  => 'Rp 2.000.000',
+                'catatan_p'  => 'Plus 6 Jilbab',
+                'keterangan' => 'Sekali Bayar',
             ],
             [
-                'nama'  => 'Biaya Warteg',
-                'ket'   => 'Biaya program makan siang bergizi harian di kantin sekolah',
-                'icon'  => 'bi-egg-fried',
-                'warna' => '#D97706',
+                'no'         => 3,
+                'nama'       => 'SPP',
+                'laki'       => 'Rp 300.000',
+                'perempuan'  => 'Rp 300.000',
+                'catatan_p'  => '',
+                'keterangan' => 'Per Bulan',
             ],
             [
-                'nama'  => 'Biaya Nyawit',
-                'ket'   => 'Biaya program kegiatan kewirausahaan dan praktik pertanian sekolah',
-                'icon'  => 'bi-tree-fill',
-                'warna' => '#16A34A',
+                'no'         => 4,
+                'nama'       => 'Ekstrakurikuler',
+                'laki'       => 'Rp 500.000',
+                'perempuan'  => 'Rp 500.000',
+                'catatan_p'  => '',
+                'keterangan' => 'Per Semester',
             ],
             [
-                'nama'  => 'Biaya UMKM',
-                'ket'   => 'Biaya program pelatihan kewirausahaan dan usaha mikro kecil menengah',
-                'icon'  => 'bi-shop-window',
-                'warna' => '#7C3AED',
+                'no'         => 5,
+                'nama'       => 'Formulir',
+                'laki'       => 'Rp 150.000',
+                'perempuan'  => 'Rp 150.000',
+                'catatan_p'  => '',
+                'keterangan' => 'Sekali Bayar',
             ],
         ];
-
-        $nominal = 'Rp 6.000.000';
-
-        $total = count($biaya) * 6000000;
         ?>
 
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
@@ -351,7 +363,7 @@ require_once 'includes/header_public.php';
                  style="background: linear-gradient(90deg, #16A34A, #15803D);">
                 <div class="d-flex align-items-center gap-2 text-white">
                     <i class="bi bi-wallet2 fs-5"></i>
-                    <span class="fw-bold">Rincian Biaya Masuk Sekolah</span>
+                    <span class="fw-bold">Tabel Biaya Pendidikan</span>
                     <span class="badge bg-white ms-auto fw-bold" style="color:#16A34A;">
                         Tahun 2026/2027
                     </span>
@@ -364,40 +376,47 @@ require_once 'includes/header_public.php';
                     <table class="table table-hover align-middle mb-0">
                         <thead style="background:#F1F5F9;">
                             <tr>
-                                <th class="px-4 py-3 fw-semibold small text-uppercase"
-                                    style="color:#64748B; letter-spacing:.04em; width:50px;">#</th>
+                                <th class="px-4 py-3 fw-semibold small text-uppercase text-center"
+                                    style="color:#64748B; letter-spacing:.04em; width:60px;">No.</th>
                                 <th class="px-3 py-3 fw-semibold small text-uppercase"
-                                    style="color:#64748B; letter-spacing:.04em;">Jenis Biaya</th>
+                                    style="color:#64748B; letter-spacing:.04em;">Biaya</th>
                                 <th class="px-3 py-3 fw-semibold small text-uppercase text-end"
-                                    style="color:#64748B; letter-spacing:.04em;">Nominal</th>
+                                    style="color:#64748B; letter-spacing:.04em;">Laki-Laki</th>
+                                <th class="px-3 py-3 fw-semibold small text-uppercase text-end"
+                                    style="color:#64748B; letter-spacing:.04em;">Perempuan</th>
+                                <th class="px-4 py-3 fw-semibold small text-uppercase text-center"
+                                    style="color:#64748B; letter-spacing:.04em;">Keterangan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($biaya as $i => $b): ?>
+                            <?php foreach ($biaya_pendidikan as $b): ?>
                             <tr class="biaya-row">
                                 <td class="px-4 py-3 text-center">
-                                    <span class="d-flex align-items-center justify-content-center rounded-circle fw-bold text-white small"
-                                          style="width:28px; height:28px; background:<?= $b['warna'] ?>; font-size:0.75rem;">
-                                        <?= $i + 1 ?>
+                                    <span class="fw-semibold text-muted small">
+                                        <?= $b['no'] ?>
                                     </span>
                                 </td>
                                 <td class="px-3 py-3">
-                                    <div class="d-flex align-items-start gap-3">
-                                        <i class="<?= $b['icon'] ?> fs-5 mt-1 flex-shrink-0"
-                                           style="color:<?= $b['warna'] ?>;"></i>
-                                        <div>
-                                            <div class="fw-semibold" style="color:#1F4172;">
-                                                <?= htmlspecialchars($b['nama']) ?>
-                                            </div>
-                                            <div class="small" style="color:#94A3B8;">
-                                                <?= htmlspecialchars($b['ket']) ?>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <span class="fw-semibold" style="color:#1F4172;">
+                                        <?= htmlspecialchars($b['nama']) ?>
+                                    </span>
                                 </td>
                                 <td class="px-3 py-3 text-end">
-                                    <span class="fw-bold" style="color:#16A34A; font-size:0.95rem;">
-                                        <?= $nominal ?>
+                                    <span class="fw-bold" style="color:#334155; font-size:0.95rem;">
+                                        <?= $b['laki'] ?>
+                                    </span>
+                                </td>
+                                <td class="px-3 py-3 text-end">
+                                    <span class="fw-bold" style="color:#334155; font-size:0.95rem;">
+                                        <?= $b['perempuan'] ?>
+                                    </span>
+                                    <?php if (!empty($b['catatan_p'])): ?>
+                                    <small class="text-muted d-block" style="font-size:0.75rem;">(<?= htmlspecialchars($b['catatan_p']) ?>)</small>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="badge bg-light text-dark border px-3 py-1 rounded-pill small fw-normal">
+                                        <?= htmlspecialchars($b['keterangan']) ?>
                                     </span>
                                 </td>
                             </tr>
@@ -408,13 +427,21 @@ require_once 'includes/header_public.php';
                                 <td colspan="2" class="px-4 py-3">
                                     <div class="d-flex align-items-center gap-2">
                                         <i class="bi bi-calculator-fill" style="color:#16A34A;"></i>
-                                        <span class="fw-bold" style="color:#1F4172;">Total Biaya Keseluruhan</span>
+                                        <span class="fw-bold" style="color:#1F4172;">Total Biaya Pendidikan</span>
                                     </div>
                                 </td>
                                 <td class="px-3 py-3 text-end">
                                     <span class="fw-bold fs-5" style="color:#16A34A;">
-                                        Rp <?= number_format($total, 0, ',', '.') ?>
+                                        Rp 4.000.000
                                     </span>
+                                </td>
+                                <td class="px-3 py-3 text-end">
+                                    <span class="fw-bold fs-5" style="color:#16A34A;">
+                                        Rp 4.450.000
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="text-muted fw-bold">-</span>
                                 </td>
                             </tr>
                         </tfoot>
@@ -424,13 +451,18 @@ require_once 'includes/header_public.php';
 
             <!-- Footer Card -->
             <div class="card-footer border-0 px-4 py-3" style="background:#F8FAFC;">
-                <div class="row g-2 align-items-center">
+                <div class="row g-3 align-items-center">
                     <div class="col-12 col-md-8">
-                        <p class="small mb-0 text-muted">
-                            <i class="bi bi-info-circle-fill me-1 text-success"></i>
-                            Biaya dapat dicicil sesuai kesepakatan. Tersedia beasiswa untuk calon siswa berprestasi dan kurang mampu.
-                            Hubungi Tata Usaha untuk informasi lebih lanjut.
-                        </p>
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="bi bi-info-circle-fill me-1 text-success fs-5 flex-shrink-0 mt-1"></i>
+                            <div>
+                                <span class="fw-bold text-dark d-block mb-1">Ketentuan Pembayaran:</span>
+                                <ul class="small mb-0 ps-3 text-muted" style="line-height: 1.7;">
+                                    <li>Pembayaran dapat diangsur, membayar minimal Rp 500.000 saat pengembalian formulir sebagai tanda jadi.</li>
+                                    <li>Jika pembayaran awal minimal Rp 2.000.000, maka calon siswa langsung dites dan ukur seragam.</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-12 col-md-4 text-md-end">
                         <a href="#" class="btn btn-sm btn-outline-success fw-semibold px-3">
