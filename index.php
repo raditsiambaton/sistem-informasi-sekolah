@@ -83,10 +83,10 @@ require_once 'includes/header_public.php';
                                 background:rgba(37,99,235,0.08); z-index:0;">
                     </div>
 
-                    <img src="https://placehold.co/600x400/e2e8f0/1e293b?text=Foto+Sekolah"
+                    <img src="assets/images/profil/hero-sekolah.jpg"
                          alt="Foto Sekolah SMA IT Al-Fadhilah Pekanbaru"
-                         class="img-fluid rounded-4 shadow position-relative"
-                         style="z-index:1; border: 4px solid #fff; max-width:100%;">
+                         class="img-fluid rounded-4 shadow-sm w-100 object-fit-cover position-relative"
+                         style="max-height: 400px; z-index: 1;">
                 </div>
             </div>
 
@@ -170,10 +170,10 @@ require_once 'includes/header_public.php';
 
                 <!-- Kolom Kanan: Gambar Gedung -->
                 <div class="col-12 col-lg-5 text-center">
-                    <img src="https://placehold.co/500x600/cbd5e1/334155?text=Gedung+Sekolah"
+                    <img src="assets/images/profil/visi-misi-sekolah.jpg"
                          alt="Gedung SMA IT Al-Fadhilah Pekanbaru"
-                         class="img-fluid rounded-3 shadow-sm"
-                         style="border: 3px solid #fff; max-height: 480px; object-fit: cover; width:100%;">
+                         class="img-fluid rounded-3 shadow-sm w-100 h-100 object-fit-cover"
+                         style="min-height: 320px;">
                 </div>
 
             </div>

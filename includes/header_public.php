@@ -29,6 +29,9 @@ function navActive(string $page, string $current): string {
     <meta name="author" content="SMA IT Al-Fadhilah Pekanbaru">
     <title><?= isset($page_title) ? htmlspecialchars($page_title) . ' – SMA IT Al-Fadhilah Pekanbaru' : 'SMA IT Al-Fadhilah Pekanbaru' ?></title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/logo-sekolah.png">
+
     <!-- ═══════════════════════════════════════════════
          Bootstrap 5.3 CSS (CDN)
     ═══════════════════════════════════════════════ -->
@@ -62,7 +65,7 @@ function navActive(string $page, string $current): string {
 
         <!-- ── BRAND / LOGO ───────────────────────────────────────── -->
         <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="index.php">
-            <i class="bi bi-shield-shaded fs-2" style="color: #1F4172;"></i>
+            <img src="assets/images/logo-sekolah.png" alt="Logo SMA IT Al-Fadhilah" width="40" height="40" class="rounded-circle object-fit-contain me-2">
             <span class="fw-bold lh-sm" style="color: #1F4172; font-size: 1.05rem;">
                 SMA IT<br>
                 <small class="fw-bold" style="font-size: 0.75rem; letter-spacing: 0.03em;">Al-Fadhilah</small>

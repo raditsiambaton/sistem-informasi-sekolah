@@ -9,7 +9,7 @@
 
                 <!-- ── LOGO + NAMA SEKOLAH ────────────────────────── -->
                 <div class="mb-3">
-                    <i class="bi bi-shield-shaded mb-2 d-block" style="font-size: 2.8rem; color: #1F4172;"></i>
+                    <img src="assets/images/logo-sekolah.png" alt="Logo SMA IT Al-Fadhilah" width="56" height="56" class="rounded-circle object-fit-contain mb-2">
                     <p class="fw-bold mb-0 text-uppercase ls-wide" style="color: #1F4172; font-size: 1rem; letter-spacing: 0.08em;">
                         SMA IT AL-FADHILAH PEKANBARU
                     </p>
