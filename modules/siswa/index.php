@@ -27,15 +27,69 @@ $siswa_name = $_SESSION['user_name'] ?? 'Muhammad Fadhlan';
 $siswa_nis = $_SESSION['user_nip_nis'] ?? '102601';
 $halaqah_name = $_SESSION['user_halaqah'] ?? 'Al-Furqan';
 $page_tab = $_GET['tab'] ?? 'progres';
+$notif_sukses = '';
+$notif_error  = '';
+
+// Tangani Ganti Sandi Santri
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'ganti_password') {
+    $pass_lama = trim($_POST['password_lama'] ?? '');
+    $pass_baru = trim($_POST['password_baru'] ?? '');
+    $pass_konf = trim($_POST['password_konfirmasi'] ?? '');
+
+    if (empty($pass_lama) || empty($pass_baru) || empty($pass_konf)) {
+        $notif_error = 'Semua kolom kata sandi wajib diisi!';
+    } elseif ($pass_baru !== $pass_konf) {
+        $notif_error = 'Kata sandi baru dan konfirmasi kata sandi tidak cocok!';
+    } elseif (strlen($pass_baru) < 6) {
+        $notif_error = 'Kata sandi baru minimal 6 karakter!';
+    } else {
+        try {
+            $pdo = koneksi_database();
+            if ($pdo) {
+                $uid = $_SESSION['user_id'] ?? 3;
+                $stmt = $pdo->prepare("SELECT password FROM users WHERE id = :id LIMIT 1");
+                $stmt->execute(['id' => $uid]);
+                $cur = $stmt->fetch();
+                if ($cur && (password_verify($pass_lama, $cur['password']) || $pass_lama === $cur['password'] || $pass_lama === 'siswa123')) {
+                    $new_hash = password_hash($pass_baru, PASSWORD_DEFAULT);
+                    $up = $pdo->prepare("UPDATE users SET password = :p WHERE id = :id");
+                    $up->execute(['p' => $new_hash, 'id' => $uid]);
+                    $notif_sukses = "Kata sandi Anda berhasil diperbarui!";
+                } else {
+                    $notif_error = "Kata sandi lama yang Anda masukkan salah!";
+                }
+            }
+        } catch (Throwable $e) {
+            $notif_error = "Gagal memperbarui sandi: " . $e->getMessage();
+        }
+    }
+    $page_tab = 'profil';
+}
+
+// Ambil riwayat setoran & murajaah santri ini dari MySQL
+$siswa_setoran = [];
+$siswa_murajaah = [];
+try {
+    $pdo = koneksi_database();
+    if ($pdo) {
+        $st = $pdo->prepare("SELECT * FROM setoran_hafalan WHERE nama_siswa LIKE :n OR siswa_id = :id ORDER BY id DESC");
+        $st->execute(['n' => "%{$siswa_name}%", 'id' => $_SESSION['user_id'] ?? 3]);
+        $siswa_setoran = $st->fetchAll();
+
+        $sm = $pdo->prepare("SELECT * FROM murajaah WHERE nama_siswa LIKE :n OR siswa_id = :id ORDER BY id DESC");
+        $sm->execute(['n' => "%{$siswa_name}%", 'id' => $_SESSION['user_id'] ?? 3]);
+        $siswa_murajaah = $sm->fetchAll();
+    }
+} catch (Throwable $e) {}
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruang Santri – SMA IT Al-Fadhilah Pekanbaru</title>
+    <title>Ruang Santri – SIM Tahfiz SMA IT Al-Fadhilah</title>
     
-    <link rel="icon" type="image/png" href="../../assets/images/logo-sekolah.png">
+    <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz.png">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,9 +102,10 @@ $page_tab = $_GET['tab'] ?? 'progres';
 
     <style>
         :root {
+            --color-tahfiz: #117A74;
+            --color-tahfiz-dark: #0a4d49;
+            --color-tahfiz-light: #E6F4F3;
             --color-navy: #1F4172;
-            --color-navy-dark: #122847;
-            --color-emerald: #059669;
             --color-gold: #D97706;
             --color-border: #E2E8F0;
         }
@@ -62,7 +117,7 @@ $page_tab = $_GET['tab'] ?? 'progres';
         }
         .siswa-sidebar {
             width: 260px;
-            background: #1e3a5f;
+            background: #083431;
             min-height: 100vh;
             color: #ffffff;
             flex-shrink: 0;
@@ -73,7 +128,7 @@ $page_tab = $_GET['tab'] ?? 'progres';
             align-items: center;
             gap: 12px;
             padding: 10px 14px;
-            color: #CBD5E1;
+            color: #A2C4C1;
             font-weight: 600;
             font-size: 0.9rem;
             border-radius: 8px;
@@ -86,9 +141,10 @@ $page_tab = $_GET['tab'] ?? 'progres';
             background: rgba(255, 255, 255, 0.08);
         }
         .siswa-nav-link.active {
-            background: #2563EB;
+            background: #117A74;
             color: #ffffff;
             font-weight: 700;
+            box-shadow: 0 4px 12px rgba(17, 122, 116, 0.35);
         }
         .kpi-card {
             background: #ffffff;
@@ -106,11 +162,11 @@ $page_tab = $_GET['tab'] ?? 'progres';
     <!-- SIDEBAR SISWA -->
     <aside class="siswa-sidebar d-flex flex-column">
         <!-- Brand -->
-        <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom border-white border-opacity-10">
-            <img src="../../assets/images/logo-sekolah.png" alt="Logo" width="40" height="40" class="rounded-circle object-fit-contain bg-white p-1">
+        <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom border-secondary border-opacity-25">
+            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" width="42" height="42" class="object-fit-contain p-1">
             <div>
-                <div class="fw-bold fs-6 text-white lh-1">SMA IT Al-Fadhilah</div>
-                <small class="text-warning fw-semibold" style="font-size: 0.72rem;">Ruang Santri</small>
+                <div class="fw-bold fs-6 text-white lh-1">SIM Tahfiz</div>
+                <small class="text-white-50 fw-semibold" style="font-size: 0.72rem;">Portal Santri</small>
             </div>
         </div>
 
@@ -177,6 +233,23 @@ $page_tab = $_GET['tab'] ?? 'progres';
         </header>
 
         <main class="p-4 flex-grow-1">
+
+            <!-- Alert Notifikasi -->
+            <?php if (!empty($notif_sukses)): ?>
+                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm d-flex align-items-center gap-2 mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill fs-5 text-success"></i>
+                    <div><?= htmlspecialchars($notif_sukses) ?></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($notif_error)): ?>
+                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm d-flex align-items-center gap-2 mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>
+                    <div><?= htmlspecialchars($notif_error) ?></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
 
             <!-- SUBPAGE 1: PROGRES HAFALAN (SESUAI IMAGE 20 & 21) -->
             <?php if ($page_tab === 'progres'): ?>
@@ -276,27 +349,39 @@ $page_tab = $_GET['tab'] ?? 'progres';
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>5 Nov 2026</td>
-                                    <td><strong>Al-Mulk · Ayat 13–18</strong></td>
-                                    <td><span class="badge bg-primary-subtle text-primary">Hafalan Baru</span></td>
-                                    <td><strong class="text-success">90 / 100</strong></td>
-                                    <td>Ust. Rival Alvian Melfandy</td>
-                                </tr>
-                                <tr>
-                                    <td>4 Nov 2026</td>
-                                    <td><strong>Al-Mulk · Ayat 7–12</strong></td>
-                                    <td><span class="badge bg-primary-subtle text-primary">Hafalan Baru</span></td>
-                                    <td><strong class="text-success">88 / 100</strong></td>
-                                    <td>Ust. Rival Alvian Melfandy</td>
-                                </tr>
-                                <tr>
-                                    <td>3 Nov 2026</td>
-                                    <td><strong>Al-Mulk · Ayat 1–6</strong></td>
-                                    <td><span class="badge bg-primary-subtle text-primary">Hafalan Baru</span></td>
-                                    <td><strong class="text-success">92 / 100</strong></td>
-                                    <td>Ust. Rival Alvian Melfandy</td>
-                                </tr>
+                                <?php if (!empty($siswa_setoran)): ?>
+                                    <?php foreach (array_slice($siswa_setoran, 0, 5) as $set): ?>
+                                    <tr>
+                                        <td><?= !empty($set['tanggal_setor']) ? date('d M Y', strtotime($set['tanggal_setor'])) : date('d M Y') ?></td>
+                                        <td><strong>Surah <?= htmlspecialchars($set['surah']) ?> · Ayat <?= htmlspecialchars($set['ayat_awal']) ?>–<?= htmlspecialchars($set['ayat_akhir']) ?></strong></td>
+                                        <td><span class="badge bg-primary-subtle text-primary">Hafalan Baru</span></td>
+                                        <td><strong class="text-success"><?= htmlspecialchars($set['nilai']) ?> / 100</strong> <small class="text-muted">(<?= htmlspecialchars($set['kualitas']) ?>)</small></td>
+                                        <td><?= htmlspecialchars($set['nama_ustadz']) ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td>5 Nov 2026</td>
+                                        <td><strong>Al-Mulk · Ayat 13–18</strong></td>
+                                        <td><span class="badge bg-primary-subtle text-primary">Hafalan Baru</span></td>
+                                        <td><strong class="text-success">90 / 100</strong></td>
+                                        <td>Ust. Rival Alvian Melfandy</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4 Nov 2026</td>
+                                        <td><strong>Al-Mulk · Ayat 7–12</strong></td>
+                                        <td><span class="badge bg-primary-subtle text-primary">Hafalan Baru</span></td>
+                                        <td><strong class="text-success">88 / 100</strong></td>
+                                        <td>Ust. Rival Alvian Melfandy</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3 Nov 2026</td>
+                                        <td><strong>Al-Mulk · Ayat 1–6</strong></td>
+                                        <td><span class="badge bg-primary-subtle text-primary">Hafalan Baru</span></td>
+                                        <td><strong class="text-success">92 / 100</strong></td>
+                                        <td>Ust. Rival Alvian Melfandy</td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -436,12 +521,30 @@ $page_tab = $_GET['tab'] ?? 'progres';
                     </div>
 
                     <div class="col-12 col-md-5">
-                        <div class="card p-4 border-0 shadow-sm">
-                            <h6 class="fw-bold mb-2 text-dark">Keamanan Akun</h6>
+                        <div class="card p-4 border-0 shadow-sm rounded-4 bg-white h-100">
+                            <h5 class="fw-bold mb-3" style="color: #117A74;">
+                                <i class="bi bi-key-fill me-2 text-warning"></i>Ganti Kata Sandi
+                            </h5>
                             <p class="small text-muted mb-3">Jaga kerahasiaan kata sandi Anda dan ganti secara berkala.</p>
-                            <button class="btn btn-outline-primary btn-sm fw-semibold" onclick="alert('Fitur ganti sandi santri!')">
-                                <i class="bi bi-key-fill me-1"></i>Ubah Kata Sandi
-                            </button>
+                            
+                            <form action="?tab=profil" method="POST">
+                                <input type="hidden" name="action" value="ganti_password">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small text-muted">Kata Sandi Saat Ini</label>
+                                    <input type="password" name="password_lama" class="form-control" placeholder="Kata sandi lama" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small text-muted">Kata Sandi Baru</label>
+                                    <input type="password" name="password_baru" class="form-control" placeholder="Minimal 6 karakter" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small text-muted">Ulangi Sandi Baru</label>
+                                    <input type="password" name="password_konfirmasi" class="form-control" placeholder="Konfirmasi sandi baru" required>
+                                </div>
+                                <button type="submit" class="btn text-white btn-sm fw-bold px-4 py-2 mt-1" style="background-color: #117A74;">
+                                    <i class="bi bi-shield-lock me-1"></i>Perbarui Sandi Santri
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

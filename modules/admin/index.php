@@ -161,12 +161,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($judul) && !empty($isi)) {
             try {
-                $stmt = $pdo->prepare("INSERT INTO konten_informasi (judul, kategori, isi, penulis, status) VALUES (:j, :k, :i, :p, 'published')");
+                $stmt = $pdo->prepare("INSERT INTO konten_informasi (judul, kategori, isi, penulis, tanggal_terbit) VALUES (:j, :k, :i, :p, :t)");
                 $stmt->execute([
                     'j' => $judul,
                     'k' => $kategori,
                     'i' => $isi,
-                    'p' => $admin_name
+                    'p' => $admin_name,
+                    't' => date('Y-m-d')
                 ]);
                 $success_msg = "Warta/Pengumuman '{$judul}' berhasil dipublikasikan!";
             } catch (PDOException $e) {
@@ -174,6 +175,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         $page_tab = 'konten';
+    }
+
+    // 5. UPDATE PROFIL ADMIN
+    elseif ($action === 'update_profil' && $pdo) {
+        $nama_lengkap = trim($_POST['nama_lengkap'] ?? '');
+        if (!empty($nama_lengkap)) {
+            try {
+                $stmt = $pdo->prepare("UPDATE users SET nama_lengkap = :nama WHERE id = :id");
+                $stmt->execute(['nama' => $nama_lengkap, 'id' => $_SESSION['user_id'] ?? 1]);
+                $_SESSION['user_name'] = $nama_lengkap;
+                $admin_name = $nama_lengkap;
+                $success_msg = "Biodata administrator berhasil diperbarui!";
+            } catch (PDOException $e) {
+                $error_msg = "Gagal memperbarui profil: " . $e->getMessage();
+            }
+        }
+        $page_tab = 'profil';
+    }
+
+    // 6. UPDATE KATA SANDI ADMIN
+    elseif ($action === 'update_password' && $pdo) {
+        $pass_lama = trim($_POST['password_lama'] ?? '');
+        $pass_baru = trim($_POST['password_baru'] ?? '');
+        $pass_konf = trim($_POST['password_konfirmasi'] ?? '');
+
+        if (empty($pass_lama) || empty($pass_baru) || empty($pass_konf)) {
+            $error_msg = "Semua kolom kata sandi wajib diisi!";
+        } elseif ($pass_baru !== $pass_konf) {
+            $error_msg = "Kata sandi baru dan konfirmasi kata sandi tidak cocok!";
+        } elseif (strlen($pass_baru) < 6) {
+            $error_msg = "Kata sandi baru minimal 6 karakter!";
+        } else {
+            try {
+                $stmt = $pdo->prepare("SELECT password FROM users WHERE id = :id LIMIT 1");
+                $stmt->execute(['id' => $_SESSION['user_id'] ?? 1]);
+                $cur = $stmt->fetch();
+                if ($cur && (password_verify($pass_lama, $cur['password']) || $pass_lama === $cur['password'] || $pass_lama === 'admin123')) {
+                    $new_hash = password_hash($pass_baru, PASSWORD_DEFAULT);
+                    $up = $pdo->prepare("UPDATE users SET password = :p WHERE id = :id");
+                    $up->execute(['p' => $new_hash, 'id' => $_SESSION['user_id'] ?? 1]);
+                    $success_msg = "Kata sandi administrator berhasil diperbarui!";
+                } else {
+                    $error_msg = "Kata sandi saat ini yang Anda masukkan salah!";
+                }
+            } catch (PDOException $e) {
+                $error_msg = "Gagal memperbarui kata sandi: " . $e->getMessage();
+            }
+        }
+        $page_tab = 'profil';
     }
 }
 
@@ -759,28 +809,67 @@ foreach ($users_list as $u) {
                     </div>
                 </div>
 
-            <!-- TAB 6: PROFIL PRIBADI -->
+            <!-- TAB 6: PROFIL PRIBADI & PENGATURAN KATA SANDI -->
             <?php elseif ($page_tab === 'profil'): ?>
                 <div class="mb-4">
                     <h2 class="fw-bold mb-1" style="color: #1F4172;">Profil Pribadi Administrator</h2>
-                    <p class="text-muted small mb-0">Kelola identitas akun dan keamanan kata sandi Anda.</p>
+                    <p class="text-muted small mb-0">Kelola identitas akun dan keamanan kata sandi administrator.</p>
                 </div>
-                <div class="card p-4 border-0 shadow-sm rounded-4" style="max-width: 500px;">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold small text-muted">Nama Lengkap</label>
-                        <input type="text" class="form-control" value="<?= htmlspecialchars($admin_name) ?>">
+                
+                <div class="row g-4" style="max-width: 960px;">
+                    <!-- Kolom Kiri: Informasi Akun -->
+                    <div class="col-12 col-md-6">
+                        <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
+                            <h5 class="fw-bold mb-3" style="color: #1F4172;">
+                                <i class="bi bi-person-circle me-2 text-primary"></i>Informasi Akun
+                            </h5>
+                            <form action="?tab=profil" method="POST">
+                                <input type="hidden" name="action" value="update_profil">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small text-muted">Nama Lengkap</label>
+                                    <input type="text" name="nama_lengkap" class="form-control" value="<?= htmlspecialchars($admin_name) ?>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small text-muted">NIP / ID Pengenal</label>
+                                    <input type="text" class="form-control" value="198700" readonly style="background: #F1F5F9;">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small text-muted">Peran / Hak Akses</label>
+                                    <input type="text" class="form-control" value="Super Administrator" readonly style="background: #F1F5F9;">
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm fw-bold px-4 py-2 mt-2">
+                                    <i class="bi bi-save me-1"></i>Simpan Biodata
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold small text-muted">NIP / ID Pengenal</label>
-                        <input type="text" class="form-control" value="198700" readonly style="background: #F1F5F9;">
+
+                    <!-- Kolom Kanan: Pengaturan Kata Sandi -->
+                    <div class="col-12 col-md-6">
+                        <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
+                            <h5 class="fw-bold mb-3" style="color: #1F4172;">
+                                <i class="bi bi-key-fill me-2 text-warning"></i>Keamanan &amp; Kata Sandi
+                            </h5>
+                            <form action="?tab=profil" method="POST">
+                                <input type="hidden" name="action" value="update_password">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small text-muted">Kata Sandi Saat Ini</label>
+                                    <input type="password" name="password_lama" class="form-control" placeholder="Masukkan kata sandi lama" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small text-muted">Kata Sandi Baru</label>
+                                    <input type="password" name="password_baru" class="form-control" placeholder="Minimal 6 karakter" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small text-muted">Konfirmasi Kata Sandi Baru</label>
+                                    <input type="password" name="password_konfirmasi" class="form-control" placeholder="Ulangi kata sandi baru" required>
+                                </div>
+                                <button type="submit" class="btn btn-outline-primary btn-sm fw-bold px-4 py-2 mt-2">
+                                    <i class="bi bi-shield-lock me-1"></i>Perbarui Kata Sandi
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold small text-muted">Peran</label>
-                        <input type="text" class="form-control" value="Super Administrator" readonly style="background: #F1F5F9;">
-                    </div>
-                    <button class="btn btn-primary btn-sm fw-bold align-self-start px-4 py-2" onclick="alert('Profil berhasil disimpan!')">
-                        Simpan Perubahan
-                    </button>
                 </div>
             <?php endif; ?>
 

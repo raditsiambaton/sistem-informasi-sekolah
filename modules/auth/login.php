@@ -176,7 +176,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         :root {
             --color-navy: #1F4172;
             --color-navy-dark: #122847;
-            --color-emerald: #059669;
+            --color-tahfiz: #117A74;
+            --color-tahfiz-dark: #0b5652;
             --color-gold: #D97706;
         }
         body {
@@ -200,18 +201,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .login-header {
             background: #F8FAFC;
-            padding: 32px 30px 24px;
+            padding: 28px 30px 20px;
             text-align: center;
             border-bottom: 1px solid #E2E8F0;
         }
         .login-logo {
-            width: 68px;
-            height: 68px;
+            width: 60px;
+            height: 60px;
             object-fit: contain;
             border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(31, 65, 114, 0.15);
-            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(31, 65, 114, 0.12);
             border: 2px solid #ffffff;
+        }
+        .login-logo-tahfiz {
+            width: 58px;
+            height: 58px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(17, 122, 116, 0.15));
         }
         .login-body {
             padding: 30px 32px;
@@ -224,11 +230,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: all 0.2s;
         }
         .form-control:focus {
-            border-color: #1F4172;
-            box-shadow: 0 0 0 3px rgba(31, 65, 114, 0.15);
+            border-color: #117A74;
+            box-shadow: 0 0 0 3px rgba(17, 122, 116, 0.18);
         }
         .btn-login {
-            background: linear-gradient(135deg, #1F4172 0%, #2563EB 100%);
+            background: linear-gradient(135deg, #117A74 0%, #14948d 100%);
             color: #ffffff;
             font-weight: 700;
             padding: 12px;
@@ -237,11 +243,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 100%;
             font-size: 1rem;
             transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(17, 122, 116, 0.25);
         }
         .btn-login:hover {
-            background: linear-gradient(135deg, #122847 0%, #1F4172 100%);
+            background: linear-gradient(135deg, #0b5652 0%, #117A74 100%);
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(31, 65, 114, 0.3);
+            box-shadow: 0 6px 18px rgba(17, 122, 116, 0.4);
             color: #ffffff;
         }
         .btn-role-select {
@@ -254,8 +261,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .btn-role-select:hover {
             background: #F8FAFC;
-            border-color: #94A3B8 !important;
-            color: #1F4172;
+            border-color: #117A74 !important;
+            color: #117A74;
             transform: translateY(-1px);
             box-shadow: 0 2px 6px rgba(0,0,0,0.04);
         }
@@ -264,11 +271,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
 <div class="login-card">
-    <!-- Header Sekolah -->
+    <!-- Header Sekolah & Tahfiz -->
     <div class="login-header">
-        <a href="../../index.php" title="Kembali ke Beranda">
-            <img src="../../assets/images/logo-sekolah.png" alt="Logo SMA IT Al-Fadhilah" class="login-logo">
-        </a>
+        <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
+            <a href="../../index.php" title="Kembali ke Beranda Sekolah">
+                <img src="../../assets/images/logo-sekolah.png" alt="Logo SMA IT Al-Fadhilah" class="login-logo">
+            </a>
+            <div style="width: 1.5px; height: 44px; background: #CBD5E1;"></div>
+            <a href="../../index.php" title="Program Tahfiz Al-Qur'an">
+                <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" class="login-logo-tahfiz">
+            </a>
+        </div>
+        <span class="badge rounded-pill fw-semibold px-3 py-1 mb-2 text-white" style="background-color: #117A74; font-size: 0.72rem; letter-spacing: 0.05em;">
+            <i class="bi bi-book-half me-1"></i>PORTAL TAHFIZ &amp; AKADEMIK
+        </span>
         <h1 class="fw-bold mb-1" style="font-size: 1.25rem; color: #1F4172; letter-spacing: -0.01em;">
             SMA IT AL-FADHILAH
         </h1>

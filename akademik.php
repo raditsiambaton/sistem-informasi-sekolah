@@ -46,43 +46,37 @@ require_once 'includes/header_public.php';
         <?php
         $programs = [
             [
-                'icon'      => 'bi-book-half',
-                'bg_color'  => 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                'img'       => 'https://placehold.co/600x380/e2e8f0/1e293b?text=Tahfiz+%26+Al-Quran',
                 'tag'       => 'Pilar Utama',
                 'judul'     => "Tahfiz & Al-Qur'an",
                 'deskripsi' => "Program pembentukan karakter Qur'ani melalui tahsin perbaikan bacaan, tasmi' simakan hafalan, mutaba'ah harian, serta bimbingan intensif target minimal 6 Juz.",
             ],
             [
-                'icon'      => 'bi-compass-fill',
-                'bg_color'  => 'linear-gradient(135deg, #1F4172 0%, #2563EB 100%)',
+                'img'       => 'https://placehold.co/600x380/e2e8f0/1e293b?text=Leadership+%26+Kepemimpinan',
                 'tag'       => 'Karakter',
                 'judul'     => 'Leadership & Kepemimpinan',
                 'deskripsi' => "Mencetak calon pemimpin muslim melalui program Leaders' Camp, Latihan Dasar Kepemimpinan (LDK), kegiatan kepanduan, dan kedisiplinan berakhlak mulia.",
             ],
             [
-                'icon'      => 'bi-translate',
-                'bg_color'  => 'linear-gradient(135deg, #0D9488 0%, #0F766E 100%)',
+                'img'       => 'https://placehold.co/600x380/e2e8f0/1e293b?text=Bahasa+%26+Public+Speaking',
                 'tag'       => 'Komunikasi',
                 'judul'     => 'Bahasa & Public Speaking',
                 'deskripsi' => 'Membangun kepercayaan diri dan kecakapan komunikasi global siswa melalui English & Arabic Day, muhadharah pidato dua bahasa, dan festival literasi.',
             ],
             [
-                'icon'      => 'bi-mortarboard-fill',
-                'bg_color'  => 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)',
+                'img'       => 'https://placehold.co/600x380/e2e8f0/1e293b?text=Sukses+SNBT+%26+PTN+Favorit',
                 'tag'       => 'Akademik',
                 'judul'     => 'Sukses SNBT & PTN Favorit',
                 'deskripsi' => 'Mempersiapkan siswa menembus PTN dan Perguruan Tinggi Kedinasan favorit melalui bimbingan intensif UTBK-SNBT, tryout berkala, dan konsultasi minat bakat.',
             ],
             [
-                'icon'      => 'bi-moon-stars-fill',
-                'bg_color'  => 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
+                'img'       => 'https://placehold.co/600x380/e2e8f0/1e293b?text=Bina+Iman+%26+Taqwa+(BIMTAQ)',
                 'tag'       => 'Spiritual',
                 'judul'     => 'Bina Iman & Taqwa (BIMTAQ)',
                 'deskripsi' => 'Memperkuat pondasi keimanan dan ketaqwaan siswa melalui program Malam Bina Iman dan Taqwa (MABIT), Taujihad spiritual, dan pembiasaan shalat berjamaah.',
             ],
             [
-                'icon'      => 'bi-heart-fill',
-                'bg_color'  => 'linear-gradient(135deg, #E11D48 0%, #BE123C 100%)',
+                'img'       => 'https://placehold.co/600x380/e2e8f0/1e293b?text=Sosial+%26+Karakter+Muslim',
                 'tag'       => 'Sosial',
                 'judul'     => 'Sosial & Karakter Muslim',
                 'deskripsi' => "Membangun kepekaan sosial dan jiwa berbagi sebagai muslim sejati melalui program Jum'at Berkah sedekah mingguan, bakti sosial, dan kepedulian lingkungan hidup.",
@@ -94,16 +88,17 @@ require_once 'includes/header_public.php';
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <?php foreach ($programs as $p): ?>
             <div class="col">
-                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden program-card bg-white">
-                    <!-- Banner Header Grafis -->
-                    <div class="p-4 text-white position-relative" style="background: <?= $p['bg_color'] ?>; min-height: 120px;">
-                        <span class="badge bg-white bg-opacity-25 text-white fw-medium rounded-pill px-3 py-1 small position-absolute top-0 end-0 m-3">
-                            <?= $p['tag'] ?>
-                        </span>
-                        <div class="d-inline-flex align-items-center justify-content-center bg-white bg-opacity-20 rounded-3 p-3 mb-2" style="width: 54px; height: 54px;">
-                            <i class="bi <?= $p['icon'] ?> fs-3 text-white"></i>
-                        </div>
-                    </div>
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden program-card bg-white position-relative">
+                    <!-- Badge Kategori -->
+                    <span class="badge bg-dark bg-opacity-75 text-white fw-medium rounded-pill px-3 py-1 small position-absolute top-0 end-0 m-3" style="z-index: 2;">
+                        <?= $p['tag'] ?>
+                    </span>
+
+                    <!-- Area Foto Rencana / Placeholder -->
+                    <img src="<?= $p['img'] ?>"
+                         class="card-img-top program-img"
+                         alt="<?= htmlspecialchars($p['judul']) ?>"
+                         style="height: 220px; object-fit: cover;">
 
                     <!-- Card Body -->
                     <div class="card-body p-4">

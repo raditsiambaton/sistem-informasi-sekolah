@@ -46,29 +46,6 @@ function navActive(string $page, string $current): string {
 <body>
 
 <!-- ═══════════════════════════════════════════════════════════════════
-     TOP BAR INFORMASI RESMI (Khas Web Sekolah & Lembaga Pendidikan)
-═══════════════════════════════════════════════════════════════════ -->
-<div class="top-info-bar py-1 d-none d-md-block text-white" style="background-color: #122847; font-size: 0.8rem; border-bottom: 2px solid #D97706;">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center gap-3">
-            <span><i class="bi bi-geo-alt-fill text-warning me-1"></i>Jl. Muhajirin, Sidomulyo Barat, Pekanbaru</span>
-            <span class="text-white-50">|</span>
-            <span><i class="bi bi-telephone-fill text-warning me-1"></i>(0761) 840-7782</span>
-            <span class="text-white-50">|</span>
-            <span><i class="bi bi-envelope-fill text-warning me-1"></i>info@alfadhilah.sch.id</span>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-            <span class="badge bg-warning text-dark px-2 py-1 fw-bold"><i class="bi bi-stars me-1"></i>SPMB 2026/2027 Dibuka</span>
-            <div class="d-flex gap-2 ms-2">
-                <a href="https://www.instagram.com/smait_fadhilah" target="_blank" class="text-white-50 text-hover-white"><i class="bi bi-instagram"></i></a>
-                <a href="https://www.facebook.com/smaitfadhilahpku" target="_blank" class="text-white-50 text-hover-white"><i class="bi bi-facebook"></i></a>
-                <a href="https://www.tiktok.com/@smait_fadhilah" target="_blank" class="text-white-50 text-hover-white"><i class="bi bi-tiktok"></i></a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
      NAVBAR – Sticky Top | Latar Putih | Shadow Halus
 ═══════════════════════════════════════════════════════════════════ -->
 <nav class="navbar navbar-expand-lg bg-white sticky-top shadow-sm py-2" id="navbarUtama">
@@ -131,13 +108,21 @@ function navActive(string $page, string $current): string {
                     </a>
                 </li>
 
-                <!-- Tahfiz (Login Portal Multi-Peran) -->
+                <!-- Kontak -->
+                <li class="nav-item">
+                    <a class="nav-link px-3 <?= navActive('kontak', $current_page) ?>"
+                       href="<?= $base_path ?>index.php#kontak">
+                        <i class="bi bi-telephone me-1"></i>Kontak
+                    </a>
+                </li>
+
+                <!-- Tahfiz (Login Portal Multi-Peran dengan Hijau Kontras #117A74) -->
                 <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
                     <a class="btn btn-sm px-4 py-2 fw-bold text-white rounded-pill shadow-sm"
-                       style="background: linear-gradient(135deg, #1F4172 0%, #0d9488 100%);"
+                       style="background: linear-gradient(135deg, #117A74 0%, #0d5753 100%);"
                        href="<?= $base_path ?>modules/auth/login.php"
                        <?= ($current_page === 'tahfiz') ? 'aria-current="page"' : '' ?>>
-                        <i class="bi bi-journal-bookmark-fill me-1 text-warning"></i>Portal Tahfiz
+                        <i class="bi bi-book-half me-1 text-warning"></i>Portal Tahfiz
                     </a>
                 </li>
 
