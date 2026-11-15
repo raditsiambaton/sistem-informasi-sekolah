@@ -5,7 +5,7 @@
  * SMA IT Al-Fadhilah Pekanbaru
  *
  * File ini berisi konfigurasi koneksi database (MySQL/MariaDB) menggunakan PDO.
- * Sesuaikan nilai konstanta di bawah dengan lingkungan server Anda.
+ * Dilengkapi kemampuan auto-create database dan auto-import tabel.
  */
 
 // Konfigurasi koneksi database
@@ -27,21 +27,43 @@ define('DB_OPTIONS', [
 
 /**
  * Membuat dan mengembalikan koneksi PDO ke database (singleton).
+ * Dilengkapi kemampuan auto-create database & auto-import skema jika database belum ada.
  *
- * @return PDO
+ * @return PDO|null
  */
-function koneksi_database(): PDO
+function koneksi_database(): ?PDO
 {
     static $pdo = null;
 
-    if ($pdo === null) {
-        try {
-            $pdo = new PDO(DB_DSN, DB_USER, DB_PASS, DB_OPTIONS);
-        } catch (PDOException $e) {
-            // TODO: ganti dengan halaman error yang ramah pengguna di lingkungan produksi
-            die('Koneksi database gagal: ' . $e->getMessage());
-        }
+    if ($pdo !== null) {
+        return $pdo;
     }
 
-    return $pdo;
+    try {
+        $pdo = new PDO(DB_DSN, DB_USER, DB_PASS, DB_OPTIONS);
+        return $pdo;
+    } catch (PDOException $e) {
+        // Jika database belum ada (Error 1049: Unknown database), buat secara otomatis
+        if ($e->getCode() == 1049 || strpos($e->getMessage(), 'Unknown database') !== false) {
+            try {
+                $rootPdo = new PDO('mysql:host=' . DB_HOST . ';charset=' . DB_CHARSET, DB_USER, DB_PASS, DB_OPTIONS);
+                $rootPdo->exec("CREATE DATABASE IF NOT EXISTS `" . DB_NAME . "` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+                
+                $sqlFile = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'database.sql';
+                if (file_exists($sqlFile)) {
+                    $sqlContent = file_get_contents($sqlFile);
+                    $rootPdo->exec("USE `" . DB_NAME . "`");
+                    $rootPdo->exec($sqlContent);
+                }
+
+                $pdo = new PDO(DB_DSN, DB_USER, DB_PASS, DB_OPTIONS);
+                return $pdo;
+            } catch (Throwable $innerError) {
+                error_log("Gagal membuat database otomatis: " . $innerError->getMessage());
+            }
+        }
+
+        // Lemparkan exception agar pemanggil dapat menangani fallback secara elegan
+        throw $e;
+    }
 }

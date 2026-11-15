@@ -207,7 +207,8 @@ require_once 'includes/header_public.php';
         <?php
         $berita = [
             [
-                'img'     => 'https://placehold.co/400x250/f1f5f9/475569?text=Berita',
+                'gradient'=> 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                'icon'    => 'bi-trophy-fill',
                 'tanggal' => '3 November 2026',
                 'judul'   => 'SMA IT Al-Fadhilah Raih Juara 1 Lomba Tahfiz Tingkat Provinsi Riau',
                 'ringkas' => 'Alhamdulillah, siswa-siswi SMA IT Al-Fadhilah berhasil meraih juara pertama dalam ajang Musabaqah Hifzil Qur\'an tingkat Provinsi Riau yang diselenggarakan di Pekanbaru.',
@@ -215,7 +216,8 @@ require_once 'includes/header_public.php';
                 'badge_warna' => '#16A34A',
             ],
             [
-                'img'     => 'https://placehold.co/400x250/f1f5f9/475569?text=Berita',
+                'gradient'=> 'linear-gradient(135deg, #1F4172 0%, #2563EB 100%)',
+                'icon'    => 'bi-megaphone-fill',
                 'tanggal' => '21 Oktober 2026',
                 'judul'   => 'Penerimaan Peserta Didik Baru (SPMB) Tahun Ajaran 2027/2028 Resmi Dibuka',
                 'ringkas' => 'SMA IT Al-Fadhilah Pekanbaru dengan bangga mengumumkan pembukaan pendaftaran siswa baru untuk tahun ajaran 2027/2028. Daftar sekarang dan bergabunglah bersama keluarga besar Al-Fadhilah.',
@@ -223,7 +225,8 @@ require_once 'includes/header_public.php';
                 'badge_warna' => '#D97706',
             ],
             [
-                'img'     => 'https://placehold.co/400x250/f1f5f9/475569?text=Berita',
+                'gradient'=> 'linear-gradient(135deg, #0D9488 0%, #0F766E 100%)',
+                'icon'    => 'bi-mortarboard-fill',
                 'tanggal' => '5 Oktober 2026',
                 'judul'   => 'Workshop Peningkatan Kompetensi Guru: Implementasi Kurikulum Merdeka 2026',
                 'ringkas' => 'Seluruh tenaga pendidik SMA IT Al-Fadhilah mengikuti workshop intensif selama dua hari tentang implementasi Kurikulum Merdeka dalam pembelajaran berbasis nilai-nilai Islam.',
@@ -238,12 +241,13 @@ require_once 'includes/header_public.php';
             <div class="col">
                 <article class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden berita-card">
 
-                    <!-- Gambar -->
-                    <div class="overflow-hidden" style="height: 200px;">
-                        <img src="<?= $b['img'] ?>"
-                             alt="<?= htmlspecialchars($b['judul']) ?>"
-                             class="card-img-top w-100 h-100 berita-img"
-                             style="object-fit: cover; transition: transform 0.4s ease;">
+                    <!-- Banner Grafis Berita -->
+                    <div class="d-flex align-items-center justify-content-center text-white"
+                         style="height: 180px; background: <?= $b['gradient'] ?>;">
+                        <div class="rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center"
+                             style="width: 70px; height: 70px;">
+                            <i class="bi <?= $b['icon'] ?> fs-2"></i>
+                        </div>
                     </div>
 
                     <div class="card-body d-flex flex-column p-4">
