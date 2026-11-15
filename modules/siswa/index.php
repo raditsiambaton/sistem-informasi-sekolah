@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * modules/siswa/index.php
  * Dashboard Santri / Siswa – SMA IT Al-Fadhilah Pekanbaru
@@ -99,13 +99,18 @@ try {
     <!-- Bootstrap 5.3 & Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/tahfiz.css">
 
     <style>
         :root {
-            --color-tahfiz: #117A74;
-            --color-tahfiz-dark: #0a4d49;
-            --color-tahfiz-light: #E6F4F3;
-            --color-navy: #1F4172;
+            --color-primary: #11756D;
+            --color-primary-dark: #0D5C56;
+            --color-primary-deep: #0A2E2B;
+            --color-accent: #11756D;
+            --color-soft: #E6F4F1;
+            --color-soft-light: #F4F7F6;
+            --color-tahfiz: #11756D;
+            --color-navy: #11756D;
             --color-gold: #D97706;
             --color-border: #E2E8F0;
         }
@@ -117,7 +122,7 @@ try {
         }
         .siswa-sidebar {
             width: 260px;
-            background: #083431;
+            background: #0A2E2B;
             min-height: 100vh;
             color: #ffffff;
             flex-shrink: 0;
@@ -128,7 +133,7 @@ try {
             align-items: center;
             gap: 12px;
             padding: 10px 14px;
-            color: #A2C4C1;
+            color: #A2D5D2;
             font-weight: 600;
             font-size: 0.9rem;
             border-radius: 8px;
@@ -138,20 +143,20 @@ try {
         }
         .siswa-nav-link:hover {
             color: #ffffff;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.12);
         }
         .siswa-nav-link.active {
-            background: #117A74;
+            background: #11756D;
             color: #ffffff;
             font-weight: 700;
-            box-shadow: 0 4px 12px rgba(17, 122, 116, 0.35);
+            box-shadow: 0 4px 12px rgba(17, 117, 109, 0.35);
         }
         .kpi-card {
             background: #ffffff;
             border: 1px solid var(--color-border);
             border-radius: 14px;
             padding: 20px;
-            box-shadow: 0 2px 8px rgba(31, 65, 114, 0.04);
+            box-shadow: 0 2px 8px rgba(17, 117, 109, 0.04);
             height: 100%;
         }
     </style>
@@ -163,7 +168,7 @@ try {
     <aside class="siswa-sidebar d-flex flex-column">
         <!-- Brand -->
         <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom border-secondary border-opacity-25">
-            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" width="42" height="42" class="object-fit-contain p-1">
+            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" style="width: 38px; height: 38px; object-fit: contain; border-radius: 8px;" class="sidebar-logo">
             <div>
                 <div class="fw-bold fs-6 text-white lh-1">SIM Tahfiz</div>
                 <small class="text-white-50 fw-semibold" style="font-size: 0.72rem;">Portal Santri</small>
@@ -217,16 +222,19 @@ try {
     <!-- MAIN WRAPPER -->
     <div class="flex-grow-1 d-flex flex-column" style="min-width: 0;">
         <header class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center shadow-sm">
-            <div class="d-flex align-items-center gap-2 small text-muted">
-                <span>Ruang Santri</span>
-                <span>/</span>
-                <span class="fw-bold text-dark text-capitalize"><?= htmlspecialchars($page_tab) ?></span>
+            <div class="d-flex align-items-center gap-3">
+                <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" style="height: 42px; width: auto; object-fit: contain;">
+                <div class="d-flex align-items-center gap-2 small text-muted">
+                    <span>Ruang Santri</span>
+                    <span>/</span>
+                    <span class="fw-bold text-dark text-capitalize"><?= htmlspecialchars($page_tab) ?></span>
+                </div>
             </div>
             <div class="d-flex align-items-center gap-3">
                 <span class="badge bg-light text-muted border px-3 py-2">
-                    <i class="bi bi-calendar3 me-1 text-primary"></i><?= date('d M Y') ?>
+                    <i class="bi bi-calendar3 me-1 text-success"></i><?= date('d M Y') ?>
                 </span>
-                <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2">
+                <span class="badge bg-success-subtle text-success fw-bold px-3 py-2">
                     <i class="bi bi-person-check-fill me-1"></i>Santri Halaqah <?= htmlspecialchars($halaqah_name) ?>
                 </span>
             </div>
@@ -256,7 +264,7 @@ try {
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <span class="badge bg-success-subtle text-success fw-bold px-3 py-1 mb-2">PROGRES HAFALAN</span>
-                        <h2 class="fw-bold mb-1" style="color: #1F4172;">Assalamu’alaikum, <?= htmlspecialchars(explode(' ', $siswa_name)[1] ?? $siswa_name) ?></h2>
+                        <h2 class="fw-bold mb-1" style="color: #11756D;">Assalamu’alaikum, <?= htmlspecialchars(explode(' ', $siswa_name)[1] ?? $siswa_name) ?></h2>
                         <p class="text-muted small mb-0">Sedikit demi sedikit, setiap ayat membawa kebaikan.</p>
                     </div>
                     <span class="badge bg-success text-white fw-bold px-3 py-2">Halaqah <?= htmlspecialchars($halaqah_name) ?></span>
@@ -268,7 +276,7 @@ try {
                         <div class="kpi-card">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="small fw-bold text-muted">Total Hafalan</span>
-                                <i class="bi bi-book-half text-primary fs-5"></i>
+                                <i class="bi bi-book-half text-success fs-5"></i>
                             </div>
                             <div class="fs-2 fw-bold text-dark">2 <span class="fs-6 text-muted fw-normal">juz</span></div>
                             <small class="text-muted">Hafalan yang telah disetorkan</small>
@@ -304,7 +312,7 @@ try {
                                 <span class="small fw-bold text-muted text-uppercase">Target Hafalan Minggu Ini</span>
                                 <span class="badge bg-success-subtle text-success fw-bold">Aktif</span>
                             </div>
-                            <h4 class="fw-bold mb-1" style="color: #1F4172;">Surah Al-Mulk</h4>
+                            <h4 class="fw-bold mb-1" style="color: #11756D;">Surah Al-Mulk</h4>
                             <p class="small text-muted mb-3">Ayat 1–30 · Juz 29 | Periode: 1–15 November 2026</p>
                             
                             <div class="progress mb-2" style="height: 10px;">
@@ -318,7 +326,7 @@ try {
                     </div>
 
                     <div class="col-12 col-lg-4">
-                        <div class="card p-4 border-0 shadow-sm h-100" style="background-color: #F0FDF4;">
+                        <div class="card p-4 border-0 shadow-sm h-100" style="background-color: #F4F7F6;">
                             <span class="badge bg-success text-white fw-bold mb-2 align-self-start">LANGKAH SELANJUTNYA</span>
                             <h5 class="fw-bold text-dark mb-2">Lanjutkan ayat 19–24</h5>
                             <p class="small text-muted mb-3">
@@ -334,7 +342,7 @@ try {
                 <!-- Setoran Terakhir Table Persis Image 20 & 21 -->
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold mb-0" style="color: #1F4172;">Setoran Terakhir</h5>
+                        <h5 class="fw-bold mb-0" style="color: #11756D;">Setoran Terakhir</h5>
                         <a href="?tab=riwayat" class="small fw-semibold text-decoration-none">Lihat Semua Riwayat →</a>
                     </div>
                     <div class="table-responsive">
@@ -354,7 +362,7 @@ try {
                                     <tr>
                                         <td><?= !empty($set['tanggal_setor']) ? date('d M Y', strtotime($set['tanggal_setor'])) : date('d M Y') ?></td>
                                         <td><strong>Surah <?= htmlspecialchars($set['surah']) ?> · Ayat <?= htmlspecialchars($set['ayat_awal']) ?>–<?= htmlspecialchars($set['ayat_akhir']) ?></strong></td>
-                                        <td><span class="badge bg-primary-subtle text-primary">Hafalan Baru</span></td>
+                                        <td><span class="badge bg-success-subtle text-success">Hafalan Baru</span></td>
                                         <td><strong class="text-success"><?= htmlspecialchars($set['nilai']) ?> / 100</strong> <small class="text-muted">(<?= htmlspecialchars($set['kualitas']) ?>)</small></td>
                                         <td><?= htmlspecialchars($set['nama_ustadz']) ?></td>
                                     </tr>
@@ -363,21 +371,21 @@ try {
                                     <tr>
                                         <td>5 Nov 2026</td>
                                         <td><strong>Al-Mulk · Ayat 13–18</strong></td>
-                                        <td><span class="badge bg-primary-subtle text-primary">Hafalan Baru</span></td>
+                                        <td><span class="badge bg-success-subtle text-success">Hafalan Baru</span></td>
                                         <td><strong class="text-success">90 / 100</strong></td>
                                         <td>Ust. Rival Alvian Melfandy</td>
                                     </tr>
                                     <tr>
                                         <td>4 Nov 2026</td>
                                         <td><strong>Al-Mulk · Ayat 7–12</strong></td>
-                                        <td><span class="badge bg-primary-subtle text-primary">Hafalan Baru</span></td>
+                                        <td><span class="badge bg-success-subtle text-success">Hafalan Baru</span></td>
                                         <td><strong class="text-success">88 / 100</strong></td>
                                         <td>Ust. Rival Alvian Melfandy</td>
                                     </tr>
                                     <tr>
                                         <td>3 Nov 2026</td>
                                         <td><strong>Al-Mulk · Ayat 1–6</strong></td>
-                                        <td><span class="badge bg-primary-subtle text-primary">Hafalan Baru</span></td>
+                                        <td><span class="badge bg-success-subtle text-success">Hafalan Baru</span></td>
                                         <td><strong class="text-success">92 / 100</strong></td>
                                         <td>Ust. Rival Alvian Melfandy</td>
                                     </tr>
@@ -390,8 +398,8 @@ try {
             <!-- SUBPAGE 2: RIWAYAT HAFALAN & CATATAN USTADZ (SESUAI IMAGE 22 & 23) -->
             <?php elseif ($page_tab === 'riwayat'): ?>
                 <div class="mb-4">
-                    <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-1 mb-2">PERJALANAN HAFALAN</span>
-                    <h2 class="fw-bold mb-1" style="color: #1F4172;">Riwayat Hafalan Santri</h2>
+                    <span class="badge bg-success-subtle text-success fw-bold px-3 py-1 mb-2">PERJALANAN HAFALAN</span>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Riwayat Hafalan Santri</h2>
                     <p class="text-muted small mb-0">Tinjau seluruh riwayat setoran, murajaah, dan evaluasi tajwid dari ustadz pembimbing.</p>
                 </div>
 
@@ -400,7 +408,7 @@ try {
                     <div class="col-12 col-lg-7">
                         <div class="card border-0 shadow-sm">
                             <div class="card-header bg-white py-3">
-                                <h6 class="fw-bold mb-0" style="color: #1F4172;">Daftar Setoran &amp; Murajaah</h6>
+                                <h6 class="fw-bold mb-0" style="color: #11756D;">Daftar Setoran &amp; Murajaah</h6>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0 small">
@@ -417,14 +425,14 @@ try {
                                         <tr>
                                             <td>01</td>
                                             <td>5 Nov 2026</td>
-                                            <td><span class="badge bg-primary-subtle text-primary">Setoran</span></td>
+                                            <td><span class="badge bg-success-subtle text-success">Setoran</span></td>
                                             <td><strong>Al-Mulk · 13–18</strong></td>
                                             <td><strong class="text-success">90 / 100</strong></td>
                                         </tr>
                                         <tr>
                                             <td>02</td>
                                             <td>4 Nov 2026</td>
-                                            <td><span class="badge bg-primary-subtle text-primary">Setoran</span></td>
+                                            <td><span class="badge bg-success-subtle text-success">Setoran</span></td>
                                             <td><strong>Al-Mulk · 7–12</strong></td>
                                             <td><strong class="text-success">88 / 100</strong></td>
                                         </tr>
@@ -451,9 +459,9 @@ try {
                     <!-- Feed Catatan Guru Sesuai Image 23 -->
                     <div class="col-12 col-lg-5">
                         <div class="card border-0 shadow-sm p-4">
-                            <h6 class="fw-bold mb-3" style="color: #1F4172;">Masukan dari Ustadz Pembimbing</h6>
+                            <h6 class="fw-bold mb-3" style="color: #11756D;">Masukan dari Ustadz Pembimbing</h6>
                             
-                            <div class="p-3 rounded-3 mb-3" style="background:#F0FDF4; border-left: 3px solid #059669;">
+                            <div class="p-3 rounded-3 mb-3" style="background:#F4F7F6; border-left: 3px solid #059669;">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <strong class="small text-dark">Ust. Rival Alvian Melfandy</strong>
                                     <small class="text-muted">5 Nov 2026</small>
@@ -464,7 +472,7 @@ try {
                                 <span class="badge bg-success-subtle text-success small">Fokus: Panjang mad</span>
                             </div>
 
-                            <div class="p-3 rounded-3" style="background:#F0FDF4; border-left: 3px solid #059669;">
+                            <div class="p-3 rounded-3" style="background:#F4F7F6; border-left: 3px solid #059669;">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <strong class="small text-dark">Ust. Rival Alvian Melfandy</strong>
                                     <small class="text-muted">4 Nov 2026</small>
@@ -481,8 +489,8 @@ try {
             <!-- SUBPAGE 3: PROFIL PRIBADI SANTRI (SESUAI IMAGE 27 & 28) -->
             <?php elseif ($page_tab === 'profil'): ?>
                 <div class="mb-4">
-                    <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-1 mb-2">AKUN SANTRI</span>
-                    <h2 class="fw-bold mb-1" style="color: #1F4172;">Profil Pribadi</h2>
+                    <span class="badge bg-success-subtle text-success fw-bold px-3 py-1 mb-2">AKUN SANTRI</span>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Profil Pribadi</h2>
                     <p class="text-muted small mb-0">Informasi diri dan keamanan akun santri Anda.</p>
                 </div>
 
@@ -522,7 +530,7 @@ try {
 
                     <div class="col-12 col-md-5">
                         <div class="card p-4 border-0 shadow-sm rounded-4 bg-white h-100">
-                            <h5 class="fw-bold mb-3" style="color: #117A74;">
+                            <h5 class="fw-bold mb-3" style="color: #11756D;">
                                 <i class="bi bi-key-fill me-2 text-warning"></i>Ganti Kata Sandi
                             </h5>
                             <p class="small text-muted mb-3">Jaga kerahasiaan kata sandi Anda dan ganti secara berkala.</p>
@@ -541,7 +549,7 @@ try {
                                     <label class="form-label fw-bold small text-muted">Ulangi Sandi Baru</label>
                                     <input type="password" name="password_konfirmasi" class="form-control" placeholder="Konfirmasi sandi baru" required>
                                 </div>
-                                <button type="submit" class="btn text-white btn-sm fw-bold px-4 py-2 mt-1" style="background-color: #117A74;">
+                                <button type="submit" class="btn text-white btn-sm fw-bold px-4 py-2 mt-1" style="background-color: #11756D;">
                                     <i class="bi bi-shield-lock me-1"></i>Perbarui Sandi Santri
                                 </button>
                             </form>

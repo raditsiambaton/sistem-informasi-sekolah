@@ -1,0 +1,57 @@
+/*
+ * profil.css
+ * Stylesheet Halaman Profil & Informasi Publik SMA IT Al-Fadhilah Pekanbaru
+ * Palet Warna Terstandarisasi: Royal Blue (#1D4ED8), Navy (#0F172A, #1F4172), Aksen Emas (#F59E0B) & Putih (#FFFFFF)
+ */
+
+:root {
+    --color-primary:       #1D4ED8; /* Royal Blue - Utama */
+    --color-primary-dark:  #1E40AF; /* Dark Blue - Hover / Gradasi */
+    --color-primary-deep:  #1E3A8A; /* Deep Blue 900 */
+    --color-accent:        #2563EB; /* Blue 600 - Aksen / Ikon */
+    --color-soft:          #DBEAFE; /* Soft Blue Badge */
+    --color-soft-light:    #EFF6FF; /* Light Soft Background */
+    --color-canvas:        #F8FAFC; /* Latar Halaman Abu-abu Terang */
+    --color-card:          #FFFFFF; /* Latar Kartu Putih Bersih */
+    --color-text:          #1E293B; /* Slate Gelap */
+    --color-muted:         #64748B; /* Abu-abu Sekunder */
+    --color-border:        #E2E8F0;
+    --color-gold:          #F59E0B;
+    --color-gold-light:    #FEF3C7;
+}
+
+/* Profil Hero & Section Banner */
+.profil-hero-banner {
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+    color: #FFFFFF;
+}
+
+/* Profil Badges */
+.badge-profil-blue {
+    background-color: var(--color-soft);
+    color: var(--color-primary-dark);
+    font-weight: 700;
+}
+
+/* Tombol Profil Biru */
+.btn-profil-blue {
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+.btn-profil-blue:hover {
+    background: linear-gradient(135deg, var(--color-primary-deep) 0%, var(--color-primary-dark) 100%);
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(30, 64, 175, 0.25);
+}
+
+/* Logo Proporsional */
+.profil-logo {
+    height: 44px;
+    width: auto;
+    object-fit: contain;
+}

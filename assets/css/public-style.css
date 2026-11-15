@@ -1,38 +1,45 @@
 /*
  * public-style.css
  * Stylesheet Resmi SMA IT Al-Fadhilah Pekanbaru
- * Desain Fresh, Elegan, dan Autentik untuk Lembaga Pendidikan Islam Terpadu.
+ * Desain Elegan, Islami, dan Modern untuk Website Profil Publik.
+ * Palet Warna Utama: Royal Blue (#1D4ED8), Navy (#0F172A, #1F4172), Aksen Emas (#F59E0B) & Putih (#FFFFFF)
  * ────────────────────────────────────────────────────────────────────────────
  */
 
 :root {
-    /* Identitas Warna Resmi SMA IT Al-Fadhilah */
-    --color-navy:        #1F4172;
-    --color-navy-dark:   #122847;
-    --color-navy-light:  #2B5797;
-    --color-blue-light:  #F0F6FC;
-    --color-blue-subtle: #E1EEFA;
-    --color-accent:      #2563EB;
+    /* Identitas Warna Resmi Web Profil SMA IT Al-Fadhilah (Royal Blue & Navy) */
+    --color-primary:       #1D4ED8; /* Royal Blue - Utama */
+    --color-primary-dark:  #1E40AF; /* Dark Blue - Hover / Gradasi */
+    --color-primary-deep:  #1E3A8A; /* Deep Blue 900 */
+    --color-primary-light: #3B82F6; /* Blue 500 */
+    --color-accent:        #2563EB; /* Blue 600 - Aksen */
+    --color-soft:          #DBEAFE; /* Soft Blue Badge (Blue 100) */
+    --color-soft-light:    #EFF6FF; /* Very Soft Blue Tint (Blue 50) */
     
-    /* Aksen Qurani & Kehormatan Akademik */
-    --color-emerald:     #059669;
-    --color-emerald-light:#ECFDF5;
-    --color-gold:        #D97706;
-    --color-gold-light:  #FEF3C7;
+    /* Variabel Kompatibilitas Navy & Blue */
+    --color-navy:          #1F4172;
+    --color-navy-dark:     #0F172A;
+    --color-navy-light:    #2563EB;
+    --color-blue-light:    #EFF6FF;
+    --color-blue-subtle:   #DBEAFE;
+    
+    /* Aksen Kehormatan & Emas */
+    --color-gold:          #F59E0B; /* Amber / Gold */
+    --color-gold-light:    #FEF3C7;
     
     /* Tipografi & Netral */
     --font-primary:      'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-arabic:       'Amiri', serif;
-    --color-heading:     #0F172A;
-    --color-text:        #334155;
+    --color-heading:     #1E293B;
+    --color-text:        #1E293B;
     --color-muted:       #64748B;
     --color-canvas:      #F8FAFC;
     --color-border:      #E2E8F0;
 
     /* Elevasi & Efek */
-    --shadow-sm:         0 2px 4px rgba(31, 65, 114, 0.04);
-    --shadow-md:         0 8px 20px rgba(31, 65, 114, 0.08);
-    --shadow-lg:         0 16px 36px rgba(31, 65, 114, 0.12);
+    --shadow-sm:         0 2px 4px rgba(29, 78, 216, 0.04);
+    --shadow-md:         0 8px 20px rgba(29, 78, 216, 0.08);
+    --shadow-lg:         0 16px 36px rgba(29, 78, 216, 0.12);
     --radius-md:         12px;
     --radius-lg:         18px;
 }
@@ -69,7 +76,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Navbar ──────────────────────────────────────────────────────── */
 #navbarUtama {
-    border-bottom: 1px solid rgba(31, 65, 114, 0.08);
+    border-bottom: 1px solid rgba(29, 78, 216, 0.08);
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
 }
@@ -84,18 +91,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #navbarUtama .nav-link:hover {
-    color: var(--color-navy);
-    background-color: var(--color-blue-light);
+    color: var(--color-primary);
+    background-color: var(--color-soft-light);
 }
 
 #navbarUtama .nav-link.active-nav-link {
-    color: var(--color-accent) !important;
-    background-color: var(--color-blue-light);
+    color: var(--color-primary) !important;
+    background-color: var(--color-soft-light);
+    font-weight: 700;
 }
 
 /* ── Button Styles ───────────────────────────────────────────────── */
 .btn-primary {
-    background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-light) 100%);
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
     border: none;
     color: #ffffff;
     border-radius: 10px;
@@ -103,25 +111,26 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, var(--color-navy-dark) 0%, var(--color-navy) 100%);
+    background: linear-gradient(135deg, var(--color-primary-deep) 0%, var(--color-primary-dark) 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(31, 65, 114, 0.25);
+    box-shadow: 0 8px 18px rgba(30, 64, 175, 0.25);
     color: #ffffff;
 }
 
 .btn-outline-primary {
-    color: var(--color-navy);
-    border: 1.5px solid var(--color-navy);
+    color: var(--color-primary);
+    border: 1.5px solid var(--color-primary);
     border-radius: 10px;
     font-weight: 600;
     transition: all 0.25s ease;
 }
 
 .btn-outline-primary:hover {
-    background-color: var(--color-navy);
-    border-color: var(--color-navy);
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
     color: #ffffff;
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2);
 }
 
 /* ── Card Styling ────────────────────────────────────────────────── */
@@ -138,26 +147,26 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Badges ──────────────────────────────────────────────────────── */
 .badge-subtle-navy {
-    background-color: #EBF3FA;
-    color: var(--color-navy);
-    border: 1px solid #D0E3F5;
+    background-color: var(--color-soft);
+    color: var(--color-primary-dark);
+    border: 1px solid #BFDBFE;
 }
 
-.badge-subtle-emerald {
-    background-color: var(--color-emerald-light);
-    color: var(--color-emerald);
-    border: 1px solid #A7F3D0;
+.badge-subtle-blue {
+    background-color: var(--color-soft-light);
+    color: var(--color-primary);
+    border: 1px solid #BFDBFE;
 }
 
 .badge-subtle-gold {
     background-color: var(--color-gold-light);
-    color: var(--color-gold);
+    color: #B45309;
     border: 1px solid #FDE68A;
 }
 
 /* ── Hero Enhancements ───────────────────────────────────────────── */
 #hero {
-    background: radial-gradient(circle at 10% 20%, rgba(31, 65, 114, 0.04) 0%, transparent 40%),
+    background: radial-gradient(circle at 10% 20%, rgba(29, 78, 216, 0.04) 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.04) 0%, transparent 40%),
                 linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
 }
@@ -198,13 +207,13 @@ h1, h2, h3, h4, h5, h6 {
     width: 60px;
     height: 60px;
     border-radius: 16px;
-    background: linear-gradient(135deg, var(--color-navy) 0%, #2563EB 100%);
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.6rem;
-    box-shadow: 0 6px 14px rgba(31, 65, 114, 0.25);
+    box-shadow: 0 6px 14px rgba(30, 64, 175, 0.25);
 }
 
 /* ── Berita & Warta ──────────────────────────────────────────────── */
@@ -215,7 +224,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .berita-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 14px 30px rgba(31, 65, 114, 0.1) !important;
+    box-shadow: 0 14px 30px rgba(29, 78, 216, 0.1) !important;
 }
 
 .berita-card:hover .berita-img {
@@ -232,8 +241,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── SPMB Enhancements ───────────────────────────────────────────── */
 .spmb-hero-card {
-    background: linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 100%);
-    border: 1.5px solid #BAE6FD;
+    background: linear-gradient(135deg, #DBEAFE 0%, #EFF6FF 100%);
+    border: 1.5px solid #BFDBFE;
     border-radius: var(--radius-lg);
 }
 
@@ -241,14 +250,14 @@ h1, h2, h3, h4, h5, h6 {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: var(--color-navy);
+    background: var(--color-primary-dark);
     color: #ffffff;
     font-weight: 800;
     font-size: 1.1rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 10px rgba(31, 65, 114, 0.25);
+    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.25);
 }
 
 /* ── Social Icons ────────────────────────────────────────────────── */
@@ -262,6 +271,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ── Footer ──────────────────────────────────────────────────────── */
+footer {
+    background-color: var(--color-navy-dark) !important;
+}
+
 footer address {
     font-style: normal;
     font-size: 0.92rem;

@@ -116,10 +116,10 @@ function navActive(string $page, string $current): string {
                     </a>
                 </li>
 
-                <!-- Tahfiz (Login Portal Multi-Peran dengan Hijau Kontras #117A74) -->
+                <!-- Tahfiz (Login Portal Multi-Peran dengan Nuansa Biru Elegan) -->
                 <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
                     <a class="btn btn-sm px-4 py-2 fw-bold text-white rounded-pill shadow-sm"
-                       style="background: linear-gradient(135deg, #117A74 0%, #0d5753 100%);"
+                       style="background: linear-gradient(135deg, #1E40AF 0%, #1D4ED8 100%);"
                        href="<?= $base_path ?>modules/auth/login.php"
                        <?= ($current_page === 'tahfiz') ? 'aria-current="page"' : '' ?>>
                         <i class="bi bi-book-half me-1 text-warning"></i>Portal Tahfiz

@@ -2,7 +2,7 @@
      FOOTER RESMI – SMA IT AL-FADHILAH PEKANBARU
      Multi-Kolom Institusional Pendidikan Islam
 ═══════════════════════════════════════════════════════════════════ -->
-<footer class="pt-5 pb-4 mt-auto" style="background-color: #0f1f38; color: #CBD5E1;">
+<footer class="pt-5 pb-4 mt-auto" style="background-color: #0F172A; color: #CBD5E1;">
     <div class="container">
         <div class="row g-4 pb-4 border-bottom border-secondary border-opacity-25">
             
@@ -76,7 +76,7 @@
                 <h6 class="fw-bold text-white text-uppercase mb-3" style="letter-spacing: 0.05em; font-size: 0.85rem;">
                     Jam Layanan &amp; Portal
                 </h6>
-                <div class="p-3 rounded-3 bg-dark bg-opacity-50 border border-secondary border-opacity-25 small mb-3">
+                <div class="p-3 rounded-3 small mb-3" style="background-color: #1E293B; border: 1px solid rgba(255, 255, 255, 0.1);">
                     <div class="d-flex justify-content-between mb-1">
                         <span class="text-white-50">Senin – Kamis:</span>
                         <strong class="text-white">07.30 – 16.00 WIB</strong>
@@ -90,7 +90,7 @@
                         <strong class="text-white">08.00 – 13.00 WIB</strong>
                     </div>
                 </div>
-                <a href="<?= $base_path ?? '' ?>modules/auth/login.php" class="btn btn-sm w-100 fw-bold text-white shadow-sm" style="background-color: #117A74;">
+                <a href="<?= $base_path ?? '' ?>modules/auth/login.php" class="btn btn-sm w-100 fw-bold text-white shadow-sm btn-login-portal" style="background-color: #1D4ED8; transition: background-color 0.2s;">
                     <i class="bi bi-box-arrow-in-right me-1"></i>Login Sistem Terpadu
                 </a>
             </div>

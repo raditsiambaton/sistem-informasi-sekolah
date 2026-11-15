@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * modules/ustadz/index.php
  * Ruang Asatidz Pembimbing Halaqah – SIM Tahfiz SMA IT Al-Fadhilah Pekanbaru
@@ -310,13 +310,16 @@ $quran_juz = [
     <!-- Bootstrap 5.3 & Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/tahfiz.css">
 
     <style>
         :root {
-            --color-tahfiz: #117A74;
-            --color-tahfiz-dark: #083431;
-            --color-tahfiz-light: #E6F4F3;
-            --color-navy: #1F4172;
+            --color-tahfiz: #11756D;
+            --color-tahfiz-dark: #0A2E2B;
+            --color-tahfiz-light: #F4F7F6;
+            --color-primary: #11756D;
+            --color-primary-dark: #0D5C56;
+            --color-soft: #E6F4F1;
             --color-gold: #D97706;
             --color-border: #E2E8F0;
         }
@@ -328,7 +331,7 @@ $quran_juz = [
         }
         .ustadz-sidebar {
             width: 260px;
-            background: #083431;
+            background: #0A2E2B;
             min-height: 100vh;
             color: #ffffff;
             flex-shrink: 0;
@@ -339,7 +342,7 @@ $quran_juz = [
             align-items: center;
             gap: 12px;
             padding: 11px 14px;
-            color: #A2C4C1;
+            color: #A2D5D2;
             font-weight: 600;
             font-size: 0.9rem;
             border-radius: 8px;
@@ -349,13 +352,13 @@ $quran_juz = [
         }
         .ustadz-nav-link:hover {
             color: #ffffff;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.12);
         }
         .ustadz-nav-link.active {
-            background: #117A74;
+            background: #11756D;
             color: #ffffff;
             font-weight: 700;
-            box-shadow: 0 4px 12px rgba(17, 122, 116, 0.35);
+            box-shadow: 0 4px 12px rgba(17, 117, 109, 0.35);
         }
         .kpi-stat-card {
             background: #ffffff;
@@ -367,7 +370,7 @@ $quran_juz = [
         }
         .kpi-stat-card:hover {
             transform: translateY(-2px);
-            border-color: #117A74;
+            border-color: #11756D;
         }
         .santri-select-card {
             border: 1.5px solid #E2E8F0;
@@ -378,13 +381,13 @@ $quran_juz = [
             background: #ffffff;
         }
         .santri-select-card:hover {
-            border-color: #117A74;
-            background: #F4FAF9;
+            border-color: #11756D;
+            background: #F4F7F6;
         }
         .santri-select-card.active {
-            border-color: #117A74;
-            background: var(--color-tahfiz-light);
-            border-left: 5px solid #117A74;
+            border-color: #11756D;
+            background: #F4F7F6;
+            border-left: 5px solid #11756D;
         }
         .surah-select-btn {
             border: 1.5px solid #E2E8F0;
@@ -397,24 +400,26 @@ $quran_juz = [
             width: 100%;
         }
         .surah-select-btn:hover {
-            border-color: #117A74;
-            background: #F4FAF9;
+            border-color: #11756D;
+            background: #F4F7F6;
         }
         .surah-select-btn.active {
-            border-color: #117A74;
-            background: var(--color-tahfiz-light);
+            border-color: #11756D;
+            background: #E6F4F1;
             font-weight: 700;
-            color: #117A74;
+            color: #0D5C56;
         }
-        .btn-tahfiz {
-            background: #117A74;
+        .btn-tahfiz, .btn-simpan-hafalan {
+            background: #11756D;
             color: #ffffff;
             font-weight: 700;
             border: none;
+            transition: all 0.25s ease;
         }
-        .btn-tahfiz:hover {
-            background: #0b5652;
+        .btn-tahfiz:hover, .btn-simpan-hafalan:hover {
+            background: #0D5C56;
             color: #ffffff;
+            box-shadow: 0 4px 14px rgba(13, 92, 86, 0.35);
         }
     </style>
 </head>
@@ -427,7 +432,7 @@ $quran_juz = [
     <aside class="ustadz-sidebar d-flex flex-column">
         <!-- Brand -->
         <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom border-secondary border-opacity-25">
-            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" width="42" height="42" class="object-fit-contain p-1">
+            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" style="width: 38px; height: 38px; object-fit: contain; border-radius: 8px;" class="sidebar-logo">
             <div>
                 <div class="fw-bold fs-6 text-white lh-1">SIM Tahfiz</div>
                 <small class="text-white-50 fw-semibold" style="font-size: 0.72rem;">SMA IT Al-Fadhilah</small>
@@ -436,7 +441,7 @@ $quran_juz = [
 
         <!-- Profil Ustadz Card -->
         <div class="p-2.5 rounded-3 mb-4 bg-dark bg-opacity-25 d-flex align-items-center gap-2">
-            <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold" style="width: 38px; height: 38px; font-size: 0.88rem; background: #117A74;">
+            <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold" style="width: 38px; height: 38px; font-size: 0.88rem; background: #11756D;">
                 RA
             </div>
             <div class="overflow-hidden">
@@ -492,25 +497,28 @@ $quran_juz = [
         
         <!-- Top Bar Header -->
         <header class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center shadow-sm">
-            <div class="d-flex align-items-center gap-2 small text-muted">
-                <span>Ruang Ustadz</span>
-                <span>›</span>
-                <span class="fw-bold text-dark text-capitalize">
-                    <?php
-                    $tab_titles = [
-                        'binaan'   => 'Siswa Binaan (Dashboard Halaqah)',
-                        'hafalan'  => 'Catat Hafalan Baru',
-                        'murajaah' => 'Dashboard & Catat Murajaah',
-                        'target'   => 'Target Hafalan Santri',
-                        'rekap'    => 'Rekapitulasi Tahfiz Halaqah',
-                        'profil'   => 'Profil & Kata Sandi'
-                    ];
-                    echo $tab_titles[$page_tab] ?? 'Dashboard';
-                    ?>
-                </span>
+            <div class="d-flex align-items-center gap-3">
+                <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" style="height: 42px; width: auto; object-fit: contain;">
+                <div class="d-flex align-items-center gap-2 small text-muted">
+                    <span>Ruang Ustadz</span>
+                    <span>›</span>
+                    <span class="fw-bold text-dark text-capitalize">
+                        <?php
+                        $tab_titles = [
+                            'binaan'   => 'Siswa Binaan (Dashboard Halaqah)',
+                            'hafalan'  => 'Catat Hafalan Baru',
+                            'murajaah' => 'Dashboard & Catat Murajaah',
+                            'target'   => 'Target Hafalan Santri',
+                            'rekap'    => 'Rekapitulasi Tahfiz Halaqah',
+                            'profil'   => 'Profil & Kata Sandi'
+                        ];
+                        echo $tab_titles[$page_tab] ?? 'Dashboard';
+                        ?>
+                    </span>
+                </div>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <span class="badge px-3 py-2 fw-semibold text-white" style="background-color: #117A74;">
+                <span class="badge px-3 py-2 fw-semibold text-white" style="background-color: #11756D;">
                     <i class="bi bi-bookmark-star-fill me-1"></i>Halaqah <?= htmlspecialchars($halaqah_name) ?> (<?= $total_santri_binaan ?> Santri)
                 </span>
                 <a href="?tab=hafalan" class="btn btn-tahfiz btn-sm px-3 py-1.5 fw-bold rounded-3">
@@ -544,8 +552,8 @@ $quran_juz = [
             ════════════════════════════════════════════════════════════ -->
             <?php if ($page_tab === 'binaan'): ?>
                 <div class="mb-4">
-                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #117A74;">HALAQAH AL-FURQAN</span>
-                    <h2 class="fw-bold mb-1" style="color: #117A74;">Daftar Santri Binaan</h2>
+                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">HALAQAH AL-FURQAN</span>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Daftar Santri Binaan</h2>
                     <p class="text-muted small mb-0">Pantau perkembangan hafalan, setoran terbaru, dan status murajaah seluruh santri halaqah.</p>
                 </div>
 
@@ -555,7 +563,7 @@ $quran_juz = [
                         <div class="kpi-stat-card">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="small fw-bold text-muted text-uppercase">Santri Binaan</span>
-                                <i class="bi bi-people fs-4 text-primary"></i>
+                                <i class="bi bi-people fs-4" style="color: #11756D;"></i>
                             </div>
                             <div class="fs-2 fw-bold text-dark"><?= $total_santri_binaan ?></div>
                             <small class="text-muted">Halaqah <?= htmlspecialchars($halaqah_name) ?> · Aktif</small>
@@ -565,7 +573,7 @@ $quran_juz = [
                         <div class="kpi-stat-card">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="small fw-bold text-muted text-uppercase">Setoran Tercatat</span>
-                                <i class="bi bi-journal-check fs-4 text-success"></i>
+                                <i class="bi bi-journal-check fs-4" style="color: #11756D;"></i>
                             </div>
                             <div class="fs-2 fw-bold text-success"><?= $total_setoran_count ?></div>
                             <small class="text-muted">Hafalan Baru Tersimpan</small>
@@ -575,7 +583,7 @@ $quran_juz = [
                         <div class="kpi-stat-card">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="small fw-bold text-muted text-uppercase">Total Murajaah</span>
-                                <i class="bi bi-arrow-repeat fs-4 text-info"></i>
+                                <i class="bi bi-arrow-repeat fs-4" style="color: #11756D;"></i>
                             </div>
                             <div class="fs-2 fw-bold text-dark"><?= $total_murajaah_count ?></div>
                             <small class="text-muted">Pengulangan Santri Mutqin</small>
@@ -620,9 +628,9 @@ $quran_juz = [
                                     <td><strong><?= htmlspecialchars($s['nama_lengkap']) ?></strong></td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2" style="min-width: 140px;">
-                                            <div class="progress flex-grow-1" style="height: 7px;">
-                                                <div class="progress-bar" style="width: <?= 60 + ($i * 15) ?>%; background-color: #117A74;"></div>
-                                            </div>
+                                             <div class="progress flex-grow-1" style="height: 7px;">
+                                                 <div class="progress-bar" style="width: <?= 60 + ($i * 15) ?>%; background-color: #11756D;"></div>
+                                             </div>
                                             <small class="fw-bold" style="font-size: 0.75rem;"><?= 60 + ($i * 15) ?>%</small>
                                         </div>
                                     </td>
@@ -632,7 +640,7 @@ $quran_juz = [
                                         <a href="?tab=hafalan&santri=<?= urlencode($s['nama_lengkap']) ?>" class="btn btn-sm btn-outline-success fw-semibold">
                                             <i class="bi bi-journal-plus me-1"></i>Catat Setoran
                                         </a>
-                                        <a href="?tab=murajaah&santri=<?= urlencode($s['nama_lengkap']) ?>" class="btn btn-sm btn-outline-primary fw-semibold">
+                                        <a href="?tab=murajaah&santri=<?= urlencode($s['nama_lengkap']) ?>" class="btn btn-sm btn-outline-success fw-semibold">
                                             <i class="bi bi-arrow-repeat me-1"></i>Catat Murajaah
                                         </a>
                                     </td>
@@ -648,8 +656,8 @@ $quran_juz = [
             ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'hafalan'): ?>
                 <div class="mb-4">
-                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #117A74;">FORMULIR SETORAN HAFALAN</span>
-                    <h2 class="fw-bold mb-1" style="color: #117A74;">Pencatatan Hafalan Baru</h2>
+                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">FORMULIR SETORAN HAFALAN</span>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Pencatatan Hafalan Baru</h2>
                     <p class="text-muted small mb-0">Pilih santri terlebih dahulu di kolom kiri, lalu tentukan surah dan batas ayat setoran.</p>
                 </div>
 
@@ -682,7 +690,7 @@ $quran_juz = [
                             
                             <!-- Placeholder jika siswa belum dipilih -->
                             <div id="placeholderHafalan" class="text-center py-5 my-auto text-muted">
-                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3" style="width: 64px; height: 64px; background: #E6F4F3; color: #117A74;">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3" style="width: 64px; height: 64px; background: #E6F4F1; color: #11756D;">
                                     <i class="bi bi-arrow-left-circle-fill fs-2"></i>
                                 </div>
                                 <h5 class="fw-bold text-dark mb-1">Silakan Pilih Siswa Terlebih Dahulu</h5>
@@ -691,7 +699,7 @@ $quran_juz = [
 
                             <!-- Area Form Setoran (Aktif setelah santri dipilih) -->
                             <div id="areaFormHafalan" style="display: none;">
-                                <div class="p-3 rounded-3 mb-4 d-flex align-items-center justify-content-between" style="background-color: var(--color-tahfiz-light); border: 1px solid #B8E2DF;">
+                                <div class="p-3 rounded-3 mb-4 d-flex align-items-center justify-content-between" style="background-color: var(--color-tahfiz-light); border: 1px solid #80C8C4;">
                                     <div>
                                         <small class="text-muted d-block" style="font-size: 0.72rem;">Santri yang Diuji:</small>
                                         <h5 class="fw-bold mb-0 text-dark" id="displayNamaSantriHafalan">Muhammad Fadhlan</h5>
@@ -703,7 +711,7 @@ $quran_juz = [
                                 <div class="mb-4">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <label class="form-label fw-bold small text-dark mb-0">
-                                            <i class="bi bi-book-half text-primary me-1"></i>2. Pilih Target Juz &amp; Surah:
+                                            <i class="bi bi-book-half text-success me-1"></i>2. Pilih Target Juz &amp; Surah:
                                         </label>
                                         <select class="form-select form-select-sm w-auto fw-bold text-dark" onchange="gantiJuzHafalan(this.value)">
                                             <option value="30" selected>Juz 30 (An-Naba – An-Nas) — 37 Surah</option>
@@ -732,7 +740,7 @@ $quran_juz = [
                                             <span class="badge bg-success-subtle text-success fw-bold px-2 py-0.5 mb-1" style="font-size: 0.7rem;">LEMBAR SETORAN EKSKLUSIF</span>
                                             <h5 class="fw-bold mb-0 text-dark" id="displaySurahTerpilih">Surah An-Naba'</h5>
                                         </div>
-                                        <span class="badge rounded-pill text-white px-3 py-1.5" style="background-color: #117A74;" id="displayTotalAyatSurah">Total 40 Ayat</span>
+                                        <span class="badge rounded-pill text-white px-3 py-1.5" style="background-color: #11756D;" id="displayTotalAyatSurah">Total 40 Ayat</span>
                                     </div>
 
                                     <form action="?tab=hafalan" method="POST">
@@ -751,7 +759,7 @@ $quran_juz = [
                                             </div>
                                             <small class="text-muted" style="font-size: 0.73rem;">
                                                 *Kertas setoran terkunci khusus surah ini (1 lembar = 1 surah).
-                                            </small>
+                                             </small>
                                         </div>
 
                                         <div class="row g-3 mb-3">
@@ -775,8 +783,8 @@ $quran_juz = [
                                             <textarea name="catatan" class="form-control" rows="2" placeholder="Catatan perbaikan tajwid, panjang mad, atau makhraj huruf..."></textarea>
                                         </div>
 
-                                        <button type="submit" class="btn btn-tahfiz w-100 py-2.5 rounded-3 fw-bold" id="btnSubmitSetoran">
-                                            <i class="bi bi-check2-circle me-1"></i>Simpan Lembar Setoran
+                                        <button type="submit" class="btn btn-tahfiz btn-simpan-hafalan w-100 py-2.5 rounded-3 fw-bold text-white" id="btnSubmitSetoran" style="background-color: #11756D;">
+                                            <i class="bi bi-check2-circle me-1"></i>Simpan Hafalan
                                         </button>
                                     </form>
                                 </div>
@@ -792,8 +800,8 @@ $quran_juz = [
             ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'murajaah'): ?>
                 <div class="mb-4">
-                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #117A74;">MONITORING MURAJAAH</span>
-                    <h2 class="fw-bold mb-1" style="color: #117A74;">Dashboard &amp; Catat Murajaah</h2>
+                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">MONITORING MURAJAAH</span>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Dashboard &amp; Catat Murajaah</h2>
                     <p class="text-muted small mb-0">Lihat total capaian murajaah seluruh siswa dan catat pengulangan hafalan mutqin.</p>
                 </div>
 
@@ -813,7 +821,7 @@ $quran_juz = [
                         <div class="kpi-stat-card">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="small fw-bold text-muted text-uppercase">Tingkat Mutqin</span>
-                                <i class="bi bi-shield-check fs-4 text-primary"></i>
+                                <i class="bi bi-shield-check fs-4" style="color: #11756D;"></i>
                             </div>
                             <div class="fs-2 fw-bold text-success">92%</div>
                             <small class="text-muted">Kategori Sangat Mutqin &amp; Lancar</small>
@@ -835,7 +843,7 @@ $quran_juz = [
                     <!-- Form Catat Murajaah -->
                     <div class="col-12 col-lg-5">
                         <div class="card p-4 border-0 shadow-sm rounded-4 bg-white h-100">
-                            <h5 class="fw-bold mb-3" style="color: #117A74;">
+                            <h5 class="fw-bold mb-3" style="color: #11756D;">
                                 <i class="bi bi-pencil-square me-2"></i>Catat Pengulangan (Murajaah)
                             </h5>
 
@@ -957,15 +965,15 @@ $quran_juz = [
             ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'target'): ?>
                 <div class="mb-4">
-                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #117A74;">PENETAPAN TARGET</span>
-                    <h2 class="fw-bold mb-1" style="color: #117A74;">Target Hafalan Santri</h2>
+                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">PENETAPAN TARGET</span>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Target Hafalan Santri</h2>
                     <p class="text-muted small mb-0">Tetapkan sasaran surah dan batas waktu target bagi santri halaqah binaan Anda.</p>
                 </div>
 
                 <div class="row g-4" style="max-width: 900px;">
                     <div class="col-12 col-md-6">
                         <div class="card p-4 border-0 shadow-sm rounded-4 bg-white h-100">
-                            <h5 class="fw-bold mb-3" style="color: #117A74;">
+                            <h5 class="fw-bold mb-3" style="color: #11756D;">
                                 <i class="bi bi-bullseye me-2"></i>Tetapkan Target Baru
                             </h5>
                             <form action="?tab=target" method="POST">
@@ -1005,7 +1013,7 @@ $quran_juz = [
 
                     <div class="col-12 col-md-6">
                         <div class="card p-4 border-0 shadow-sm rounded-4 bg-white h-100">
-                            <h5 class="fw-bold mb-3" style="color: #117A74;">
+                            <h5 class="fw-bold mb-3" style="color: #11756D;">
                                 <i class="bi bi-list-task me-2"></i>Target Aktif Pekan Ini
                             </h5>
                             <div class="d-flex flex-column gap-3">
@@ -1041,8 +1049,8 @@ $quran_juz = [
             ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'rekap'): ?>
                 <div class="mb-4">
-                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #117A74;">REKAPITULASI PROGRES</span>
-                    <h2 class="fw-bold mb-1" style="color: #117A74;">Rekapitulasi Halaqah <?= htmlspecialchars($halaqah_name) ?></h2>
+                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">REKAPITULASI PROGRES</span>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Rekapitulasi Halaqah <?= htmlspecialchars($halaqah_name) ?></h2>
                     <p class="text-muted small mb-0">Tinjau rekap progres hafalan, total juz yang dikuasai, dan status mutabaah seluruh siswa secara cepat.</p>
                 </div>
 
@@ -1072,7 +1080,7 @@ $quran_juz = [
                                     <td>
                                         <div class="d-flex align-items-center gap-2" style="max-width: 160px;">
                                             <div class="progress flex-grow-1" style="height: 8px;">
-                                                <div class="progress-bar" style="width: <?= 85 - ($i * 15) ?>%; background-color: #117A74;"></div>
+                                                <div class="progress-bar" style="width: <?= 85 - ($i * 15) ?>%; background-color: #11756D;"></div>
                                             </div>
                                             <small class="fw-bold"><?= 85 - ($i * 15) ?>%</small>
                                         </div>
@@ -1098,15 +1106,15 @@ $quran_juz = [
             ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'profil'): ?>
                 <div class="mb-4">
-                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #117A74;">KEAMANAN AKUN</span>
-                    <h2 class="fw-bold mb-1" style="color: #117A74;">Profil Saya &amp; Ganti Password</h2>
+                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">KEAMANAN AKUN</span>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Profil Saya &amp; Ganti Password</h2>
                     <p class="text-muted small mb-0">Pengaturan informasi akun asatidz pembimbing dan keamanan kata sandi.</p>
                 </div>
 
                 <div class="row g-4" style="max-width: 900px;">
                     <div class="col-12 col-md-6">
                         <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
-                            <h5 class="fw-bold mb-3" style="color: #117A74;">
+                            <h5 class="fw-bold mb-3" style="color: #11756D;">
                                 <i class="bi bi-person-badge-fill me-2"></i>Biodata Ustadz
                             </h5>
                             <div class="mb-3">
@@ -1126,7 +1134,7 @@ $quran_juz = [
 
                     <div class="col-12 col-md-6">
                         <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
-                            <h5 class="fw-bold mb-3" style="color: #117A74;">
+                            <h5 class="fw-bold mb-3" style="color: #11756D;">
                                 <i class="bi bi-key-fill me-2 text-warning"></i>Ganti Kata Sandi
                             </h5>
                             <form action="?tab=profil" method="POST">
@@ -1226,7 +1234,7 @@ function pilihSurahHafalan(namaSurah, totalAyat, noSurah, el) {
         if (parseInt(this.value) > totalAyat) this.value = totalAyat;
     };
 
-    document.getElementById('btnSubmitSetoran').innerHTML = `<i class="bi bi-check2-circle me-1"></i>Simpan Setoran Surah ${namaSurah}`;
+    document.getElementById('btnSubmitSetoran').innerHTML = `<i class="bi bi-check2-circle me-1"></i>Simpan Hafalan Surah ${namaSurah}`;
     inputAkhir.focus();
 }
 

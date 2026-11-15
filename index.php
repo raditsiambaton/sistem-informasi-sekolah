@@ -322,7 +322,7 @@ require_once 'includes/header_public.php';
 <!-- /CTA -->
 
 <!-- ═══════════════════════════════════════════════════════════════
-     SECTION KONTAK & LOKASI KAMPUS (Profesional & Menarik)
+     SECTION KONTAK & LOKASI Sekolah (Profesional & Menarik)
 ════════════════════════════════════════════════════════════════ -->
 <section id="kontak" class="py-5" style="background-color: #F8FAFC;">
     <div class="container">
@@ -332,7 +332,7 @@ require_once 'includes/header_public.php';
                   style="background-color: #117A74; letter-spacing:0.05em;">
                 <i class="bi bi-geo-alt-fill me-1"></i> HUBUNGI KAMI
             </span>
-            <h2 class="fw-bold" style="color:#1F4172;">Kontak &amp; Lokasi Kampus</h2>
+            <h2 class="fw-bold" style="color:#1F4172;">Kontak &amp; Lokasi Sekolah</h2>
             <p class="text-muted mx-auto" style="max-width:580px;">
                 Layanan informasi pendaftaran, konsultasi kurikulum tahfiz, dan sekretariat SMA IT Al-Fadhilah Pekanbaru.
             </p>
@@ -340,13 +340,13 @@ require_once 'includes/header_public.php';
 
         <!-- 3 Kartu Kontak Interaktif -->
         <div class="row g-4 mb-2">
-            <!-- Kartu 1: Alamat Kampus -->
+            <!-- Kartu 1: Alamat Sekolah -->
             <div class="col-12 col-md-4">
                 <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center bg-white">
                     <div class="rounded-circle d-inline-flex align-items-center justify-content-center mx-auto mb-3" style="width: 60px; height: 60px; background: #EBF3FA; color: #1F4172;">
                         <i class="bi bi-geo-alt-fill fs-3"></i>
                     </div>
-                    <h5 class="fw-bold mb-2" style="color: #1F4172;">Alamat Kampus</h5>
+                    <h5 class="fw-bold mb-2" style="color: #1F4172;">Alamat Sekolah</h5>
                     <p class="text-muted small mb-3">
                         Jl. Muhajirin No. RT/RW. 04/09 Kel. Sidomulyo Barat, Kec. Tuah Madani, Kota Pekanbaru, Riau 28294
                     </p>

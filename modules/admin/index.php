@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * modules/admin/index.php
  * Dashboard Eksekutif Administrator – SMA IT Al-Fadhilah Pekanbaru
@@ -285,7 +285,7 @@ foreach ($users_list as $u) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Administrator – SMA IT Al-Fadhilah</title>
     
-    <link rel="icon" type="image/png" href="../../assets/images/logo-sekolah.png">
+    <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz.png">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -295,13 +295,18 @@ foreach ($users_list as $u) {
     <!-- Bootstrap 5.3 & Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/tahfiz.css">
 
     <style>
         :root {
-            --color-navy: #1F4172;
-            --color-navy-dark: #122847;
-            --color-emerald: #059669;
-            --color-gold: #D97706;
+            --color-primary: #11756D;
+            --color-primary-dark: #0D5C56;
+            --color-primary-deep: #0A2E2B;
+            --color-accent: #11756D;
+            --color-soft: #E6F4F1;
+            --color-soft-light: #F4F7F6;
+            --color-navy: #11756D;
+            --color-navy-dark: #0D5C56;
             --color-border: #E2E8F0;
         }
         body {
@@ -312,7 +317,7 @@ foreach ($users_list as $u) {
         }
         .admin-sidebar {
             width: 260px;
-            background: #122847;
+            background: #0A2E2B;
             min-height: 100vh;
             color: #ffffff;
             flex-shrink: 0;
@@ -323,7 +328,7 @@ foreach ($users_list as $u) {
             align-items: center;
             gap: 12px;
             padding: 10px 14px;
-            color: #94A3B8;
+            color: #A2D5D2;
             font-weight: 600;
             font-size: 0.9rem;
             border-radius: 8px;
@@ -333,34 +338,36 @@ foreach ($users_list as $u) {
         }
         .admin-nav-link:hover {
             color: #ffffff;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.12);
         }
         .admin-nav-link.active {
-            background: #1F4172;
-            color: #38BDF8;
+            background: #11756D;
+            color: #ffffff;
             font-weight: 700;
-            border-left: 3px solid #38BDF8;
+            border-left: 3px solid #80C8C4;
+            box-shadow: 0 4px 12px rgba(17, 117, 109, 0.35);
         }
         .kpi-card {
             background: #ffffff;
             border: 1px solid var(--color-border);
             border-radius: 14px;
             padding: 20px;
-            box-shadow: 0 2px 8px rgba(31, 65, 114, 0.04);
+            box-shadow: 0 2px 8px rgba(17, 117, 109, 0.04);
             height: 100%;
         }
         .chart-bar-clean {
-            background: var(--color-navy);
+            background: #11756D;
             border-radius: 6px 6px 0 0;
             transition: height 0.4s ease;
         }
         .badge-status-green {
-            background: #DCFCE7;
-            color: #15803D;
+            background: #E6F4F1;
+            color: #0D5C56;
             font-weight: 700;
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 0.75rem;
+            border: 1px solid #80C8C4;
         }
         .badge-status-yellow {
             background: #FEF3C7;
@@ -369,6 +376,23 @@ foreach ($users_list as $u) {
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 0.75rem;
+        }
+        .btn-primary {
+            background-color: #11756D !important;
+            border-color: #11756D !important;
+        }
+        .btn-primary:hover {
+            background-color: #0D5C56 !important;
+            border-color: #0D5C56 !important;
+        }
+        .btn-outline-primary {
+            color: #11756D !important;
+            border-color: #11756D !important;
+        }
+        .btn-outline-primary:hover {
+            background-color: #11756D !important;
+            border-color: #11756D !important;
+            color: #ffffff !important;
         }
     </style>
 </head>
@@ -379,16 +403,16 @@ foreach ($users_list as $u) {
     <aside class="admin-sidebar d-flex flex-column">
         <!-- Brand -->
         <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom border-secondary border-opacity-25">
-            <img src="../../assets/images/logo-sekolah.png" alt="Logo" width="40" height="40" class="rounded-circle object-fit-contain bg-white p-1">
+            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" style="width: 38px; height: 38px; object-fit: contain; border-radius: 8px;" class="sidebar-logo">
             <div>
                 <div class="fw-bold fs-6 text-white lh-1">SMA IT Al-Fadhilah</div>
-                <small class="text-info fw-semibold" style="font-size: 0.72rem;">Admin Panel</small>
+                <small class="text-white-50 fw-semibold" style="font-size: 0.72rem;">Admin Panel</small>
             </div>
         </div>
 
         <!-- User Info -->
         <div class="p-2 rounded-3 mb-4 bg-dark bg-opacity-25 d-flex align-items-center gap-2">
-            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 36px; height: 36px; font-size: 0.85rem;">
+            <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold" style="width: 36px; height: 36px; font-size: 0.85rem; background: #11756D;">
                 AD
             </div>
             <div class="overflow-hidden">
@@ -399,7 +423,7 @@ foreach ($users_list as $u) {
 
         <!-- Navigation Menu -->
         <nav class="flex-grow-1">
-            <small class="text-uppercase fw-bold text-muted px-2 mb-2 d-block" style="font-size: 0.68rem; letter-spacing: 0.06em;">Menu Utama</small>
+            <small class="text-uppercase fw-bold text-white-50 px-2 mb-2 d-block" style="font-size: 0.68rem; letter-spacing: 0.06em;">Menu Utama</small>
             <a href="?tab=rekap" class="admin-nav-link <?= $page_tab === 'rekap' ? 'active' : '' ?>">
                 <i class="bi bi-grid-1x2-fill"></i>Rekap Tahfiz
             </a>
@@ -435,16 +459,19 @@ foreach ($users_list as $u) {
     <div class="flex-grow-1 d-flex flex-column" style="min-width: 0;">
         <!-- Top Navbar -->
         <header class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center shadow-sm">
-            <div class="d-flex align-items-center gap-2 small text-muted">
-                <span>Ruang Admin</span>
-                <span>/</span>
-                <span class="fw-bold text-dark text-capitalize"><?= htmlspecialchars($page_tab) ?></span>
+            <div class="d-flex align-items-center gap-3">
+                <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" style="height: 42px; width: auto; object-fit: contain;">
+                <div class="d-flex align-items-center gap-2 small text-muted">
+                    <span>Ruang Admin</span>
+                    <span>/</span>
+                    <span class="fw-bold text-dark text-capitalize"><?= htmlspecialchars($page_tab) ?></span>
+                </div>
             </div>
             <div class="d-flex align-items-center gap-3">
                 <span class="badge bg-light text-dark border px-3 py-2 fw-semibold">
-                    <i class="bi bi-calendar3 me-1 text-primary"></i><?= date('d M Y') ?>
+                    <i class="bi bi-calendar3 me-1 text-success"></i><?= date('d M Y') ?>
                 </span>
-                <span class="badge bg-primary px-3 py-2 fw-semibold">
+                <span class="badge px-3 py-2 fw-semibold text-white" style="background-color: #11756D;">
                     <i class="bi bi-shield-lock-fill me-1"></i>Super Administrator
                 </span>
             </div>
@@ -474,7 +501,7 @@ foreach ($users_list as $u) {
             <?php if ($page_tab === 'rekap'): ?>
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <h2 class="fw-bold mb-1" style="color: #1F4172;">Assalamu’alaikum, Administrator</h2>
+                        <h2 class="fw-bold mb-1" style="color: #11756D;">Assalamu’alaikum, Administrator</h2>
                         <p class="text-muted small mb-0">Pantau perkembangan hafalan dan aktivitas halaqah binaan SMA IT Al-Fadhilah.</p>
                     </div>
                     <select class="form-select form-select-sm w-auto fw-semibold">
@@ -489,7 +516,7 @@ foreach ($users_list as $u) {
                         <div class="kpi-card">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="small fw-bold text-muted text-uppercase">Total Santri</span>
-                                <i class="bi bi-people-fill text-primary fs-5"></i>
+                                <i class="bi bi-people-fill text-success fs-5"></i>
                             </div>
                             <div class="fs-2 fw-bold text-dark"><?= max(count($users_list) - 2, 3) ?></div>
                             <small class="text-muted">Aktif dalam Halaqah</small>
@@ -532,16 +559,16 @@ foreach ($users_list as $u) {
                     <div class="col-12 col-lg-8">
                         <div class="card p-4 border-0 shadow-sm h-100">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="fw-bold mb-0" style="color: #1F4172;">Capaian per Kelompok Halaqah</h5>
+                                <h5 class="fw-bold mb-0" style="color: #11756D;">Capaian per Kelompok Halaqah</h5>
                                 <span class="badge bg-light text-muted border">Bulan Berjalan</span>
                             </div>
                             <div class="d-flex align-items-end justify-content-between pt-4 pb-2 border-bottom" style="height: 180px;">
-                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 82%; width: 36px; background:#1F4172;"></div><small class="fw-bold d-block mt-2">Furqan<br>82%</small></div>
-                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 78%; width: 36px; background:#1F4172;"></div><small class="fw-bold d-block mt-2">Ikhlas<br>78%</small></div>
+                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 82%; width: 36px; background:#11756D;"></div><small class="fw-bold d-block mt-2">Furqan<br>82%</small></div>
+                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 78%; width: 36px; background:#11756D;"></div><small class="fw-bold d-block mt-2">Ikhlas<br>78%</small></div>
                                 <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 69%; width: 36px; background:#D97706;"></div><small class="fw-bold d-block mt-2">Falaq<br>69%</small></div>
                                 <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 85%; width: 36px; background:#059669;"></div><small class="fw-bold d-block mt-2">Nas<br>85%</small></div>
-                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 74%; width: 36px; background:#1F4172;"></div><small class="fw-bold d-block mt-2">Kautsar<br>74%</small></div>
-                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 80%; width: 36px; background:#1F4172;"></div><small class="fw-bold d-block mt-2">Asr<br>80%</small></div>
+                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 74%; width: 36px; background:#11756D;"></div><small class="fw-bold d-block mt-2">Kautsar<br>74%</small></div>
+                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 80%; width: 36px; background:#11756D;"></div><small class="fw-bold d-block mt-2">Asr<br>80%</small></div>
                             </div>
                         </div>
                     </div>
@@ -562,7 +589,7 @@ foreach ($users_list as $u) {
                 <!-- Ringkasan Status Halaqah Table -->
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold mb-0" style="color: #1F4172;">Ringkasan Kelompok Halaqah</h5>
+                        <h5 class="fw-bold mb-0" style="color: #11756D;">Ringkasan Kelompok Halaqah</h5>
                         <a href="?tab=halaqah" class="small fw-semibold text-decoration-none">Kelola Seluruh Halaqah →</a>
                     </div>
                     <div class="table-responsive">
@@ -583,7 +610,7 @@ foreach ($users_list as $u) {
                                         <td><strong><?= htmlspecialchars($h['nama_halaqah']) ?></strong></td>
                                         <td><?= htmlspecialchars($h['nama_ustadz']) ?></td>
                                         <td><?= htmlspecialchars($h['target_juz']) ?></td>
-                                        <td><strong class="text-primary">80%</strong></td>
+                                        <td><strong class="text-success">80%</strong></td>
                                         <td><span class="badge-status-green">Sesuai Target</span></td>
                                     </tr>
                                     <?php endforeach; ?>
@@ -592,7 +619,7 @@ foreach ($users_list as $u) {
                                         <td><strong>Al-Furqan</strong></td>
                                         <td>Ust. Rival Alvian Melfandy</td>
                                         <td>Juz 29 - 30</td>
-                                        <td><strong class="text-primary">82%</strong></td>
+                                        <td><strong class="text-success">82%</strong></td>
                                         <td><span class="badge-status-green">Sesuai Target</span></td>
                                     </tr>
                                 <?php endif; ?>
@@ -605,7 +632,7 @@ foreach ($users_list as $u) {
             <?php elseif ($page_tab === 'pengguna'): ?>
                 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                     <div>
-                        <h2 class="fw-bold mb-1" style="color: #1F4172;">Data Pengguna Sistem</h2>
+                        <h2 class="fw-bold mb-1" style="color: #11756D;">Data Pengguna Sistem</h2>
                         <p class="text-muted small mb-0">Manajemen akun santri, ustadz pembimbing, dan administrator tersimpan di MySQL.</p>
                     </div>
                     <!-- Tombol Tambah Pengguna Memicu Modal Bootstrap -->
@@ -639,7 +666,7 @@ foreach ($users_list as $u) {
                                     <td><?= htmlspecialchars($u['nip_nis'] ?? '—') ?></td>
                                     <td>
                                         <?php if ($u['role'] === 'admin'): ?>
-                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">Admin</span>
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Admin</span>
                                         <?php elseif ($u['role'] === 'ustadz'): ?>
                                             <span class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1">Ustadz</span>
                                         <?php else: ?>
@@ -687,7 +714,7 @@ foreach ($users_list as $u) {
             <?php elseif ($page_tab === 'halaqah'): ?>
                 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                     <div>
-                        <h2 class="fw-bold mb-1" style="color: #1F4172;">Kelompok Halaqah Belajar</h2>
+                        <h2 class="fw-bold mb-1" style="color: #11756D;">Kelompok Halaqah Belajar</h2>
                         <p class="text-muted small mb-0">Pembagian santri dan asatidz pembimbing penanggung jawab mutabaah.</p>
                     </div>
                     <button class="btn btn-primary btn-sm fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTambahHalaqah">
@@ -734,7 +761,7 @@ foreach ($users_list as $u) {
             <!-- TAB 4: KONTEN INFORMASI (CMS) -->
             <?php elseif ($page_tab === 'konten'): ?>
                 <div class="mb-4">
-                    <h2 class="fw-bold mb-1" style="color: #1F4172;">Publikasi Konten Informasi</h2>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Publikasi Konten Informasi</h2>
                     <p class="text-muted small mb-0">Tulis berita dan pengumuman untuk ditampilkan di website publik sekolah.</p>
                 </div>
                 <div class="card p-4 border-0 shadow-sm rounded-4" style="max-width: 750px;">
@@ -766,7 +793,7 @@ foreach ($users_list as $u) {
             <?php elseif ($page_tab === 'laporan'): ?>
                 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                     <div>
-                        <h2 class="fw-bold mb-1" style="color: #1F4172;">Laporan Rekapitulasi Tahfiz</h2>
+                        <h2 class="fw-bold mb-1" style="color: #11756D;">Laporan Rekapitulasi Tahfiz</h2>
                         <p class="text-muted small mb-0">Cetak rekapitulasi capaian hafalan dan lembar mutabaah santri.</p>
                     </div>
                     <button class="btn btn-primary btn-sm fw-bold px-3 py-2" onclick="window.print()">
@@ -797,7 +824,7 @@ foreach ($users_list as $u) {
                                     <td><strong><?= htmlspecialchars($u['nama_lengkap']) ?></strong></td>
                                     <td><?= htmlspecialchars($u['nip_nis']) ?></td>
                                     <td><?= htmlspecialchars($u['halaqah']) ?></td>
-                                    <td><strong class="text-primary">80%</strong></td>
+                                    <td><strong class="text-success">80%</strong></td>
                                     <td><span class="badge-status-green">Sesuai Target</span></td>
                                 </tr>
                                 <?php 
@@ -812,7 +839,7 @@ foreach ($users_list as $u) {
             <!-- TAB 6: PROFIL PRIBADI & PENGATURAN KATA SANDI -->
             <?php elseif ($page_tab === 'profil'): ?>
                 <div class="mb-4">
-                    <h2 class="fw-bold mb-1" style="color: #1F4172;">Profil Pribadi Administrator</h2>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Profil Pribadi Administrator</h2>
                     <p class="text-muted small mb-0">Kelola identitas akun dan keamanan kata sandi administrator.</p>
                 </div>
                 
@@ -820,8 +847,8 @@ foreach ($users_list as $u) {
                     <!-- Kolom Kiri: Informasi Akun -->
                     <div class="col-12 col-md-6">
                         <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
-                            <h5 class="fw-bold mb-3" style="color: #1F4172;">
-                                <i class="bi bi-person-circle me-2 text-primary"></i>Informasi Akun
+                            <h5 class="fw-bold mb-3" style="color: #11756D;">
+                                <i class="bi bi-person-circle me-2 text-success"></i>Informasi Akun
                             </h5>
                             <form action="?tab=profil" method="POST">
                                 <input type="hidden" name="action" value="update_profil">
@@ -847,7 +874,7 @@ foreach ($users_list as $u) {
                     <!-- Kolom Kanan: Pengaturan Kata Sandi -->
                     <div class="col-12 col-md-6">
                         <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
-                            <h5 class="fw-bold mb-3" style="color: #1F4172;">
+                            <h5 class="fw-bold mb-3" style="color: #11756D;">
                                 <i class="bi bi-key-fill me-2 text-warning"></i>Keamanan &amp; Kata Sandi
                             </h5>
                             <form action="?tab=profil" method="POST">
@@ -886,8 +913,8 @@ foreach ($users_list as $u) {
             <form action="?tab=pengguna" method="POST">
                 <input type="hidden" name="action" value="tambah_pengguna">
                 <div class="modal-header border-0 pb-0 pt-4 px-4">
-                    <h5 class="modal-title fw-bold" id="modalTambahPenggunaLabel" style="color: #1F4172;">
-                        <i class="bi bi-person-plus-fill me-2 text-primary"></i>Tambah Pengguna Baru
+                    <h5 class="modal-title fw-bold" id="modalTambahPenggunaLabel" style="color: #11756D;">
+                        <i class="bi bi-person-plus-fill me-2 text-success"></i>Tambah Pengguna Baru
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -952,8 +979,8 @@ foreach ($users_list as $u) {
                 <input type="hidden" name="action" value="edit_pengguna">
                 <input type="hidden" name="user_id" id="edit_user_id">
                 <div class="modal-header border-0 pb-0 pt-4 px-4">
-                    <h5 class="modal-title fw-bold" id="modalEditPenggunaLabel" style="color: #1F4172;">
-                        <i class="bi bi-pencil-square me-2 text-primary"></i>Edit Data Pengguna
+                    <h5 class="modal-title fw-bold" id="modalEditPenggunaLabel" style="color: #11756D;">
+                        <i class="bi bi-pencil-square me-2 text-success"></i>Edit Data Pengguna
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -1026,8 +1053,8 @@ foreach ($users_list as $u) {
             <form action="?tab=halaqah" method="POST">
                 <input type="hidden" name="action" value="tambah_halaqah">
                 <div class="modal-header border-0 pb-0 pt-4 px-4">
-                    <h5 class="modal-title fw-bold" style="color: #1F4172;">
-                        <i class="bi bi-diagram-3-fill me-2 text-primary"></i>Tambah Kelompok Halaqah
+                    <h5 class="modal-title fw-bold" style="color: #11756D;">
+                        <i class="bi bi-diagram-3-fill me-2 text-success"></i>Tambah Kelompok Halaqah
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>

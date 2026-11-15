@@ -13,7 +13,7 @@ require_once 'includes/header_public.php';
 <!-- ═══════════════════════════════════════════════════════════════
      PAGE HERO BANNER
 ════════════════════════════════════════════════════════════════ -->
-<section class="py-4" style="background: linear-gradient(135deg, #1F4172 0%, #2563EB 100%);">
+<section class="py-4" style="background: linear-gradient(135deg, #1F4172 0%, #1D4ED8 100%);">
     <div class="container py-3 text-white text-center">
         <span class="badge bg-white bg-opacity-25 text-white fw-semibold mb-2 px-3 py-2 small">
             <i class="bi bi-book-fill me-1"></i> Program Pendidikan
@@ -33,7 +33,7 @@ require_once 'includes/header_public.php';
         <!-- Heading -->
         <div class="text-center mb-5">
             <span class="badge rounded-pill fw-semibold px-3 py-2 mb-2"
-                  style="background:#EBF3FA; color:#2563EB; letter-spacing:0.05em;">
+                  style="background:#DBEAFE; color:#1D4ED8; letter-spacing:0.05em;">
                 <i class="bi bi-stars me-1"></i> PROGRAM UNGGULAN
             </span>
             <h2 class="fw-bold" style="color:#1F4172;">Program Pembinaan Unggulan</h2>
@@ -128,7 +128,7 @@ require_once 'includes/header_public.php';
         <!-- Heading -->
         <div class="text-center mb-5">
             <span class="badge rounded-pill fw-semibold px-3 py-2 mb-2"
-                  style="background:#EBF3FA; color:#2563EB; letter-spacing:0.05em;">
+                  style="background:#DBEAFE; color:#1D4ED8; letter-spacing:0.05em;">
                 <i class="bi bi-stars me-1"></i> KEGIATAN SISWA
             </span>
             <h2 class="fw-bold" style="color:#1F4172;">Ekstrakurikuler</h2>
@@ -239,69 +239,54 @@ require_once 'includes/header_public.php';
 
 
 <!-- ═══════════════════════════════════════════════════════════════
-     SECTION 3 — PRESTASI
+     SECTION 3 — PENCAPAIAN
 ════════════════════════════════════════════════════════════════ -->
 <section id="prestasi" class="py-5">
-    <div class="container">
+    <div class="container" id="pencapaian">
 
-        <!-- Heading -->
-        <div class="text-center mb-5">
-            <span class="badge rounded-pill fw-semibold px-3 py-2 mb-2"
-                  style="background:#FEF9C3; color:#CA8A04; letter-spacing:0.05em;">
-                <i class="bi bi-trophy-fill me-1"></i> KEBANGGAAN SEKOLAH
-            </span>
-            <h2 class="fw-bold" style="color:#1F4172;">Prestasi</h2>
-            <p class="text-muted mx-auto" style="max-width:560px;">
-                Dokumentasi kebanggaan dan raihan prestasi siswa-siswi SMA IT Al-Fadhilah Pekanbaru.
-            </p>
+        <!-- Heading Section (Rata Kiri, Warna #1E3A8A) -->
+        <div class="mb-4 text-start">
+            <h2 class="fw-bold mb-0" style="color: #1E3A8A;">Pencapaian</h2>
         </div>
 
-        <?php
-        $prestasi = [
-            ['juara' => 'Juara 1 MTQ Remaja Putra', 'tingkat' => 'Tingkat Nasional', 'kategori' => 'Al-Qur\'an', 'tahun' => '2026', 'peraih' => 'Ahmad Fathurrahman (Kelas XII)', 'icon' => 'bi-trophy-fill', 'color' => '#D97706', 'bg' => '#FEF3C7'],
-            ['juara' => 'Juara Umum Turnamen Futsal', 'tingkat' => 'Tingkat Riau', 'kategori' => 'Olahraga', 'tahun' => '2026', 'peraih' => 'Tim Futsal Putra Al-Fadhilah', 'icon' => 'bi-award-fill', 'color' => '#2563EB', 'bg' => '#DBEAFE'],
-            ['juara' => 'Medali Emas OSN Biologi', 'tingkat' => 'Tingkat Provinsi', 'kategori' => 'Akademik', 'tahun' => '2025', 'peraih' => 'Zahra Maulida (Kelas XI)', 'icon' => 'bi-mortarboard-fill', 'color' => '#059669', 'bg' => '#D1FAE5'],
-            ['juara' => 'Juara 1 Da\'i Muda Bahasa Arab', 'tingkat' => 'Tingkat Pekanbaru', 'kategori' => 'Da\'wah', 'tahun' => '2025', 'peraih' => 'Muhammad Rifqi (Kelas XI)', 'icon' => 'bi-mic-fill', 'color' => '#7C3AED', 'bg' => '#EDE9FE'],
-            ['juara' => 'Juara 1 Cipta Karya Tulis Ilmiah', 'tingkat' => 'Tingkat Kota', 'kategori' => 'Riset Sains', 'tahun' => '2025', 'peraih' => 'Tim KIR Fadhilah Cendekia', 'icon' => 'bi-lightbulb-fill', 'color' => '#0284C7', 'bg' => '#E0F2FE'],
-            ['juara' => 'Wisudawan Mumtaz 10 Juz', 'tingkat' => 'Wisuda Akbar', 'kategori' => 'Tahfizhul Qur\'an', 'tahun' => '2025', 'peraih' => 'Farhan Al-Kautsar (Kelas XII)', 'icon' => 'bi-stars', 'color' => '#B45309', 'bg' => '#FEF9C3'],
-        ];
-        ?>
+        <!-- Grid 3 Kolom x 2 Baris — Galeri Foto Poster 4:5 -->
+        <div class="row g-4">
+            <?php for ($i = 1; $i <= 6; $i++): 
+                $file_nama = "prestasi-{$i}.jpg";
+                $file_path = "assets/images/prestasi/{$file_nama}";
+                $foto_tersedia = file_exists('assets/images/prestasi/prestasi-' . $i . '.jpg') || file_exists(__DIR__ . '/' . $file_path);
+            ?>
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="pencapaian-box rounded-4 overflow-hidden shadow-sm">
+                    <?php if ($foto_tersedia): ?>
+                        <img src="<?= $file_path ?>" alt="Prestasi <?= $i ?>" class="w-100 h-100 object-fit-cover">
+                    <?php else: ?>
+                        <!-- Kotak placeholder abu-abu (#808080) bergaris silang diagonal -->
+                        <div class="pencapaian-placeholder d-flex flex-column align-items-center justify-content-center text-center p-3 text-white"
+                             style="background-color: #808080;">
+                            
+                            <!-- Garis silang diagonal -->
+                            <svg class="position-absolute top-0 start-0 w-100 h-100" style="pointer-events: none;" xmlns="http://www.w3.org/2000/svg">
+                                <line x1="0" y1="0" x2="100%" y2="100%" stroke="rgba(255, 255, 255, 0.4)" stroke-width="2" />
+                                <line x1="0" y1="100%" x2="100%" y2="0" stroke="rgba(255, 255, 255, 0.4)" stroke-width="2" />
+                            </svg>
 
-        <!-- Grid 3×2 — Galeri Prestasi Unggulan -->
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            <?php foreach ($prestasi as $p): ?>
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 bg-white prestasi-card position-relative">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="rounded-3 d-flex align-items-center justify-content-center p-3"
-                             style="background: <?= $p['bg'] ?>; color: <?= $p['color'] ?>; width: 50px; height: 50px;">
-                            <i class="bi <?= $p['icon'] ?> fs-4"></i>
+                            <!-- Konten Placeholder: Ikon Gambar, Nama File Target, Label Ukuran -->
+                            <div class="position-relative z-1 d-flex flex-column align-items-center text-white" style="text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);">
+                                <i class="bi bi-image display-5 mb-2"></i>
+                                <span class="fw-bold fs-6 mb-1"><?= $file_nama ?></span>
+                                <span class="small opacity-75">1080 × 1350 px (4:5)</span>
+                            </div>
                         </div>
-                        <span class="badge rounded-pill fw-semibold px-3 py-1 small"
-                              style="background: <?= $p['bg'] ?>; color: <?= $p['color'] ?>;">
-                            <?= $p['tingkat'] ?>
-                        </span>
-                    </div>
-
-                    <h5 class="fw-bold mb-1" style="color: #1F4172;">
-                        <?= htmlspecialchars($p['juara']) ?>
-                    </h5>
-                    <p class="text-muted small mb-3">
-                        <i class="bi bi-person-fill me-1 text-secondary"></i><?= htmlspecialchars($p['peraih']) ?>
-                    </p>
-
-                    <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center text-muted small">
-                        <span><i class="bi bi-tag-fill me-1"></i><?= $p['kategori'] ?></span>
-                        <span class="fw-bold text-dark"><?= $p['tahun'] ?></span>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
-            <?php endforeach; ?>
+            <?php endfor; ?>
         </div>
 
     </div>
 </section>
-<!-- /PRESTASI -->
+<!-- /PENCAPAIAN -->
 
 
 <style>
@@ -310,10 +295,36 @@ require_once 'includes/header_public.php';
 .program-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(31,65,114,.12) !important; }
 .program-card:hover .program-img { transform: scale(1.06); }
 
-/* Hover efek card prestasi — zoom saja tanpa lift */
-.prestasi-card { transition: box-shadow .4s ease; }
-.prestasi-card:hover { box-shadow: 0 12px 32px rgba(31,65,114,.15) !important; }
-.prestasi-card:hover .prestasi-img { transform: scale(1.07); }
+/* Galeri Pencapaian Poster 4:5 */
+.pencapaian-box {
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    min-height: unset !important;
+    height: auto !important;
+    position: relative;
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+.pencapaian-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(30, 58, 138, 0.15) !important;
+}
+.pencapaian-placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+.pencapaian-box img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s ease;
+}
+.pencapaian-box:hover img {
+    transform: scale(1.05);
+}
 </style>
 
 <?php require_once 'includes/footer_public.php'; ?>

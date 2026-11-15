@@ -1,0 +1,195 @@
+/*
+ * tahfiz.css
+ * Stylesheet Resmi Sistem Informasi & Monitoring Tahfiz "Tahfiz Yuk"
+ * SMA IT Al-Fadhilah Pekanbaru
+ * Palet Warna Wajib: Teal-Green (#11756D, #0D5C56, #E6F4F1) & Putih (#FFFFFF)
+ */
+
+:root {
+    --color-primary:       #11756D; /* Primary Teal-Green */
+    --color-primary-dark:  #0D5C56; /* Hover / Dark Teal-Green */
+    --color-primary-deep:  #0A2E2B; /* Deep Teal-Green untuk Sidebar (#0A2E2B) */
+    --color-accent:        #11756D;
+    --color-soft:          #E6F4F1; /* Soft Teal-Green Tint */
+    --color-soft-light:    #F4F7F6; /* Page Background / Light Soft */
+    --color-canvas:        #F4F7F6; /* Latar Halaman Putih Keabuan Sangat Lembut */
+    --color-card:          #FFFFFF; /* Kartu & Kontainer Putih Bersih */
+    --color-text:          #1E293B; /* Slate Gelap */
+    --color-muted:         #64748B; /* Abu-abu Sekunder */
+    --color-border:        #E2E8F0;
+    --color-gold:          #D97706;
+    --color-gold-light:    #FEF3C7;
+}
+
+/* ── Global Layout ─────────────────────────────────────────── */
+body.tahfiz-body, .tahfiz-app {
+    background-color: var(--color-canvas);
+    color: var(--color-text);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Sidebar Sistem Monitoring Tahfiz ──────────────────────── */
+.tahfiz-sidebar, .ustadz-sidebar, .admin-sidebar, .siswa-sidebar {
+    width: 260px;
+    background: var(--color-primary-deep) !important;
+    min-height: 100vh;
+    color: #FFFFFF !important;
+    flex-shrink: 0;
+    padding: 24px 16px;
+}
+
+.tahfiz-nav-link, .ustadz-nav-link, .admin-nav-link, .siswa-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    color: #A2D5D2 !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-bottom: 4px;
+}
+
+.tahfiz-nav-link:hover, .ustadz-nav-link:hover, .admin-nav-link:hover, .siswa-nav-link:hover {
+    color: #FFFFFF !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.tahfiz-nav-link.active, .ustadz-nav-link.active, .admin-nav-link.active, .siswa-nav-link.active {
+    background: var(--color-primary) !important;
+    color: #FFFFFF !important;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(17, 117, 109, 0.35) !important;
+}
+
+/* ── Top Header / Navbar Dashboard ─────────────────────────── */
+.tahfiz-topbar {
+    background: var(--color-card) !important;
+    border-bottom: 1px solid var(--color-border) !important;
+    padding: 12px 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* ── Logo Proporsional ─────────────────────────────────────── */
+.tahfiz-logo, .tahfiz-header-logo, .login-logo-img {
+    height: 44px;
+    width: auto;
+    object-fit: contain;
+}
+
+.sidebar-logo {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    padding: 3px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Tombol Simpan & Aksi Tahfiz ───────────────────────────── */
+.btn-simpan-hafalan, .btn-tahfiz {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #FFFFFF !important;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 10px 20px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(17, 117, 109, 0.2);
+}
+
+.btn-simpan-hafalan:hover, .btn-tahfiz:hover {
+    background-color: var(--color-primary-dark) !important;
+    border-color: var(--color-primary-dark) !important;
+    color: #FFFFFF !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(13, 92, 86, 0.35);
+}
+
+/* Override btn-primary di halaman Tahfiz agar selalu teal */
+.tahfiz-page .btn-primary,
+.admin-sidebar ~ div .btn-primary,
+.ustadz-sidebar ~ div .btn-primary,
+.siswa-sidebar ~ div .btn-primary,
+.btn-teal {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #FFFFFF !important;
+}
+
+.tahfiz-page .btn-primary:hover,
+.admin-sidebar ~ div .btn-primary:hover,
+.ustadz-sidebar ~ div .btn-primary:hover,
+.siswa-sidebar ~ div .btn-primary:hover,
+.btn-teal:hover {
+    background-color: var(--color-primary-dark) !important;
+    border-color: var(--color-primary-dark) !important;
+    color: #FFFFFF !important;
+}
+
+/* ── Tab & Seleksi Surah / Juz ─────────────────────────────── */
+.surah-select-btn, .santri-select-card {
+    border: 1.5px solid var(--color-border);
+    border-radius: 10px;
+    background: #FFFFFF;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.surah-select-btn:hover, .santri-select-card:hover {
+    border-color: var(--color-primary);
+    background: var(--color-soft);
+}
+
+.surah-select-btn.active {
+    border-color: var(--color-primary) !important;
+    background: var(--color-soft) !important;
+    color: var(--color-primary) !important;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(17, 117, 109, 0.15);
+}
+
+.santri-select-card.active {
+    border-color: var(--color-primary) !important;
+    background: var(--color-soft) !important;
+    border-left: 5px solid var(--color-primary) !important;
+}
+
+/* ── Badge Predikat Hafalan (Mumtaz, Jayyid, dll.) ──────────── */
+.badge-predikat-mumtaz, .badge-mumtaz {
+    background-color: var(--color-soft) !important;
+    color: var(--color-primary) !important;
+    font-weight: 700;
+    border: 1px solid #A2D5D2 !important;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+.badge-predikat-jayyid-jiddan, .badge-jayyid-jiddan {
+    background-color: var(--color-soft-light) !important;
+    color: var(--color-primary-dark) !important;
+    font-weight: 600;
+    border: 1px solid #CBD5E1 !important;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+.badge-status-teal, .badge-status-green {
+    background-color: var(--color-soft) !important;
+    color: var(--color-primary) !important;
+    border: 1px solid #A2D5D2 !important;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+}
+
+/* ── Form Controls Focus Teal ──────────────────────────────── */
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 3px rgba(17, 117, 109, 0.2) !important;
+}
