@@ -4,9 +4,6 @@
 -- SMA IT Al-Fadhilah Pekanbaru
 -- =====================================================================
 
-CREATE DATABASE IF NOT EXISTS `sistem_informasi_sekolah` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `sistem_informasi_sekolah`;
-
 -- ---------------------------------------------------------------------
 -- 1. TABEL PENGGUNA (users)
 -- Mendukung 3 Peran: admin, ustadz, siswa
