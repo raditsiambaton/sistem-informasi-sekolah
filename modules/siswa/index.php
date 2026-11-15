@@ -478,75 +478,241 @@ try {
                     </div>
                 </div>
 
-            <!-- SUBPAGE 3: PROFIL PRIBADI SANTRI (SESUAI IMAGE 27 & 28) -->
+            <!-- ═══════════════════════════════════════════════════════════
+                 SUBPAGE 3: PROFIL PRIBADI SANTRI & KEAMANAN AKUN
+                 (Tampilan Eksekutif, Elegan, dan Profesional)
+            ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'profil'): ?>
                 <div class="mb-4">
-                    <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-1 mb-2">AKUN SANTRI</span>
-                    <h2 class="fw-bold mb-1" style="color: #1F4172;">Profil Pribadi</h2>
-                    <p class="text-muted small mb-0">Informasi diri dan keamanan akun santri Anda.</p>
+                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #117A74;">AKUN SANTRI</span>
+                    <h2 class="fw-bold mb-1" style="color: #117A74;">Profil Pribadi &amp; Keamanan Akun</h2>
+                    <p class="text-muted small mb-0">Informasi biodata santri, kelompok halaqah pembinaan, dan pengaturan kata sandi.</p>
                 </div>
 
-                <div class="row g-4">
-                    <div class="col-12 col-md-7">
-                        <div class="card p-4 border-0 shadow-sm">
-                            <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
-                                <div class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 56px; height: 56px;">
-                                    MF
+                <!-- 1. HERO IDENTITY CARD (SANTRI PROFILE BANNER) -->
+                <div class="card border-0 rounded-4 shadow-sm overflow-hidden text-white mb-4" style="background: linear-gradient(135deg, #083431 0%, #117A74 65%, #0e635e 100%);">
+                    <div class="p-4 p-md-5">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
+                            
+                            <!-- Avatar & Identitas Santri -->
+                            <div class="d-flex align-items-center gap-3.5">
+                                <div class="position-relative">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-lg" 
+                                         style="width: 88px; height: 88px; font-size: 2rem; background: linear-gradient(135deg, #0d5f5a 0%, #063935 100%); border: 3px solid rgba(255,255,255,0.35);">
+                                        <?= strtoupper(substr($siswa_name, 0, 1) . substr(explode(' ', $siswa_name)[1] ?? '', 0, 1)) ?>
+                                    </div>
+                                    <span class="position-absolute bottom-0 end-0 p-2 bg-success border border-2 border-white rounded-circle" title="Santri Aktif"></span>
                                 </div>
                                 <div>
-                                    <h5 class="fw-bold mb-0 text-dark"><?= htmlspecialchars($siswa_name) ?></h5>
-                                    <small class="text-muted">Santri Kelas X-A · Halaqah <?= htmlspecialchars($halaqah_name) ?></small>
+                                    <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                        <h3 class="fw-bold mb-0 text-white"><?= htmlspecialchars($siswa_name) ?></h3>
+                                        <span class="badge bg-warning text-dark fw-bold px-2.5 py-1" style="font-size: 0.72rem;">
+                                            <i class="bi bi-mortarboard-fill me-1"></i>Santri SMA IT
+                                        </span>
+                                    </div>
+                                    <p class="text-white-50 small mb-2">Kelas X-A (MIPA Tahfiz Unggulan) · Halaqah <?= htmlspecialchars($halaqah_name) ?></p>
+                                    
+                                    <div class="d-flex align-items-center gap-2 flex-wrap" style="font-size: 0.78rem;">
+                                        <span class="badge bg-white text-dark px-3 py-1.5 shadow-sm fw-semibold">
+                                            <i class="bi bi-card-heading me-1" style="color: #117A74;"></i>NIS: <?= htmlspecialchars($siswa_nis) ?>
+                                        </span>
+                                        <span class="badge px-3 py-1.5 fw-semibold" style="background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.25);">
+                                            <i class="bi bi-bookmark-star-fill text-warning me-1"></i>Halaqah <?= htmlspecialchars($halaqah_name) ?>
+                                        </span>
+                                        <span class="badge px-3 py-1.5 fw-semibold" style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.4); color: #A7F3D0;">
+                                            <i class="bi bi-person-badge-fill me-1"></i>Ust. Rival Alvian Melfandy
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="d-flex flex-column gap-3 small">
-                                <div class="d-flex justify-content-between pb-2 border-bottom">
-                                    <span class="text-muted">Nomor Induk Siswa (NIS)</span>
-                                    <strong><?= htmlspecialchars($siswa_nis) ?></strong>
+                            <!-- Statistik Singkat Capaian Santri -->
+                            <div class="d-flex gap-3 text-center border-top border-md-top-0 pt-3 pt-md-0 border-white border-opacity-20">
+                                <div class="px-3 py-2 rounded-3" style="background: rgba(0,0,0,0.18); min-width: 90px;">
+                                    <div class="fs-4 fw-bold text-white">2 Juz</div>
+                                    <small class="text-white-50" style="font-size: 0.72rem;">Hafalan Mutqin</small>
                                 </div>
-                                <div class="d-flex justify-content-between pb-2 border-bottom">
-                                    <span class="text-muted">Kelompok Halaqah</span>
-                                    <strong>Halaqah <?= htmlspecialchars($halaqah_name) ?></strong>
+                                <div class="px-3 py-2 rounded-3" style="background: rgba(0,0,0,0.18); min-width: 90px;">
+                                    <div class="fs-4 fw-bold text-warning">60%</div>
+                                    <small class="text-white-50" style="font-size: 0.72rem;">Capaian Target</small>
                                 </div>
-                                <div class="d-flex justify-content-between pb-2 border-bottom">
-                                    <span class="text-muted">Ustadz Pembimbing</span>
-                                    <strong>Ust. Rival Alvian Melfandy</strong>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted">Target Kelulusan Tahfiz</span>
-                                    <strong class="text-success">Minimal 6 Juz</strong>
+                                <div class="px-3 py-2 rounded-3" style="background: rgba(0,0,0,0.18); min-width: 90px;">
+                                    <div class="fs-4 fw-bold text-white">90</div>
+                                    <small class="text-white-50" style="font-size: 0.72rem;">Rata-rata Nilai</small>
                                 </div>
                             </div>
+
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-12 col-md-5">
+                <!-- 2. DUA KOLOM FORMULIR PENGATURAN (BIODATA & KEAMANAN) -->
+                <div class="row g-4">
+                    
+                    <!-- KOLOM KIRI: BIODATA & DATA AKADEMIK SANTRI -->
+                    <div class="col-12 col-lg-7">
                         <div class="card p-4 border-0 shadow-sm rounded-4 bg-white h-100">
-                            <h5 class="fw-bold mb-3" style="color: #117A74;">
-                                <i class="bi bi-key-fill me-2 text-warning"></i>Ganti Kata Sandi
-                            </h5>
-                            <p class="small text-muted mb-3">Jaga kerahasiaan kata sandi Anda dan ganti secara berkala.</p>
-                            
-                            <form action="?tab=profil" method="POST">
-                                <input type="hidden" name="action" value="ganti_password">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold small text-muted">Kata Sandi Saat Ini</label>
-                                    <input type="password" name="password_lama" class="form-control" placeholder="Kata sandi lama" required>
+                            <div class="d-flex align-items-center gap-2 pb-3 mb-4 border-bottom">
+                                <div class="rounded-3 p-2 text-white d-flex align-items-center justify-content-center" style="background: #117A74; width: 40px; height: 40px;">
+                                    <i class="bi bi-person-vcard fs-5"></i>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold small text-muted">Kata Sandi Baru</label>
-                                    <input type="password" name="password_baru" class="form-control" placeholder="Minimal 6 karakter" required>
+                                <div>
+                                    <h5 class="fw-bold mb-0 text-dark">Data Biodata &amp; Halaqah Santri</h5>
+                                    <small class="text-muted">Informasi identitas resmi santri di SMA IT Al-Fadhilah</small>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold small text-muted">Ulangi Sandi Baru</label>
-                                    <input type="password" name="password_konfirmasi" class="form-control" placeholder="Konfirmasi sandi baru" required>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label small fw-bold text-dark">Nama Lengkap</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                        <input type="text" class="form-control border-start-0 fw-semibold" value="<?= htmlspecialchars($siswa_name) ?>" readonly style="background: #F8FAFC;">
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn text-white btn-sm fw-bold px-4 py-2 mt-1" style="background-color: #117A74;">
-                                    <i class="bi bi-shield-lock me-1"></i>Perbarui Sandi Santri
-                                </button>
-                            </form>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label small fw-bold text-dark">Nomor Induk Siswa (NIS)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-card-text"></i></span>
+                                        <input type="text" class="form-control border-start-0" value="<?= htmlspecialchars($siswa_nis) ?>" readonly style="background: #F8FAFC;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label small fw-bold text-dark">Kelas &amp; Program</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-book"></i></span>
+                                        <input type="text" class="form-control border-start-0" value="Kelas X-A (MIPA Tahfiz)" readonly style="background: #F8FAFC;">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label small fw-bold text-dark">Ustadz Pembimbing</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person-check"></i></span>
+                                        <input type="text" class="form-control border-start-0" value="Ust. Rival Alvian Melfandy" readonly style="background: #F8FAFC;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-3 rounded-3 mb-3 bg-light border">
+                                <h6 class="fw-bold small text-dark mb-2">
+                                    <i class="bi bi-award me-1 text-primary"></i>Ketentuan &amp; Target Kelulusan
+                                </h6>
+                                <div class="row g-2 small text-muted">
+                                    <div class="col-6">
+                                        <span>Target Kelulusan SMA:</span>
+                                        <strong class="text-success d-block">Minimal 6 Juz Mutqin</strong>
+                                    </div>
+                                    <div class="col-6">
+                                        <span>Halaqah Pembinaan:</span>
+                                        <strong class="text-dark d-block">Halaqah <?= htmlspecialchars($halaqah_name) ?></strong>
+                                    </div>
+                                    <div class="col-6 mt-2">
+                                        <span>Jadwal Setoran Rutin:</span>
+                                        <strong class="text-dark d-block">Setiap Sore (Ba'da Ashar)</strong>
+                                    </div>
+                                    <div class="col-6 mt-2">
+                                        <span>Program Unggulan:</span>
+                                        <strong class="text-dark d-block">Tasmi' &amp; Murajaah Mandiri</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Box Kutipan Islami Pengingat -->
+                            <div class="p-3 rounded-3" style="background-color: var(--color-tahfiz-light); border: 1px solid #B8E2DF;">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <i class="bi bi-quote fs-4" style="color: #117A74;"></i>
+                                    <strong class="small" style="color: #117A74;">Nasehat Penuntut Ilmu</strong>
+                                </div>
+                                <p class="small text-muted mb-0 fst-italic">
+                                    "Sebaik-baik kalian adalah orang yang belajar Al-Qur'an dan mengajarkannya." (HR. Bukhari no. 5027)
+                                </p>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- KOLOM KANAN: PENGATURAN KATA SANDI SANTRI -->
+                    <div class="col-12 col-lg-5">
+                        <div class="d-flex flex-column gap-4">
+                            
+                            <!-- Card Ganti Kata Sandi -->
+                            <div class="card p-4 border-0 shadow-sm rounded-4 bg-white">
+                                <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom">
+                                    <div class="rounded-3 p-2 text-white bg-warning d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-key-fill fs-5"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold mb-0 text-dark">Ganti Kata Sandi</h5>
+                                        <small class="text-muted">Perbarui kata sandi santri Anda secara mandiri</small>
+                                    </div>
+                                </div>
+
+                                <form action="?tab=profil" method="POST">
+                                    <input type="hidden" name="action" value="ganti_password">
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-dark">Kata Sandi Saat Ini</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                                            <input type="password" name="password_lama" class="form-control border-start-0" placeholder="Masukkan kata sandi lama" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-dark">Kata Sandi Baru</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-check"></i></span>
+                                            <input type="password" name="password_baru" class="form-control border-start-0" placeholder="Minimal 6 karakter" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-dark">Ulangi Kata Sandi Baru</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-lock"></i></span>
+                                            <input type="password" name="password_konfirmasi" class="form-control border-start-0" placeholder="Konfirmasi sandi baru" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-2.5 rounded-3 bg-light border mb-3 small text-muted" style="font-size: 0.75rem;">
+                                        <i class="bi bi-info-circle text-primary me-1"></i>Jangan bagikan kata sandi Anda kepada orang lain agar data hafalan tetap aman.
+                                    </div>
+
+                                    <button type="submit" class="btn text-white w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #117A74;">
+                                        <i class="bi bi-shield-lock me-1"></i>Perbarui Sandi Santri
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Card Info Sesi Santri -->
+                            <div class="card p-3.5 border-0 shadow-sm rounded-4 bg-white">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <small class="fw-bold text-uppercase text-muted" style="font-size: 0.72rem;">
+                                        <i class="bi bi-shield-fill-check text-success me-1"></i>Status Sesi Santri
+                                    </small>
+                                    <span class="badge bg-success-subtle text-success small">Aktif</span>
+                                </div>
+                                <div class="small text-muted" style="font-size: 0.78rem;">
+                                    <div class="d-flex justify-content-between py-1 border-bottom">
+                                        <span>Peran:</span>
+                                        <strong class="text-dark">Santri / Siswa Aktif</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1 border-bottom">
+                                        <span>Tahun Masuk:</span>
+                                        <strong class="text-dark">T.A. 2026/2027</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1">
+                                        <span>Login Terkini:</span>
+                                        <span class="text-dark"><?= date('d F Y, H:i') ?> WIB</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
             <?php endif; ?>
 

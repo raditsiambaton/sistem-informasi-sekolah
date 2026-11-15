@@ -41,7 +41,7 @@ try {
 // ─────────────────────────────────────────────────────────────
 // PROSES AKSI POST (CRUD)
 // ─────────────────────────────────────────────────────────────
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $action = $_POST['action'] ?? '';
 
     // 1. TAMBAH PENGGUNA BARU
@@ -249,8 +249,9 @@ if (isset($_GET['hapus_pengguna']) && $pdo) {
 // ─────────────────────────────────────────────────────────────
 // AMBIL DATA DARI DATABASE
 // ─────────────────────────────────────────────────────────────
-$users_list = [];
+$users_list   = [];
 $halaqah_list = [];
+$konten_list  = [];
 
 if ($pdo) {
     try {
@@ -260,6 +261,18 @@ if ($pdo) {
     try {
         $halaqah_list = $pdo->query("SELECT * FROM halaqah ORDER BY id ASC")->fetchAll();
     } catch (Throwable $e) {}
+
+    try {
+        $konten_list = $pdo->query("SELECT * FROM konten_informasi ORDER BY id DESC")->fetchAll();
+    } catch (Throwable $e) {}
+}
+
+if (empty($konten_list)) {
+    $konten_list = [
+        ['id' => 1, 'judul' => 'Penerimaan Santri Baru (SPMB) Gelombang 1', 'kategori' => 'Pengumuman', 'tanggal_terbit' => '2026-11-01'],
+        ['id' => 2, 'judul' => 'Agenda Tasmi Akbar Akhir Semester Ganjil', 'kategori' => 'Agenda', 'tanggal_terbit' => '2026-11-10'],
+        ['id' => 3, 'judul' => 'Prestasi Santri Juara 1 MHQ Tingkat Provinsi Riau', 'kategori' => 'Berita', 'tanggal_terbit' => '2026-11-12']
+    ];
 }
 
 if (empty($users_list)) {
@@ -809,67 +822,241 @@ foreach ($users_list as $u) {
                     </div>
                 </div>
 
-            <!-- TAB 6: PROFIL PRIBADI & PENGATURAN KATA SANDI -->
+            <!-- ═══════════════════════════════════════════════════════════
+                 TAB 6: PROFIL PRIBADI ADMINISTRATOR & KEAMANAN AKUN
+                 (Tampilan Eksekutif, Elegan, dan Profesional)
+            ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'profil'): ?>
                 <div class="mb-4">
-                    <h2 class="fw-bold mb-1" style="color: #1F4172;">Profil Pribadi Administrator</h2>
-                    <p class="text-muted small mb-0">Kelola identitas akun dan keamanan kata sandi administrator.</p>
+                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #1F4172;">PENGATURAN SUPER ADMIN</span>
+                    <h2 class="fw-bold mb-1" style="color: #1F4172;">Profil Administrator &amp; Keamanan Akun</h2>
+                    <p class="text-muted small mb-0">Kelola identitas pengelola sistem, data kontak operasional, dan keamanan kata sandi administrator.</p>
                 </div>
-                
-                <div class="row g-4" style="max-width: 960px;">
-                    <!-- Kolom Kiri: Informasi Akun -->
-                    <div class="col-12 col-md-6">
-                        <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
-                            <h5 class="fw-bold mb-3" style="color: #1F4172;">
-                                <i class="bi bi-person-circle me-2 text-primary"></i>Informasi Akun
-                            </h5>
+
+                <!-- 1. HERO IDENTITY CARD (ADMIN EXECUTIVE BANNER) -->
+                <div class="card border-0 rounded-4 shadow-sm overflow-hidden text-white mb-4" style="background: linear-gradient(135deg, #0f172a 0%, #1F4172 60%, #1e40af 100%);">
+                    <div class="p-4 p-md-5">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
+                            
+                            <!-- Avatar & Identitas Admin -->
+                            <div class="d-flex align-items-center gap-3.5">
+                                <div class="position-relative">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-lg" 
+                                         style="width: 88px; height: 88px; font-size: 2rem; background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%); border: 3px solid rgba(255,255,255,0.35);">
+                                        AD
+                                    </div>
+                                    <span class="position-absolute bottom-0 end-0 p-2 bg-success border border-2 border-white rounded-circle" title="Super Admin Aktif"></span>
+                                </div>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                        <h3 class="fw-bold mb-0 text-white"><?= htmlspecialchars($admin_name) ?></h3>
+                                        <span class="badge bg-warning text-dark fw-bold px-2.5 py-1" style="font-size: 0.72rem;">
+                                            <i class="bi bi-shield-lock-fill me-1"></i>Super Administrator
+                                        </span>
+                                    </div>
+                                    <p class="text-white-50 small mb-2">Pusat Pengelolaan Sistem Informasi &amp; Database SMA IT Al-Fadhilah Pekanbaru</p>
+                                    
+                                    <div class="d-flex align-items-center gap-2 flex-wrap" style="font-size: 0.78rem;">
+                                        <span class="badge bg-white text-dark px-3 py-1.5 shadow-sm fw-semibold">
+                                            <i class="bi bi-person-badge me-1 text-primary"></i>NIP: 198700
+                                        </span>
+                                        <span class="badge px-3 py-1.5 fw-semibold" style="background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.25);">
+                                            <i class="bi bi-hdd-network-fill me-1 text-info"></i>Akses Root Sistem
+                                        </span>
+                                        <span class="badge px-3 py-1.5 fw-semibold" style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.4); color: #A7F3D0;">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Status: Server Online
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Statistik Sistem Singkat -->
+                            <div class="d-flex gap-3 text-center border-top border-md-top-0 pt-3 pt-md-0 border-white border-opacity-20">
+                                <div class="px-3 py-2 rounded-3" style="background: rgba(0,0,0,0.22); min-width: 90px;">
+                                    <div class="fs-4 fw-bold text-white"><?= count($users_list ?? []) ?></div>
+                                    <small class="text-white-50" style="font-size: 0.72rem;">Total Akun</small>
+                                </div>
+                                <div class="px-3 py-2 rounded-3" style="background: rgba(0,0,0,0.22); min-width: 90px;">
+                                    <div class="fs-4 fw-bold text-white"><?= count($halaqah_list ?? []) ?></div>
+                                    <small class="text-white-50" style="font-size: 0.72rem;">Halaqah</small>
+                                </div>
+                                <div class="px-3 py-2 rounded-3" style="background: rgba(0,0,0,0.22); min-width: 90px;">
+                                    <div class="fs-4 fw-bold text-warning"><?= count($konten_list ?? []) ?></div>
+                                    <small class="text-white-50" style="font-size: 0.72rem;">Warta Terbit</small>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. DUA KOLOM FORMULIR PENGATURAN (BIODATA & KEAMANAN) -->
+                <div class="row g-4">
+                    
+                    <!-- KOLOM KIRI: INFORMASI AKUN ADMINISTRATOR -->
+                    <div class="col-12 col-lg-7">
+                        <div class="card p-4 border-0 shadow-sm rounded-4 bg-white h-100">
+                            <div class="d-flex align-items-center gap-2 pb-3 mb-4 border-bottom">
+                                <div class="rounded-3 p-2 text-white d-flex align-items-center justify-content-center" style="background: #1F4172; width: 40px; height: 40px;">
+                                    <i class="bi bi-person-gear fs-5"></i>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-0 text-dark">Informasi Akun Administrator</h5>
+                                    <small class="text-muted">Data penanggung jawab sistem informasi sekolah</small>
+                                </div>
+                            </div>
+
                             <form action="?tab=profil" method="POST">
                                 <input type="hidden" name="action" value="update_profil">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold small text-muted">Nama Lengkap</label>
-                                    <input type="text" name="nama_lengkap" class="form-control" value="<?= htmlspecialchars($admin_name) ?>" required>
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label small fw-bold text-dark">Nama Administrator</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                            <input type="text" name="nama_lengkap" class="form-control border-start-0 fw-semibold" value="<?= htmlspecialchars($admin_name) ?>" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label small fw-bold text-dark">NIP / ID Pengenal</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-lock"></i></span>
+                                            <input type="text" class="form-control border-start-0" value="198700" readonly style="background: #F8FAFC;">
+                                        </div>
+                                        <small class="text-muted" style="font-size: 0.72rem;">*ID Root Administrator terproteksi.</small>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold small text-muted">NIP / ID Pengenal</label>
-                                    <input type="text" class="form-control" value="198700" readonly style="background: #F1F5F9;">
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label small fw-bold text-dark">Nomor Kontak Unit IT / TU</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                                            <input type="text" class="form-control border-start-0" value="(0761) 840-7782">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label small fw-bold text-dark">Alamat Surel Resmi</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                                            <input type="email" class="form-control border-start-0" value="admin@alfadhilah.sch.id">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold small text-muted">Peran / Hak Akses</label>
-                                    <input type="text" class="form-control" value="Super Administrator" readonly style="background: #F1F5F9;">
+
+                                <div class="p-3 rounded-3 mb-4 bg-light border">
+                                    <h6 class="fw-bold small text-dark mb-2">
+                                        <i class="bi bi-sliders me-1 text-primary"></i>Lingkup Hak Akses &amp; Otoritas Sistem
+                                    </h6>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-6">
+                                            <span>Tingkat Akses:</span>
+                                            <strong class="text-dark d-block">Super Administrator (Level 1)</strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <span>Basis Data:</span>
+                                            <strong class="text-dark d-block">sistem_informasi_sekolah</strong>
+                                        </div>
+                                        <div class="col-6 mt-2">
+                                            <span>Otoritas Pengguna:</span>
+                                            <strong class="text-dark d-block">CRUD Pengguna &amp; Reset Sandi</strong>
+                                        </div>
+                                        <div class="col-6 mt-2">
+                                            <span>Publikasi Warta:</span>
+                                            <strong class="text-dark d-block">Konten Web Sekolah &amp; Portal</strong>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm fw-bold px-4 py-2 mt-2">
-                                    <i class="bi bi-save me-1"></i>Simpan Biodata
-                                </button>
+
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn text-white px-4 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #1F4172;">
+                                        <i class="bi bi-check-circle me-1"></i>Simpan Biodata Administrator
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
 
-                    <!-- Kolom Kanan: Pengaturan Kata Sandi -->
-                    <div class="col-12 col-md-6">
-                        <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
-                            <h5 class="fw-bold mb-3" style="color: #1F4172;">
-                                <i class="bi bi-key-fill me-2 text-warning"></i>Keamanan &amp; Kata Sandi
-                            </h5>
-                            <form action="?tab=profil" method="POST">
-                                <input type="hidden" name="action" value="update_password">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold small text-muted">Kata Sandi Saat Ini</label>
-                                    <input type="password" name="password_lama" class="form-control" placeholder="Masukkan kata sandi lama" required>
+                    <!-- KOLOM KANAN: PENGATURAN KATA SANDI & KEAMANAN SISTEM -->
+                    <div class="col-12 col-lg-5">
+                        <div class="d-flex flex-column gap-4">
+                            
+                            <!-- Card Ganti Kata Sandi -->
+                            <div class="card p-4 border-0 shadow-sm rounded-4 bg-white">
+                                <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom">
+                                    <div class="rounded-3 p-2 text-white bg-warning d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-key-fill fs-5"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold mb-0 text-dark">Ganti Kata Sandi</h5>
+                                        <small class="text-muted">Perbarui sandi root akun administrator</small>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold small text-muted">Kata Sandi Baru</label>
-                                    <input type="password" name="password_baru" class="form-control" placeholder="Minimal 6 karakter" required>
+
+                                <form action="?tab=profil" method="POST">
+                                    <input type="hidden" name="action" value="update_password">
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-dark">Kata Sandi Saat Ini</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                                            <input type="password" name="password_lama" class="form-control border-start-0" placeholder="Masukkan kata sandi lama" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-dark">Kata Sandi Baru</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-check"></i></span>
+                                            <input type="password" name="password_baru" class="form-control border-start-0" placeholder="Minimal 6 karakter" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-dark">Ulangi Kata Sandi Baru</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-lock"></i></span>
+                                            <input type="password" name="password_konfirmasi" class="form-control border-start-0" placeholder="Konfirmasi sandi baru" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-2.5 rounded-3 bg-light border mb-3 small text-muted" style="font-size: 0.75rem;">
+                                        <i class="bi bi-info-circle text-primary me-1"></i>Sandi Super Administrator memiliki hak penuh atas konfigurasi sistem.
+                                    </div>
+
+                                    <button type="submit" class="btn text-white w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #1F4172;">
+                                        <i class="bi bi-shield-lock me-1"></i>Perbarui Sandi Administrator
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Card Info Sesi & Autentikasi -->
+                            <div class="card p-3.5 border-0 shadow-sm rounded-4 bg-white">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <small class="fw-bold text-uppercase text-muted" style="font-size: 0.72rem;">
+                                        <i class="bi bi-shield-fill-check text-success me-1"></i>Keamanan Server &amp; Sesi
+                                    </small>
+                                    <span class="badge bg-success-subtle text-success small">Aktif</span>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold small text-muted">Konfirmasi Kata Sandi Baru</label>
-                                    <input type="password" name="password_konfirmasi" class="form-control" placeholder="Ulangi kata sandi baru" required>
+                                <div class="small text-muted" style="font-size: 0.78rem;">
+                                    <div class="d-flex justify-content-between py-1 border-bottom">
+                                        <span>Tingkat Akses:</span>
+                                        <strong class="text-dark">Super Administrator</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1 border-bottom">
+                                        <span>Protokol Keamanan:</span>
+                                        <code class="text-dark">Argon2id / Bcrypt Session Guard</code>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1">
+                                        <span>Terakhir Login:</span>
+                                        <span class="text-dark"><?= date('d F Y, H:i') ?> WIB</span>
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn btn-outline-primary btn-sm fw-bold px-4 py-2 mt-2">
-                                    <i class="bi bi-shield-lock me-1"></i>Perbarui Kata Sandi
-                                </button>
-                            </form>
+                            </div>
+
                         </div>
                     </div>
+
                 </div>
             <?php endif; ?>
 
