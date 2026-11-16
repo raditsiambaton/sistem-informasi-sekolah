@@ -348,35 +348,67 @@ $quran_juz = [
             min-height: 100vh;
         }
         .ustadz-sidebar {
-            width: 260px;
-            background: #0A2E2B;
-            min-height: 100vh;
+            width: 250px;
+            background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
             color: #ffffff;
             flex-shrink: 0;
-            padding: 24px 16px;
+            padding: 0 !important;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .ustadz-sidebar::-webkit-scrollbar {
+            display: none;
+        }
+        .ustadz-content-wrapper {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #F6F7F5;
         }
         .ustadz-nav-link {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 11px 14px;
-            color: #A2D5D2;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border-radius: 8px;
+            margin: 4px 12px;
+            color: rgba(255, 255, 255, 0.88);
+            font-weight: 500;
+            font-size: 13.5px;
+            border-radius: 10px;
             text-decoration: none;
             transition: all 0.2s;
-            margin-bottom: 4px;
+            border: 1px solid transparent;
+        }
+        .ustadz-nav-link i {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 16px;
         }
         .ustadz-nav-link:hover {
             color: #ffffff;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.10);
         }
         .ustadz-nav-link.active {
-            background: #11756D;
+            background: rgba(255, 255, 255, 0.20);
             color: #ffffff;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(17, 117, 109, 0.35);
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
         }
         .kpi-stat-card {
             background: #ffffff;
@@ -447,31 +479,33 @@ $quran_juz = [
     <!-- ═══════════════════════════════════════════════════════════
          SIDEBAR UTAMA ASATIDZ (SEMUA MENU KEMBALI LENGKAP)
     ════════════════════════════════════════════════════════════ -->
-    <aside class="ustadz-sidebar d-flex flex-column">
+    <aside class="ustadz-sidebar d-flex flex-column" style="width: 250px; height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important; padding: 0; z-index: 1000; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
         <!-- Brand -->
-        <div class="ustadz-sidebar-brand">
-            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" class="sidebar-logo">
-            <div class="ustadz-brand-text">
-                <div class="ustadz-brand-title">Tahfiz Yuk</div>
-                <div class="ustadz-brand-subtitle">Sistem monitoring tahfiz</div>
+        <div class="ustadz-sidebar-brand" style="padding: 20px 18px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); display: flex; align-items: center; gap: 12px;">
+            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" class="sidebar-logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 8px; flex-shrink: 0;">
+            <div class="ustadz-brand-text overflow-hidden">
+                <div class="ustadz-brand-title text-truncate" style="font-size: 15px; font-weight: 700; color: #FACC15; line-height: 1.2;">Tahfiz Yuk</div>
+                <div class="ustadz-brand-subtitle text-truncate" style="font-size: 12px; color: rgba(255, 255, 255, 0.85); font-weight: 500; line-height: 1.2; margin-top: 2px;">Panel Ustadz</div>
             </div>
         </div>
 
         <!-- Info Pengguna -->
-        <div class="ustadz-user-info">
-            <div class="ustadz-user-avatar">RA</div>
-            <div class="ustadz-user-text">
-                <div class="ustadz-user-role">Ustadz</div>
-                <div class="ustadz-user-name"><?= htmlspecialchars($ustadz_name) ?></div>
+        <div class="ustadz-user-info" style="margin: 14px 12px; padding: 10px 12px; background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+            <div class="ustadz-user-avatar" style="width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 700; font-size: 13px; color: #FFFFFF; background: #0B4F49; flex-shrink: 0;">
+                RA
+            </div>
+            <div class="ustadz-user-text overflow-hidden" style="min-width: 0;">
+                <div class="ustadz-user-role text-white fw-semibold text-truncate" style="font-size: 13px; line-height: 1.3;"><?= htmlspecialchars($ustadz_name) ?></div>
+                <div class="ustadz-user-name fw-semibold text-truncate" style="font-size: 11px; color: #A7F3D0; line-height: 1.2;">● Halaqah <?= htmlspecialchars($halaqah_name) ?></div>
             </div>
         </div>
 
         <!-- Menu Navigasi -->
         <nav class="ustadz-nav flex-grow-1">
-            <div class="ustadz-nav-label">MENU</div>
+            <div class="ustadz-nav-label text-uppercase fw-bold d-block" style="padding: 10px 20px 6px; font-size: 11px; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.70);">Menu Utama</div>
 
             <a href="?tab=profil" class="ustadz-nav-link <?= $page_tab === 'profil' ? 'active' : '' ?>">
-                <i class="bi bi-star"></i><span>Profil Saya</span>
+                <i class="bi bi-person-circle"></i><span>Profil Saya</span>
             </a>
 
             <a href="?tab=hafalan" class="ustadz-nav-link <?= $page_tab === 'hafalan' ? 'active' : '' ?>">
@@ -492,9 +526,9 @@ $quran_juz = [
         </nav>
 
         <!-- Footer Sidebar -->
-        <div class="ustadz-sidebar-footer">
-            <a href="../auth/logout.php" class="ustadz-logout">
-                <i class="bi bi-box-arrow-right"></i><span>Log out</span>
+        <div class="ustadz-sidebar-footer" style="margin-top: auto; padding: 16px 14px 20px; border-top: 1px solid rgba(255, 255, 255, 0.14); display: flex; flex-direction: column;">
+            <a href="../auth/logout.php" class="btn-sidebar-logout">
+                <i class="bi bi-box-arrow-right me-1"></i>Keluar Sesi
             </a>
         </div>
     </aside>
@@ -1115,23 +1149,28 @@ $quran_juz = [
                  (Tampilan Eksekutif, Elegan, dan Profesional)
             ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'profil'): ?>
-                <h1 class="profil-page-title">Profil Saya</h1>
+                <div class="mb-4">
+                    <h1 class="profil-page-title mb-1">Profil Pribadi</h1>
+                    <p class="profil-page-subtitle mb-0">Kelola informasi biodata asatidz dan pembaruan kata sandi akun.</p>
+                </div>
 
                 <div class="profil-grid">
                     <!-- Kartu Kiri: Informasi Akun -->
                     <div class="profil-card">
-                        <h2 class="profil-card-title">Informasi Akun</h2>
+                        <h2 class="profil-card-title">
+                            <i class="bi bi-person-circle text-success"></i>Informasi Akun
+                        </h2>
 
                         <form action="?tab=profil" method="POST">
                             <input type="hidden" name="action" value="update_biodata">
 
                             <div class="profil-field">
                                 <label class="profil-label" for="namaLengkap">Nama Lengkap</label>
-                                <input type="text" id="namaLengkap" name="nama_lengkap" class="profil-input" value="<?= htmlspecialchars($ustadz_name) ?>" required>
+                                <input type="text" id="namaLengkap" name="nama_lengkap" class="profil-input fw-semibold" value="<?= htmlspecialchars($ustadz_name) ?>" required>
                             </div>
 
                             <div class="profil-field">
-                                <label class="profil-label" for="kontakUstadz">Kontak</label>
+                                <label class="profil-label" for="kontakUstadz">Nomor Kontak</label>
                                 <input type="text" id="kontakUstadz" name="kontak" class="profil-input" value="0812-7890-1234" placeholder="Contoh: 0812xxxxxxxx">
                             </div>
 
@@ -1142,14 +1181,14 @@ $quran_juz = [
                             </div>
 
                             <div class="profil-field">
-                                <label class="profil-label" for="halaqahUstadz">Halaqah</label>
+                                <label class="profil-label" for="halaqahUstadz">Halaqah Binaan</label>
                                 <input type="text" id="halaqahUstadz" class="profil-input" value="Halaqah <?= htmlspecialchars($halaqah_name) ?>" readonly>
-                                <small class="profil-hint">Halaqah tidak dapat diubah</small>
+                                <small class="profil-hint">Penugasan halaqah dikelola oleh Admin</small>
                             </div>
 
                             <div class="profil-actions">
                                 <button type="submit" class="profil-btn profil-btn-primary">
-                                    <i class="bi bi-floppy"></i>Simpan perubahan
+                                    <i class="bi bi-floppy"></i>Simpan Perubahan
                                 </button>
                                 <button type="reset" class="profil-btn profil-btn-reset">
                                     <i class="bi bi-x-circle"></i>Batal
@@ -1160,29 +1199,35 @@ $quran_juz = [
 
                     <!-- Kartu Kanan: Ganti Password -->
                     <div class="profil-card">
-                        <h2 class="profil-card-title">Ganti Password</h2>
+                        <h2 class="profil-card-title">
+                            <i class="bi bi-key-fill text-warning"></i>Ganti Password
+                        </h2>
 
                         <form action="?tab=profil" method="POST">
                             <input type="hidden" name="action" value="update_password">
 
                             <div class="profil-field">
-                                <label class="profil-label" for="passLama">Password lama</label>
+                                <label class="profil-label" for="passLama">Kata Sandi Saat Ini</label>
                                 <input type="password" id="passLama" name="password_lama" class="profil-input" placeholder="Masukkan kata sandi lama" required>
                             </div>
 
                             <div class="profil-field">
-                                <label class="profil-label" for="passBaru">Password Baru</label>
-                                <input type="password" id="passBaru" name="password_baru" class="profil-input" placeholder="Minimal 6 Karakter" required>
+                                <label class="profil-label" for="passBaru">Kata Sandi Baru</label>
+                                <input type="password" id="passBaru" name="password_baru" class="profil-input" placeholder="Minimal 6 karakter" required>
                             </div>
 
                             <div class="profil-field">
-                                <label class="profil-label" for="passKonfirmasi">Konfirmasi Password Baru</label>
+                                <label class="profil-label" for="passKonfirmasi">Konfirmasi Kata Sandi Baru</label>
                                 <input type="password" id="passKonfirmasi" name="password_konfirmasi" class="profil-input" placeholder="Ulangi kata sandi baru" required>
                             </div>
 
-                            <div class="profil-actions">
-                                <button type="submit" class="profil-btn profil-btn-primary">
-                                    <i class="bi bi-floppy"></i>Simpan perubahan
+                            <div class="p-2.5 rounded-3 bg-light border mb-3 small text-muted" style="font-size: 12px;">
+                                <i class="bi bi-info-circle me-1" style="color: #11756D;"></i>Pastikan kata sandi Anda kuat dan tidak mudah ditebak demi keamanan nilai hafalan santri.
+                            </div>
+
+                            <div class="profil-actions mt-0">
+                                <button type="submit" class="profil-btn profil-btn-primary w-100">
+                                    <i class="bi bi-shield-lock"></i>Perbarui Kata Sandi
                                 </button>
                             </div>
                         </form>

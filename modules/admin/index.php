@@ -369,21 +369,21 @@ foreach ($users_list as $u) {
         .sidebar-brand-title {
             font-size: 15px;
             font-weight: 700;
-            color: #FFFFFF;
+            color: #FACC15;
             line-height: 1.2;
         }
         .sidebar-brand-subtitle {
             font-size: 12px;
-            color: #8FA8A1;
+            color: rgba(255, 255, 255, 0.85);
             font-weight: 500;
             line-height: 1.2;
             margin-top: 2px;
         }
         .sidebar-user-card {
-            margin: 16px 14px;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin: 14px 12px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.16);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -399,9 +399,9 @@ foreach ($users_list as $u) {
             justify-content: center;
             text-align: center;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             color: #FFFFFF;
-            background: #11756D;
+            background: #0B4F49;
             flex-shrink: 0;
         }
         .sidebar-user-info {
@@ -419,7 +419,7 @@ foreach ($users_list as $u) {
         }
         .sidebar-user-status {
             font-size: 11px;
-            color: #10B981;
+            color: #A7F3D0;
             font-weight: 500;
             display: flex;
             align-items: center;
@@ -427,10 +427,10 @@ foreach ($users_list as $u) {
             line-height: 1.2;
         }
         .sidebar-menu-label {
-            padding: 8px 24px 6px;
+            padding: 10px 20px 6px;
             font-size: 11px;
             letter-spacing: 0.08em;
-            color: #7A968E;
+            color: rgba(255, 255, 255, 0.70);
             text-transform: uppercase;
             font-weight: 700;
             display: block;
@@ -440,11 +440,11 @@ foreach ($users_list as $u) {
             align-items: center;
             gap: 12px;
             padding: 11px 14px;
-            margin: 2px 14px;
+            margin: 4px 12px;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 500;
-            color: #C8D6D2;
+            color: rgba(255, 255, 255, 0.88);
             text-decoration: none;
             transition: all 0.2s ease;
             border: 1px solid transparent;
@@ -460,63 +460,40 @@ foreach ($users_list as $u) {
         }
         .admin-nav-link:hover {
             color: #FFFFFF;
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.10);
         }
         .admin-nav-link.active {
-            background: linear-gradient(135deg, #136F5B 0%, #0E5A49 100%);
+            background: rgba(255, 255, 255, 0.20);
             color: #FFFFFF;
             font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
         }
         .sidebar-footer {
             margin-top: auto;
             padding: 16px 14px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.14);
             display: flex;
             flex-direction: column;
-            gap: 10px;
-        }
-        .btn-sidebar-web {
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            text-decoration: none;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            background: transparent;
-            color: #FFFFFF;
-            gap: 8px;
-            transition: all 0.2s ease;
-            width: 100%;
-        }
-        .btn-sidebar-web:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.4);
-            color: #FFFFFF;
         }
         .btn-sidebar-logout {
-            height: 40px;
+            width: 100%;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 10px;
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 600;
             text-decoration: none;
             background: #DC2626;
-            border: 1px solid #DC2626;
+            border: none;
             color: #FFFFFF;
             gap: 8px;
-            transition: all 0.2s ease;
-            width: 100%;
+            transition: background 0.2s ease;
         }
         .btn-sidebar-logout:hover {
             background: #B91C1C;
-            border-color: #B91C1C;
             color: #FFFFFF;
         }
         .kpi-card {
@@ -586,31 +563,34 @@ foreach ($users_list as $u) {
 <body>
 
 <div class="d-flex">
-    <!-- SIDEBAR ADMIN (Fixed Left Sidebar, lebar 260px, background #0A2922) -->
-    <aside class="admin-sidebar d-flex flex-column" style="width: 260px; height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; background: #0A2922 !important; padding: 0; z-index: 1000; overflow-y: auto;">
+    <!-- SIDEBAR ADMIN (Fixed Left Sidebar, lebar 250px, background #11756D) -->
+    <aside class="admin-sidebar d-flex flex-column" style="width: 250px; height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important; padding: 0; z-index: 1000; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
         <!-- Brand Header -->
-        <div class="sidebar-brand" style="padding: 20px 20px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; gap: 12px;">
-            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Sekolah" class="sidebar-logo" style="width: 38px; height: 38px; object-fit: contain; border-radius: 8px; flex-shrink: 0;">
+        <div class="sidebar-brand" style="padding: 20px 18px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); display: flex; align-items: center; gap: 12px;">
+            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Sekolah" class="sidebar-logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 8px; flex-shrink: 0;">
             <div class="overflow-hidden">
-                <div class="sidebar-brand-title text-white text-truncate" style="font-size: 15px; font-weight: 700; line-height: 1.2;">SMA IT Al-Fadhilah</div>
-                <div class="sidebar-brand-subtitle text-truncate" style="font-size: 12px; color: #8FA8A1; font-weight: 500; line-height: 1.2; margin-top: 2px;">Admin Panel</div>
+                <div class="sidebar-brand-title text-truncate" style="font-size: 15px; font-weight: 700; color: #FACC15; line-height: 1.2;">Tahfiz Yuk</div>
+                <div class="sidebar-brand-subtitle text-truncate" style="font-size: 12px; color: rgba(255, 255, 255, 0.85); font-weight: 500; line-height: 1.2; margin-top: 2px;">Admin Panel</div>
             </div>
         </div>
 
         <!-- Kartu Profil User -->
-        <div class="sidebar-user-card" style="margin: 16px 14px; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
-            <div class="sidebar-user-avatar" style="width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 700; font-size: 14px; color: #FFFFFF; background: #11756D; flex-shrink: 0;">
+        <div class="sidebar-user-card" style="margin: 14px 12px; padding: 10px 12px; background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+            <div class="sidebar-user-avatar" style="width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 700; font-size: 13px; color: #FFFFFF; background: #0B4F49; flex-shrink: 0;">
                 AD
             </div>
             <div class="sidebar-user-info overflow-hidden" style="min-width: 0;">
                 <div class="sidebar-user-name text-white fw-semibold text-truncate" style="font-size: 13px; line-height: 1.3;"><?= htmlspecialchars($admin_name) ?></div>
-                <small class="sidebar-user-status fw-semibold" style="font-size: 11px; color: #10B981; line-height: 1.2; display: flex; align-items: center; gap: 4px;">● Online</small>
+                <small class="sidebar-user-status fw-semibold" style="font-size: 11px; color: #A7F3D0; line-height: 1.2; display: flex; align-items: center; gap: 4px;">● Administrator</small>
             </div>
         </div>
 
         <!-- Navigation Menu -->
         <nav class="flex-grow-1">
-            <small class="sidebar-menu-label text-uppercase fw-bold d-block" style="padding: 8px 24px 6px; font-size: 11px; letter-spacing: 0.08em; color: #7A968E;">Menu Utama</small>
+            <small class="sidebar-menu-label text-uppercase fw-bold d-block" style="padding: 10px 20px 6px; font-size: 11px; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.70);">Menu Utama</small>
+            <a href="?tab=profil" class="admin-nav-link <?= $page_tab === 'profil' ? 'active' : '' ?>">
+                <i class="bi bi-person-circle"></i><span>Profil Saya</span>
+            </a>
             <a href="?tab=rekap" class="admin-nav-link <?= $page_tab === 'rekap' ? 'active' : '' ?>">
                 <i class="bi bi-grid-1x2-fill"></i><span>Rekap Tahfiz</span>
             </a>
@@ -626,16 +606,10 @@ foreach ($users_list as $u) {
             <a href="?tab=laporan" class="admin-nav-link <?= $page_tab === 'laporan' ? 'active' : '' ?>">
                 <i class="bi bi-file-earmark-bar-graph-fill"></i><span>Laporan Rekapitulasi</span>
             </a>
-            <a href="?tab=profil" class="admin-nav-link <?= $page_tab === 'profil' ? 'active' : '' ?>">
-                <i class="bi bi-person-circle"></i><span>Profil Pribadi</span>
-            </a>
         </nav>
 
         <!-- Footer Sidebar (Tombol Bawah) -->
-        <div class="sidebar-footer" style="margin-top: auto; padding: 16px 14px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 10px;">
-            <a href="../../index.php" class="btn-sidebar-web" target="_blank">
-                <i class="bi bi-box-arrow-up-right me-1"></i>Web Sekolah
-            </a>
+        <div class="sidebar-footer" style="margin-top: auto; padding: 16px 14px 20px; border-top: 1px solid rgba(255, 255, 255, 0.14); display: flex; flex-direction: column;">
             <a href="../auth/logout.php" class="btn-sidebar-logout">
                 <i class="bi bi-box-arrow-right me-1"></i>Keluar Sesi
             </a>
@@ -643,7 +617,7 @@ foreach ($users_list as $u) {
     </aside>
 
     <!-- CONTENT WRAPPER -->
-    <div class="flex-grow-1 d-flex flex-column admin-content-wrapper" style="min-width: 0; margin-left: 260px;">
+    <div class="flex-grow-1 d-flex flex-column admin-content-wrapper" style="min-width: 0; margin-left: 250px; width: calc(100% - 250px); background-color: #F6F7F5; min-height: 100vh;">
         <!-- Top Navbar -->
         <header class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center shadow-sm">
             <div class="d-flex align-items-center gap-3">
@@ -1055,167 +1029,85 @@ foreach ($users_list as $u) {
 
             <!-- ═══════════════════════════════════════════════════════════
                  TAB 6: PROFIL PRIBADI ADMINISTRATOR & KEAMANAN AKUN
-                 (Tampilan Eksekutif, Elegan, dan Profesional)
+                 (Desain Bersih, Elegan, dan Seragam Standar 2 Kolom)
             ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'profil'): ?>
                 <div class="mb-4">
-                    <h2 class="fw-bold mb-1" style="color: #11756D;">Profil Pribadi Administrator</h2>
-                    <p class="text-muted small mb-0">Kelola identitas akun dan keamanan kata sandi administrator.</p>
+                    <h1 class="profil-page-title mb-1">Profil Pribadi</h1>
+                    <p class="profil-page-subtitle mb-0">Kelola identitas akun dan keamanan kata sandi administrator.</p>
                 </div>
                 
-                <div class="row g-4" style="max-width: 960px;">
+                <div class="profil-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch;">
                     <!-- Kolom Kiri: Informasi Akun -->
-                    <div class="col-12 col-md-6">
-                        <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
-                            <h5 class="fw-bold mb-3" style="color: #11756D;">
-                                <i class="bi bi-person-circle me-2 text-success"></i>Informasi Akun
-                            </h5>
-                            <form action="?tab=profil" method="POST">
-                                <input type="hidden" name="action" value="update_profil">
+                    <div class="profil-card d-flex flex-column">
+                        <h2 class="profil-card-title">
+                            <i class="bi bi-person-circle text-success"></i>Informasi Akun
+                        </h2>
+                        <form action="?tab=profil" method="POST" class="d-flex flex-column flex-grow-1">
+                            <input type="hidden" name="action" value="update_profil">
 
-                                <div class="row g-3 mb-3">
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label small fw-bold text-dark">Nama Administrator</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
-                                            <input type="text" name="nama_lengkap" class="form-control border-start-0 fw-semibold" value="<?= htmlspecialchars($admin_name) ?>" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label small fw-bold text-dark">NIP / ID Pengenal</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-lock"></i></span>
-                                            <input type="text" class="form-control border-start-0" value="198700" readonly style="background: #F8FAFC;">
-                                        </div>
-                                        <small class="text-muted" style="font-size: 0.72rem;">*ID Root Administrator terproteksi.</small>
-                                    </div>
-                                </div>
+                            <div class="profil-field">
+                                <label class="profil-label">Nama Administrator</label>
+                                <input type="text" name="nama_lengkap" class="profil-input fw-semibold" value="<?= htmlspecialchars($admin_name) ?>" required>
+                            </div>
 
-                                <div class="row g-3 mb-3">
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label small fw-bold text-dark">Nomor Kontak Unit IT / TU</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
-                                            <input type="text" class="form-control border-start-0" value="(0761) 840-7782">
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label small fw-bold text-dark">Alamat Surel Resmi</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
-                                            <input type="email" class="form-control border-start-0" value="admin@alfadhilah.sch.id">
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="profil-field">
+                                <label class="profil-label">NIP / ID Pengenal</label>
+                                <input type="text" class="profil-input" value="198700" readonly>
+                                <small class="profil-hint">*ID Root Administrator terproteksi oleh sistem.</small>
+                            </div>
 
-                                <div class="p-3 rounded-3 mb-4 bg-light border">
-                                    <h6 class="fw-bold small text-dark mb-2">
-                                        <i class="bi bi-sliders me-1 text-primary"></i>Lingkup Hak Akses &amp; Otoritas Sistem
-                                    </h6>
-                                    <div class="row g-2 small text-muted">
-                                        <div class="col-6">
-                                            <span>Tingkat Akses:</span>
-                                            <strong class="text-dark d-block">Super Administrator (Level 1)</strong>
-                                        </div>
-                                        <div class="col-6">
-                                            <span>Basis Data:</span>
-                                            <strong class="text-dark d-block">sistem_informasi_sekolah</strong>
-                                        </div>
-                                        <div class="col-6 mt-2">
-                                            <span>Otoritas Pengguna:</span>
-                                            <strong class="text-dark d-block">CRUD Pengguna &amp; Reset Sandi</strong>
-                                        </div>
-                                        <div class="col-6 mt-2">
-                                            <span>Publikasi Warta:</span>
-                                            <strong class="text-dark d-block">Konten Web Sekolah &amp; Portal</strong>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="profil-field">
+                                <label class="profil-label">Nomor Kontak Unit IT / TU</label>
+                                <input type="text" class="profil-input" value="(0761) 840-7782">
+                            </div>
 
-                                <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn text-white px-4 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #1F4172;">
-                                        <i class="bi bi-check-circle me-1"></i>Simpan Biodata Administrator
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                            <div class="profil-field">
+                                <label class="profil-label">Alamat Surel Resmi</label>
+                                <input type="email" class="profil-input" value="admin@alfadhilah.sch.id">
+                            </div>
+
+                            <div class="profil-actions mt-auto pt-2">
+                                <button type="submit" class="profil-btn profil-btn-primary">
+                                    <i class="bi bi-check-circle me-1"></i>Simpan Biodata Administrator
+                                </button>
+                            </div>
+                        </form>
                     </div>
 
-                    <!-- Kolom Kanan: Pengaturan Kata Sandi -->
-                    <div class="col-12 col-md-6">
-                        <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
-                            <h5 class="fw-bold mb-3" style="color: #11756D;">
-                                <i class="bi bi-key-fill me-2 text-warning"></i>Keamanan &amp; Kata Sandi
-                            </h5>
-                            <form action="?tab=profil" method="POST">
-                                <input type="hidden" name="action" value="update_password">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold small text-muted">Kata Sandi Saat Ini</label>
-                                    <input type="password" name="password_lama" class="form-control" placeholder="Masukkan kata sandi lama" required>
-                                </div>
+                    <!-- Kolom Kanan: Pengaturan Kata Sandi & Keamanan -->
+                    <div class="profil-card d-flex flex-column">
+                        <h2 class="profil-card-title">
+                            <i class="bi bi-key-fill text-warning"></i>Keamanan &amp; Kata Sandi
+                        </h2>
+                        <form action="?tab=profil" method="POST" class="d-flex flex-column flex-grow-1">
+                            <input type="hidden" name="action" value="update_password">
 
-                                <form action="?tab=profil" method="POST">
-                                    <input type="hidden" name="action" value="update_password">
-
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold text-dark">Kata Sandi Saat Ini</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
-                                            <input type="password" name="password_lama" class="form-control border-start-0" placeholder="Masukkan kata sandi lama" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold text-dark">Kata Sandi Baru</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-check"></i></span>
-                                            <input type="password" name="password_baru" class="form-control border-start-0" placeholder="Minimal 6 karakter" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold text-dark">Ulangi Kata Sandi Baru</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-lock"></i></span>
-                                            <input type="password" name="password_konfirmasi" class="form-control border-start-0" placeholder="Konfirmasi sandi baru" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="p-2.5 rounded-3 bg-light border mb-3 small text-muted" style="font-size: 0.75rem;">
-                                        <i class="bi bi-info-circle text-primary me-1"></i>Sandi Super Administrator memiliki hak penuh atas konfigurasi sistem.
-                                    </div>
-
-                                    <button type="submit" class="btn text-white w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #1F4172;">
-                                        <i class="bi bi-shield-lock me-1"></i>Perbarui Sandi Administrator
-                                    </button>
-                                </form>
+                            <div class="profil-field">
+                                <label class="profil-label">Kata Sandi Saat Ini</label>
+                                <input type="password" name="password_lama" class="profil-input" placeholder="Masukkan kata sandi lama" required>
                             </div>
 
-                            <!-- Card Info Sesi & Autentikasi -->
-                            <div class="card p-3.5 border-0 shadow-sm rounded-4 bg-white">
-                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <small class="fw-bold text-uppercase text-muted" style="font-size: 0.72rem;">
-                                        <i class="bi bi-shield-fill-check text-success me-1"></i>Keamanan Server &amp; Sesi
-                                    </small>
-                                    <span class="badge bg-success-subtle text-success small">Aktif</span>
-                                </div>
-                                <div class="small text-muted" style="font-size: 0.78rem;">
-                                    <div class="d-flex justify-content-between py-1 border-bottom">
-                                        <span>Tingkat Akses:</span>
-                                        <strong class="text-dark">Super Administrator</strong>
-                                    </div>
-                                    <div class="d-flex justify-content-between py-1 border-bottom">
-                                        <span>Protokol Keamanan:</span>
-                                        <code class="text-dark">Argon2id / Bcrypt Session Guard</code>
-                                    </div>
-                                    <div class="d-flex justify-content-between py-1">
-                                        <span>Terakhir Login:</span>
-                                        <span class="text-dark"><?= date('d F Y, H:i') ?> WIB</span>
-                                    </div>
-                                </div>
+                            <div class="profil-field">
+                                <label class="profil-label">Kata Sandi Baru</label>
+                                <input type="password" name="password_baru" class="profil-input" placeholder="Minimal 6 karakter" required>
                             </div>
 
-                        </div>
+                            <div class="profil-field">
+                                <label class="profil-label">Ulangi Kata Sandi Baru</label>
+                                <input type="password" name="password_konfirmasi" class="profil-input" placeholder="Konfirmasi sandi baru" required>
+                            </div>
+
+                            <div class="p-2.5 rounded-3 bg-light border mb-3 small text-muted" style="font-size: 12px;">
+                                <i class="bi bi-info-circle me-1" style="color: #11756D;"></i>Sandi Super Administrator memiliki hak penuh atas konfigurasi sistem.
+                            </div>
+
+                            <div class="profil-actions mt-auto">
+                                <button type="submit" class="profil-btn profil-btn-primary w-100">
+                                    <i class="bi bi-shield-lock me-1"></i>Perbarui Sandi Administrator
+                                </button>
+                            </div>
+                        </form>
                     </div>
 
                 </div>

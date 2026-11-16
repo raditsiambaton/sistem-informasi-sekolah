@@ -28,258 +28,214 @@ body.tahfiz-body, .tahfiz-app {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
-/* ── Sidebar Sistem Monitoring Tahfiz ──────────────────────── */
-.tahfiz-sidebar, .ustadz-sidebar, .siswa-sidebar {
-    width: 260px;
-    background: var(--color-primary-deep) !important;
-    min-height: 100vh;
+/* ── Sidebar Sistem Monitoring Tahfiz (Seragam: 250px, #11756D) ─ */
+.tahfiz-sidebar, .admin-sidebar, .ustadz-sidebar, .siswa-sidebar {
+    width: 250px !important;
+    min-width: 250px !important;
+    max-width: 250px !important;
+    height: 100vh !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important;
     color: #FFFFFF !important;
-    flex-shrink: 0;
-    padding: 24px 16px;
-}
-
-.tahfiz-nav-link, .ustadz-nav-link, .siswa-nav-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
-    color: #A2D5D2 !important;
-    font-weight: 600;
-    font-size: 0.9rem;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.2s;
-    margin-bottom: 4px;
-}
-
-.tahfiz-nav-link:hover, .ustadz-nav-link:hover, .siswa-nav-link:hover {
-    color: #FFFFFF !important;
-    background: rgba(255, 255, 255, 0.12) !important;
-}
-
-.tahfiz-nav-link.active, .ustadz-nav-link.active, .siswa-nav-link.active {
-    background: var(--color-primary) !important;
-    color: #FFFFFF !important;
-    font-weight: 700;
-    box-shadow: 0 4px 12px rgba(17, 117, 109, 0.35) !important;
-}
-
-/* ── Admin Sidebar (Figma Presisi: 260px, #0A2922) ─────────── */
-.admin-sidebar {
-    width: 260px;
-    min-width: 260px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    background: #0A2922 !important;
-    color: #FFFFFF !important;
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
     padding: 0 !important;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
+    z-index: 1000 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE/Edge */
 }
 
-.admin-content-wrapper {
-    margin-left: 260px;
-    width: calc(100% - 260px);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+.tahfiz-sidebar::-webkit-scrollbar, 
+.admin-sidebar::-webkit-scrollbar, 
+.ustadz-sidebar::-webkit-scrollbar, 
+.siswa-sidebar::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Opera */
 }
 
-/* Sidebar Brand Header */
-.sidebar-brand {
-    padding: 20px 20px 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    display: flex;
-    align-items: center;
-    gap: 12px;
+/* Kontainer Utama di Sebelah Kanan Sidebar */
+.admin-content-wrapper, .ustadz-content-wrapper, .siswa-content-wrapper {
+    margin-left: 250px !important;
+    width: calc(100% - 250px) !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background-color: #F6F7F5 !important;
 }
 
-.sidebar-brand .sidebar-logo {
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
-    object-fit: contain;
-    flex-shrink: 0;
+/* ── Brand Header Sidebar (Seragam) ────────────────────────── */
+.sidebar-brand, .ustadz-sidebar-brand, .siswa-sidebar-brand {
+    padding: 20px 18px 16px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
 }
 
-.sidebar-brand-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: #FFFFFF;
-    line-height: 1.2;
+.sidebar-logo, .sidebar-brand .sidebar-logo, .ustadz-sidebar-brand .sidebar-logo, .siswa-sidebar-brand .sidebar-logo {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 8px !important;
+    object-fit: contain !important;
+    background-color: #FFFFFF !important;
+    padding: 2px !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
 }
 
-.sidebar-brand-subtitle {
-    font-size: 12px;
-    color: #8FA8A1;
-    font-weight: 500;
-    line-height: 1.2;
-    margin-top: 2px;
+.sidebar-brand-title, .ustadz-brand-title, .siswa-brand-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #FACC15 !important; /* Emas #FACC15 */
+    line-height: 1.2 !important;
 }
 
-/* Sidebar User Profile Card */
-.sidebar-user-card {
-    margin: 16px 14px;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.sidebar-brand-subtitle, .ustadz-brand-subtitle, .siswa-brand-subtitle {
+    font-size: 12px !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+    margin-top: 2px !important;
 }
 
-.sidebar-user-avatar {
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-weight: 700;
-    font-size: 14px;
-    color: #FFFFFF;
-    background: #11756D;
-    flex-shrink: 0;
+/* ── Kartu Ringkas Profil Pengguna di Bawah Header ─────────── */
+.sidebar-user-card, .ustadz-user-info, .siswa-user-card {
+    margin: 14px 12px !important;
+    padding: 10px 12px !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
 }
 
-.sidebar-user-info {
-    overflow: hidden;
-    min-width: 0;
+.sidebar-user-avatar, .ustadz-user-avatar, .siswa-user-avatar {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    color: #FFFFFF !important;
+    background: #0B4F49 !important; /* Gelap Kontras #0B4F49 */
+    flex-shrink: 0 !important;
 }
 
-.sidebar-user-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: #FFFFFF;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.3;
+.sidebar-user-info, .ustadz-user-text, .siswa-user-text {
+    overflow: hidden !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
-.sidebar-user-status {
-    font-size: 11px;
-    color: #10B981;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    line-height: 1.2;
+.sidebar-user-name, .ustadz-user-role, .siswa-user-name {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #FFFFFF !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    line-height: 1.3 !important;
 }
 
-/* Sidebar Section Label */
-.sidebar-menu-label {
-    padding: 8px 24px 6px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: #7A968E;
-    text-transform: uppercase;
-    font-weight: 700;
-    display: block;
+.sidebar-user-status, .ustadz-user-name, .siswa-user-status {
+    font-size: 11px !important;
+    color: #A7F3D0 !important; /* Hijau mint terang #A7F3D0 */
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
-/* Sidebar Navigation Item */
-.admin-nav-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
-    margin: 2px 14px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #C8D6D2;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    border: 1px solid transparent;
+/* ── Label Kategori Menu ───────────────────────────────────── */
+.sidebar-menu-label, .ustadz-nav-label, .siswa-menu-label {
+    padding: 10px 20px 6px !important;
+    font-size: 11px !important;
+    letter-spacing: 0.08em !important;
+    color: rgba(255, 255, 255, 0.70) !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+    display: block !important;
 }
 
-.admin-nav-link i {
-    width: 20px;
-    height: 20px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 16px;
+/* ── Link Navigasi Menu Lurus & Konsisten ──────────────────── */
+.admin-nav-link, .ustadz-nav-link, .siswa-nav-link, .tahfiz-nav-link {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 11px 14px !important;
+    margin: 4px 12px !important;
+    border-radius: 10px !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    color: rgba(255, 255, 255, 0.88) !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid transparent !important;
 }
 
-.admin-nav-link:hover {
-    background: rgba(255, 255, 255, 0.06);
-    color: #FFFFFF;
+.admin-nav-link i, .ustadz-nav-link i, .siswa-nav-link i, .tahfiz-nav-link i {
+    width: 20px !important;
+    height: 20px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    font-size: 16px !important;
 }
 
-.admin-nav-link.active {
-    background: linear-gradient(135deg, #136F5B 0%, #0E5A49 100%);
-    color: #FFFFFF;
-    font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+.admin-nav-link:hover, .ustadz-nav-link:hover, .siswa-nav-link:hover, .tahfiz-nav-link:hover {
+    background: rgba(255, 255, 255, 0.10) !important;
+    color: #FFFFFF !important;
 }
 
-/* Sidebar Footer Actions */
-.sidebar-footer {
-    margin-top: auto;
-    padding: 16px 14px 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.admin-nav-link.active, .ustadz-nav-link.active, .siswa-nav-link.active, .tahfiz-nav-link.active {
+    background: rgba(255, 255, 255, 0.20) !important;
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10) !important;
 }
 
-.btn-sidebar-web {
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    background: transparent;
-    color: #FFFFFF;
-    gap: 8px;
-    transition: all 0.2s ease;
-    width: 100%;
-}
-
-.btn-sidebar-web:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.4);
-    color: #FFFFFF;
+/* ── Footer Sidebar Seragam (margin-top: auto) ─────────────── */
+.sidebar-footer, .ustadz-sidebar-footer, .siswa-sidebar-footer {
+    margin-top: auto !important;
+    padding: 16px 14px 20px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.14) !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 .btn-sidebar-logout {
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    background: #DC2626;
-    border: 1px solid #DC2626;
-    color: #FFFFFF;
-    gap: 8px;
-    transition: all 0.2s ease;
-    width: 100%;
+    width: 100% !important;
+    height: 42px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    background: #DC2626 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: background 0.2s ease !important;
 }
 
 .btn-sidebar-logout:hover {
-    background: #B91C1C;
-    border-color: #B91C1C;
-    color: #FFFFFF;
+    background: #B91C1C !important;
+    color: #FFFFFF !important;
 }
 
 /* ── Top Header / Navbar Dashboard ─────────────────────────── */
@@ -437,282 +393,110 @@ body.tahfiz-body, .tahfiz-app {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   USTADZ SIDEBAR — Figma Presisi (240px, solid #11756D)
+   PROFIL SAYA — Desain Bersih Standar 2 Kolom
    ═══════════════════════════════════════════════════════════════ */
-.ustadz-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 240px;
-    height: 100vh;
-    background: #11756D !important;
-    color: #FFFFFF !important;
-    padding: 0 !important;
-    min-height: 100vh;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    z-index: 1000;
-    overflow-y: auto;
-}
-
-/* Brand Header */
-.ustadz-sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 22px 20px 18px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.ustadz-sidebar-brand .sidebar-logo {
-    width: 38px;
-    height: 38px;
-    object-fit: contain;
-    border-radius: 8px;
-    flex-shrink: 0;
-}
-
-.ustadz-brand-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #FACC15;
-    line-height: 1.2;
-}
-
-.ustadz-brand-subtitle {
-    font-size: 11px;
-    color: #FFFFFF;
-    opacity: 0.9;
-    line-height: 1.3;
-    margin-top: 2px;
-}
-
-/* Info Pengguna */
-.ustadz-user-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 18px 20px 14px;
-}
-
-.ustadz-user-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #E5E7EB;
-    color: #11756D;
-    font-weight: 700;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.ustadz-user-text {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.ustadz-user-role {
-    font-size: 13px;
-    font-weight: 700;
-    color: #FFFFFF;
-}
-
-.ustadz-user-name {
-    font-size: 12px;
-    color: #A7F3D0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Menu Navigasi */
-.ustadz-nav {
-    padding: 0 0 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.ustadz-nav-label {
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    opacity: 0.75;
-    padding: 12px 20px 6px;
-    color: #FFFFFF;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.ustadz-nav .ustadz-nav-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 2px 12px;
-    border-radius: 10px;
-    padding: 10px 14px;
-    color: rgba(255, 255, 255, 0.9) !important;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.2s ease, color 0.2s ease;
-}
-
-.ustadz-nav .ustadz-nav-link i {
-    font-size: 16px;
-    line-height: 1;
-}
-
-.ustadz-nav .ustadz-nav-link:hover {
-    background: rgba(255, 255, 255, 0.10);
-    color: #FFFFFF !important;
-}
-
-.ustadz-nav .ustadz-nav-link.active {
-    background: rgba(255, 255, 255, 0.16) !important;
-    color: #FFFFFF !important;
-    font-weight: 700;
-    box-shadow: none !important;
-}
-
-/* Footer Sidebar */
-.ustadz-sidebar-footer {
-    margin-top: auto;
-    padding: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.ustadz-logout {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #FFFFFF;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 8px 4px;
-    transition: opacity 0.2s ease;
-}
-
-.ustadz-logout:hover {
-    opacity: 0.8;
-    color: #FFFFFF;
-    text-decoration: none;
-}
-
-.ustadz-logout i {
-    font-size: 16px;
-}
-
-/* Konten utama — geser sejajar sidebar 240px */
-.ustadz-content-wrapper {
-    margin-left: 240px;
-    width: calc(100% - 240px);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background-color: #F6F6F2;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   PROFIL SAYA — Figma Presisi (2 kolom kartu putih)
-   ═══════════════════════════════════════════════════════════════ */
-.ustadz-content-wrapper:has(.profil-grid) main {
-    background-color: #F6F6F2;
-}
-
 .profil-page-title {
     font-size: 22px;
     font-weight: 700;
-    color: #111827;
+    color: #11756D;
+    margin-bottom: 6px;
+}
+
+.profil-page-subtitle {
+    font-size: 13.5px;
+    color: #64748B;
     margin-bottom: 24px;
 }
 
 .profil-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px;
-    align-items: stretch;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 24px !important;
+    align-items: start !important;
 }
 
 .profil-card {
-    background: #FFFFFF;
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    background: #FFFFFF !important;
+    border-radius: 16px !important;
+    padding: 28px !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
 }
 
 .profil-card-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: #111827;
-    margin-bottom: 24px;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #11756D !important;
+    margin-bottom: 20px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .profil-field {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 }
 
 .profil-label {
     display: block;
     font-size: 13px;
-    font-weight: 700;
-    color: #374151;
-    margin-bottom: 8px;
+    font-weight: 600;
+    color: #1E293B;
+    margin-bottom: 6px;
 }
 
-.profil-input {
+.profil-input, .profil-field .form-control {
     width: 100%;
-    height: 44px;
-    border-radius: 8px;
-    border: none;
-    padding: 0 14px;
-    font-size: 14px;
-    color: #374151;
-    background: #EEF2F6;
+    height: 42px !important;
+    border-radius: 8px !important;
+    border: 1px solid #E2E8F0 !important;
+    padding: 0 14px !important;
+    font-size: 13.5px !important;
+    color: #1E293B !important;
+    background: #F1F5F9 !important;
     outline: none;
-    transition: box-shadow 0.2s ease;
+    transition: all 0.2s ease;
 }
 
-.profil-input:focus {
-    box-shadow: 0 0 0 3px rgba(17, 117, 109, 0.2);
+.profil-input:focus, .profil-field .form-control:focus {
+    border-color: #11756D !important;
+    box-shadow: 0 0 0 3px rgba(17, 117, 109, 0.15) !important;
+    background: #FFFFFF !important;
 }
 
-.profil-input[readonly] {
-    background: #EEF2F6;
-    color: #374151;
+.profil-input[readonly], .profil-field .form-control[readonly] {
+    background: #F8FAFC !important;
+    color: #64748B !important;
     cursor: default;
 }
 
 .profil-hint {
     display: block;
-    font-size: 11px;
-    color: #9CA3AF;
-    margin-top: 6px;
+    font-size: 11.5px;
+    color: #94A3B8;
+    margin-top: 4px;
 }
 
 .profil-actions {
     display: flex;
-    gap: 16px;
-    margin-top: 28px;
+    gap: 12px;
+    margin-top: 24px;
 }
 
 .profil-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 11px 20px;
-    border-radius: 10px;
+    height: 42px;
+    padding: 0 20px;
+    border-radius: 8px;
     border: none;
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
-    transition: background 0.2s ease, transform 0.1s ease;
+    transition: all 0.2s ease;
 }
 
 .profil-btn:active {
@@ -720,32 +504,30 @@ body.tahfiz-body, .tahfiz-app {
 }
 
 .profil-btn-primary {
-    background: #11756D;
-    color: #FFFFFF;
+    background: #11756D !important;
+    color: #FFFFFF !important;
 }
 
 .profil-btn-primary:hover {
-    background: #0D5C56;
-    color: #FFFFFF;
+    background: #0D5C56 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 10px rgba(17, 117, 109, 0.25);
 }
 
 .profil-btn-reset {
-    background: #E5E7EB;
-    color: #DC2626;
-    padding: 11px 24px;
-}
-
-.profil-btn-reset i {
-    color: #DC2626;
+    background: #F1F5F9 !important;
+    color: #64748B !important;
+    border: 1px solid #E2E8F0 !important;
 }
 
 .profil-btn-reset:hover {
-    background: #D1D5DB;
+    background: #E2E8F0 !important;
+    color: #1E293B !important;
 }
 
 @media (max-width: 991.98px) {
     .profil-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
     }
 }
