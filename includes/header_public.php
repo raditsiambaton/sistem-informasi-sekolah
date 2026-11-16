@@ -108,14 +108,6 @@ function navActive(string $page, string $current): string {
                     </a>
                 </li>
 
-                <!-- Kontak -->
-                <li class="nav-item">
-                    <a class="nav-link px-3 <?= navActive('kontak', $current_page) ?>"
-                       href="<?= $base_path ?>index.php#kontak">
-                        <i class="bi bi-telephone me-1"></i>Kontak
-                    </a>
-                </li>
-
                 <!-- Tahfiz (Login Portal Multi-Peran dengan Nuansa Biru Elegan) -->
                 <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
                     <a class="btn btn-sm px-4 py-2 fw-bold text-white rounded-pill shadow-sm"

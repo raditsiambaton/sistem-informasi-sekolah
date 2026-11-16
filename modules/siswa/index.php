@@ -575,15 +575,15 @@ try {
                 </div>
 
                 <!-- 2. DUA KOLOM FORMULIR PENGATURAN (BIODATA & KEAMANAN) -->
-                <div class="profil-grid">
+                <div class="profil-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch;">
                     
                     <!-- KOLOM KIRI: DATA BIODATA & HALAQAH SANTRI -->
-                    <div class="profil-card">
+                    <div class="profil-card d-flex flex-column">
                         <h2 class="profil-card-title">
                             <i class="bi bi-person-circle text-success"></i>Data Biodata &amp; Halaqah Santri
                         </h2>
                         
-                        <form action="?tab=profil" method="POST">
+                        <form action="?tab=profil" method="POST" class="d-flex flex-column flex-grow-1">
                             <input type="hidden" name="action" value="update_biodata">
 
                             <div class="profil-field">
@@ -617,7 +617,7 @@ try {
                                 </div>
                             </div>
 
-                            <div class="profil-actions">
+                            <div class="profil-actions mt-auto pt-2">
                                 <button type="submit" class="profil-btn profil-btn-primary">
                                     <i class="bi bi-floppy"></i>Simpan Biodata Santri
                                 </button>
@@ -626,66 +626,39 @@ try {
                     </div>
 
                     <!-- KOLOM KANAN: PENGATURAN KATA SANDI SANTRI -->
-                    <div class="d-flex flex-column">
-                        
-                        <!-- Card Ganti Kata Sandi -->
-                        <div class="profil-card">
-                            <h2 class="profil-card-title">
-                                <i class="bi bi-key-fill text-warning"></i>Ganti Kata Sandi
-                            </h2>
+                    <div class="profil-card d-flex flex-column">
+                        <h2 class="profil-card-title">
+                            <i class="bi bi-key-fill text-warning"></i>Ganti Kata Sandi
+                        </h2>
 
-                            <form action="?tab=profil" method="POST">
-                                <input type="hidden" name="action" value="ganti_password">
+                        <form action="?tab=profil" method="POST" class="d-flex flex-column flex-grow-1">
+                            <input type="hidden" name="action" value="ganti_password">
 
-                                <div class="profil-field">
-                                    <label class="profil-label">Kata Sandi Saat Ini</label>
-                                    <input type="password" name="password_lama" class="profil-input" placeholder="Masukkan kata sandi lama" required>
-                                </div>
+                            <div class="profil-field">
+                                <label class="profil-label">Kata Sandi Saat Ini</label>
+                                <input type="password" name="password_lama" class="profil-input" placeholder="Masukkan kata sandi lama" required>
+                            </div>
 
-                                <div class="profil-field">
-                                    <label class="profil-label">Kata Sandi Baru</label>
-                                    <input type="password" name="password_baru" class="profil-input" placeholder="Minimal 6 karakter" required>
-                                </div>
+                            <div class="profil-field">
+                                <label class="profil-label">Kata Sandi Baru</label>
+                                <input type="password" name="password_baru" class="profil-input" placeholder="Minimal 6 karakter" required>
+                            </div>
 
-                                <div class="profil-field">
-                                    <label class="profil-label">Ulangi Kata Sandi Baru</label>
-                                    <input type="password" name="password_konfirmasi" class="profil-input" placeholder="Konfirmasi sandi baru" required>
-                                </div>
+                            <div class="profil-field">
+                                <label class="profil-label">Ulangi Kata Sandi Baru</label>
+                                <input type="password" name="password_konfirmasi" class="profil-input" placeholder="Konfirmasi sandi baru" required>
+                            </div>
 
-                                <div class="p-2.5 rounded-3 bg-light border mb-3 small text-muted" style="font-size: 12px;">
-                                    <i class="bi bi-info-circle me-1" style="color: #11756D;"></i>Jangan bagikan kata sandi Anda kepada orang lain agar data hafalan tetap aman.
-                                </div>
+                            <div class="p-2.5 rounded-3 bg-light border mb-3 small text-muted" style="font-size: 12px;">
+                                <i class="bi bi-info-circle me-1" style="color: #11756D;"></i>Jangan bagikan kata sandi Anda kepada orang lain agar data hafalan tetap aman.
+                            </div>
 
+                            <div class="profil-actions mt-auto">
                                 <button type="submit" class="profil-btn profil-btn-primary w-100">
                                     <i class="bi bi-shield-lock me-1"></i>Perbarui Sandi Santri
                                 </button>
-                            </form>
-                        </div>
-
-                        <!-- Card Info Sesi Santri -->
-                        <div class="card p-3 border-0 shadow-sm rounded-4 bg-white" style="margin-top: 20px; border: 1px solid #E2E8F0 !important;">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <small class="fw-bold text-uppercase text-muted" style="font-size: 0.72rem;">
-                                    <i class="bi bi-shield-fill-check text-success me-1"></i>Status Sesi Santri
-                                </small>
-                                <span class="badge bg-success-subtle text-success small">Aktif</span>
                             </div>
-                            <div class="small text-muted" style="font-size: 0.78rem;">
-                                <div class="d-flex justify-content-between py-1 border-bottom">
-                                    <span>Peran:</span>
-                                    <strong class="text-dark">Santri / Siswa Aktif</strong>
-                                </div>
-                                <div class="d-flex justify-content-between py-1 border-bottom">
-                                    <span>Tahun Masuk:</span>
-                                    <strong class="text-dark">T.A. 2026/2027</strong>
-                                </div>
-                                <div class="d-flex justify-content-between py-1">
-                                    <span>Login Terkini:</span>
-                                    <span class="text-dark"><?= date('d F Y, H:i') ?> WIB</span>
-                                </div>
-                            </div>
-                        </div>
-
+                        </form>
                     </div>
 
                 </div>

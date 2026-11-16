@@ -272,7 +272,31 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Footer ──────────────────────────────────────────────────────── */
 footer {
-    background-color: var(--color-navy-dark) !important;
+    background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 45%, #1D4ED8 100%) !important;
+}
+
+footer a.text-hover-white {
+    transition: color 0.2s ease;
+}
+
+footer a.text-hover-white:hover {
+    color: #FFFFFF !important;
+}
+
+.btn-login-portal-white {
+    background: #FFFFFF !important;
+    color: #1E3A8A !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: 10px !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-login-portal-white:hover {
+    background: #F1F5F9 !important;
+    color: #1D4ED8 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
 }
 
 footer address {
