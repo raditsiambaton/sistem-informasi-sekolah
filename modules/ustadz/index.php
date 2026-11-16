@@ -449,61 +449,52 @@ $quran_juz = [
     ════════════════════════════════════════════════════════════ -->
     <aside class="ustadz-sidebar d-flex flex-column">
         <!-- Brand -->
-        <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom border-secondary border-opacity-25">
-            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" style="width: 38px; height: 38px; object-fit: contain; border-radius: 8px;" class="sidebar-logo">
-            <div>
-                <div class="fw-bold fs-6 text-white lh-1">SIM Tahfiz</div>
-                <small class="text-white-50 fw-semibold" style="font-size: 0.72rem;">SMA IT Al-Fadhilah</small>
+        <div class="ustadz-sidebar-brand">
+            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" class="sidebar-logo">
+            <div class="ustadz-brand-text">
+                <div class="ustadz-brand-title">Tahfiz Yuk</div>
+                <div class="ustadz-brand-subtitle">Sistem monitoring tahfiz</div>
             </div>
         </div>
 
-        <!-- Profil Ustadz Card -->
-        <div class="p-2.5 rounded-3 mb-4 bg-dark bg-opacity-25 d-flex align-items-center gap-2">
-            <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold" style="width: 38px; height: 38px; font-size: 0.88rem; background: #11756D;">
-                RA
-            </div>
-            <div class="overflow-hidden">
-                <div class="fw-bold text-white small text-truncate"><?= htmlspecialchars($ustadz_name) ?></div>
-                <small class="text-warning fw-semibold" style="font-size: 0.72rem;">Halaqah <?= htmlspecialchars($halaqah_name) ?></small>
+        <!-- Info Pengguna -->
+        <div class="ustadz-user-info">
+            <div class="ustadz-user-avatar">RA</div>
+            <div class="ustadz-user-text">
+                <div class="ustadz-user-role">Ustadz</div>
+                <div class="ustadz-user-name"><?= htmlspecialchars($ustadz_name) ?></div>
             </div>
         </div>
 
-        <!-- Menu Pembimbing -->
-        <nav class="flex-grow-1">
-            <small class="text-uppercase fw-bold text-white-50 px-2 mb-2 d-block" style="font-size: 0.68rem; letter-spacing: 0.06em;">Menu Pembimbing</small>
-            
-            <a href="?tab=binaan" class="ustadz-nav-link <?= $page_tab === 'binaan' ? 'active' : '' ?>">
-                <i class="bi bi-people-fill"></i>Siswa Binaan
+        <!-- Menu Navigasi -->
+        <nav class="ustadz-nav flex-grow-1">
+            <div class="ustadz-nav-label">MENU</div>
+
+            <a href="?tab=profil" class="ustadz-nav-link <?= $page_tab === 'profil' ? 'active' : '' ?>">
+                <i class="bi bi-star"></i><span>Profil Saya</span>
             </a>
-            
+
             <a href="?tab=hafalan" class="ustadz-nav-link <?= $page_tab === 'hafalan' ? 'active' : '' ?>">
-                <i class="bi bi-journal-plus"></i>Catat Hafalan Baru
+                <i class="bi bi-book"></i><span>Hafalan</span>
             </a>
 
             <a href="?tab=murajaah" class="ustadz-nav-link <?= $page_tab === 'murajaah' ? 'active' : '' ?>">
-                <i class="bi bi-arrow-repeat"></i>Dashboard Murajaah
-            </a>
-
-            <a href="?tab=target" class="ustadz-nav-link <?= $page_tab === 'target' ? 'active' : '' ?>">
-                <i class="bi bi-bullseye"></i>Target Hafalan
+                <i class="bi bi-arrow-counterclockwise"></i><span>Murajaah</span>
             </a>
 
             <a href="?tab=rekap" class="ustadz-nav-link <?= $page_tab === 'rekap' ? 'active' : '' ?>">
-                <i class="bi bi-file-earmark-bar-graph-fill"></i>Rekap Tahfiz
+                <i class="bi bi-file-earmark-text"></i><span>Rekap Tahfiz</span>
             </a>
 
-            <a href="?tab=profil" class="ustadz-nav-link <?= $page_tab === 'profil' ? 'active' : '' ?>">
-                <i class="bi bi-person-circle"></i>Profil Saya
+            <a href="?tab=target" class="ustadz-nav-link <?= $page_tab === 'target' ? 'active' : '' ?>">
+                <i class="bi bi-bullseye"></i><span>Target</span>
             </a>
         </nav>
 
-        <!-- Aksi Sesi & Web Sekolah -->
-        <div class="pt-3 border-top border-secondary border-opacity-25 mt-auto">
-            <a href="../../index.php" class="btn btn-outline-light btn-sm w-100 mb-2 fw-semibold" target="_blank">
-                <i class="bi bi-box-arrow-up-right me-1"></i>Web Sekolah
-            </a>
-            <a href="../auth/logout.php" class="btn btn-danger btn-sm w-100 fw-semibold">
-                <i class="bi bi-box-arrow-right me-1"></i>Keluar Sesi
+        <!-- Footer Sidebar -->
+        <div class="ustadz-sidebar-footer">
+            <a href="../auth/logout.php" class="ustadz-logout">
+                <i class="bi bi-box-arrow-right"></i><span>Log out</span>
             </a>
         </div>
     </aside>
@@ -511,7 +502,7 @@ $quran_juz = [
     <!-- ═══════════════════════════════════════════════════════════
          MAIN CONTENT AREA
     ════════════════════════════════════════════════════════════ -->
-    <div class="flex-grow-1 d-flex flex-column" style="min-width: 0;">
+    <div class="ustadz-content-wrapper">
         
         <!-- Top Bar Header -->
         <header class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center shadow-sm">
@@ -1124,215 +1115,78 @@ $quran_juz = [
                  (Tampilan Eksekutif, Elegan, dan Profesional)
             ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'profil'): ?>
-                <div class="mb-4">
-                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">KEAMANAN AKUN</span>
-                    <h2 class="fw-bold mb-1" style="color: #11756D;">Profil Saya &amp; Ganti Password</h2>
-                    <p class="text-muted small mb-0">Pengaturan informasi akun asatidz pembimbing dan keamanan kata sandi.</p>
-                </div>
+                <h1 class="profil-page-title">Profil Saya</h1>
 
-                <div class="row g-4" style="max-width: 900px;">
-                    <div class="col-12 col-md-6">
-                        <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
-                            <h5 class="fw-bold mb-3" style="color: #11756D;">
-                                <i class="bi bi-person-badge-fill me-2"></i>Biodata Ustadz
-                            </h5>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold small text-muted">Nama Lengkap</label>
-                                <input type="text" class="form-control" value="<?= htmlspecialchars($ustadz_name) ?>" readonly style="background: #F8FAFC;">
+                <div class="profil-grid">
+                    <!-- Kartu Kiri: Informasi Akun -->
+                    <div class="profil-card">
+                        <h2 class="profil-card-title">Informasi Akun</h2>
+
+                        <form action="?tab=profil" method="POST">
+                            <input type="hidden" name="action" value="update_biodata">
+
+                            <div class="profil-field">
+                                <label class="profil-label" for="namaLengkap">Nama Lengkap</label>
+                                <input type="text" id="namaLengkap" name="nama_lengkap" class="profil-input" value="<?= htmlspecialchars($ustadz_name) ?>" required>
                             </div>
 
-                            <!-- Statistik Singkat Pembimbing -->
-                            <div class="d-flex gap-3 text-center border-top border-md-top-0 pt-3 pt-md-0 border-white border-opacity-20">
-                                <div class="px-3 py-2 rounded-3" style="background: rgba(0,0,0,0.18); min-width: 90px;">
-                                    <div class="fs-4 fw-bold text-white"><?= $total_santri_binaan ?></div>
-                                    <small class="text-white-50" style="font-size: 0.72rem;">Santri Binaan</small>
-                                </div>
-                                <div class="px-3 py-2 rounded-3" style="background: rgba(0,0,0,0.18); min-width: 90px;">
-                                    <div class="fs-4 fw-bold text-white">2 Juz</div>
-                                    <small class="text-white-50" style="font-size: 0.72rem;">Target (29–30)</small>
-                                </div>
-                                <div class="px-3 py-2 rounded-3" style="background: rgba(0,0,0,0.18); min-width: 90px;">
-                                    <div class="fs-4 fw-bold text-warning"><?= $total_setoran_count ?></div>
-                                    <small class="text-white-50" style="font-size: 0.72rem;">Total Setoran</small>
-                                </div>
+                            <div class="profil-field">
+                                <label class="profil-label" for="kontakUstadz">Kontak</label>
+                                <input type="text" id="kontakUstadz" name="kontak" class="profil-input" value="0812-7890-1234" placeholder="Contoh: 0812xxxxxxxx">
                             </div>
 
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. DUA KOLOM FORMULIR PENGATURAN (BIODATA & KEAMANAN) -->
-                <div class="row g-4">
-                    
-                    <!-- KOLOM KIRI: BIODATA & DATA PENUGASAN ASATIDZ -->
-                    <div class="col-12 col-lg-7">
-                        <div class="card p-4 border-0 shadow-sm rounded-4 bg-white h-100">
-                            <div class="d-flex align-items-center gap-2 pb-3 mb-4 border-bottom">
-                                <div class="rounded-3 p-2 text-white d-flex align-items-center justify-content-center" style="background: #117A74; width: 40px; height: 40px;">
-                                    <i class="bi bi-person-vcard fs-5"></i>
-                                </div>
-                                <div>
-                                    <h5 class="fw-bold mb-0 text-dark">Informasi Akun &amp; Penugasan</h5>
-                                    <small class="text-muted">Data identitas pengampu resmi SMA IT Al-Fadhilah Pekanbaru</small>
-                                </div>
+                            <div class="profil-field">
+                                <label class="profil-label" for="nipUstadz">Nomor Induk Pegawai (NIP)</label>
+                                <input type="text" id="nipUstadz" class="profil-input" value="199205142023031004" readonly>
+                                <small class="profil-hint">Nomor Induk Pegawai (NIP) tidak dapat diubah</small>
                             </div>
 
-                    <div class="col-12 col-md-6">
-                        <div class="card p-4 border-0 shadow-sm rounded-4 h-100 bg-white">
-                            <h5 class="fw-bold mb-3" style="color: #11756D;">
-                                <i class="bi bi-key-fill me-2 text-warning"></i>Ganti Kata Sandi
-                            </h5>
-                            <form action="?tab=profil" method="POST">
-                                <input type="hidden" name="action" value="update_biodata">
+                            <div class="profil-field">
+                                <label class="profil-label" for="halaqahUstadz">Halaqah</label>
+                                <input type="text" id="halaqahUstadz" class="profil-input" value="Halaqah <?= htmlspecialchars($halaqah_name) ?>" readonly>
+                                <small class="profil-hint">Halaqah tidak dapat diubah</small>
+                            </div>
 
-                                <div class="row g-3 mb-3">
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label small fw-bold text-dark">Nama Lengkap &amp; Gelar</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
-                                            <input type="text" name="nama_lengkap" class="form-control border-start-0 fw-semibold" value="<?= htmlspecialchars($ustadz_name) ?>" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label small fw-bold text-dark">Nomor Induk Pegawai (NIP)</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-lock"></i></span>
-                                            <input type="text" class="form-control border-start-0" value="199205142023031004" readonly style="background: #F8FAFC;">
-                                        </div>
-                                        <small class="text-muted" style="font-size: 0.72rem;">*NIP resmi terdaftar di kepegawaian yayasan.</small>
-                                    </div>
-                                </div>
-
-                                <div class="row g-3 mb-3">
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label small fw-bold text-dark">Nomor Kontak / WhatsApp</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-whatsapp"></i></span>
-                                            <input type="text" class="form-control border-start-0" value="0812-7890-1234" placeholder="Contoh: 0812xxxxxxxx">
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label small fw-bold text-dark">Alamat Surel Edukasi</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
-                                            <input type="email" class="form-control border-start-0" value="rival.melfandy@alfadhilah.sch.id">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="p-3 rounded-3 mb-4 bg-light border">
-                                    <h6 class="fw-bold small text-dark mb-2">
-                                        <i class="bi bi-briefcase me-1 text-primary"></i>Penugasan Halaqah &amp; Jadwal
-                                    </h6>
-                                    <div class="row g-2 small text-muted">
-                                        <div class="col-6">
-                                            <span>Halaqah Binaan:</span>
-                                            <strong class="text-dark d-block">Halaqah <?= htmlspecialchars($halaqah_name) ?> (Kelas X)</strong>
-                                        </div>
-                                        <div class="col-6">
-                                            <span>Target Hafalan:</span>
-                                            <strong class="text-dark d-block">Juz 29 &amp; Juz 30 Mutqin</strong>
-                                        </div>
-                                        <div class="col-6 mt-2">
-                                            <span>Jadwal Halaqah:</span>
-                                            <strong class="text-dark d-block">Senin–Kamis (Ba'da Ashar)</strong>
-                                        </div>
-                                        <div class="col-6 mt-2">
-                                            <span>Tempat Halaqah:</span>
-                                            <strong class="text-dark d-block">Masjid Al-Fadhilah Lt. 1</strong>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-tahfiz px-4 py-2.5 rounded-3 fw-bold shadow-sm">
-                                        <i class="bi bi-check-circle me-1"></i>Simpan Perubahan Biodata
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                            <div class="profil-actions">
+                                <button type="submit" class="profil-btn profil-btn-primary">
+                                    <i class="bi bi-floppy"></i>Simpan perubahan
+                                </button>
+                                <button type="reset" class="profil-btn profil-btn-reset">
+                                    <i class="bi bi-x-circle"></i>Batal
+                                </button>
+                            </div>
+                        </form>
                     </div>
 
-                    <!-- KOLOM KANAN: KEAMANAN KATA SANDI & STATUS SESI -->
-                    <div class="col-12 col-lg-5">
-                        <div class="d-flex flex-column gap-4">
-                            
-                            <!-- Card Ganti Kata Sandi -->
-                            <div class="card p-4 border-0 shadow-sm rounded-4 bg-white">
-                                <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom">
-                                    <div class="rounded-3 p-2 text-white bg-warning d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                        <i class="bi bi-key-fill fs-5"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="fw-bold mb-0 text-dark">Ganti Kata Sandi</h5>
-                                        <small class="text-muted">Perbarui kata sandi untuk melindungi akun Anda</small>
-                                    </div>
-                                </div>
+                    <!-- Kartu Kanan: Ganti Password -->
+                    <div class="profil-card">
+                        <h2 class="profil-card-title">Ganti Password</h2>
 
-                                <form action="?tab=profil" method="POST">
-                                    <input type="hidden" name="action" value="update_password">
+                        <form action="?tab=profil" method="POST">
+                            <input type="hidden" name="action" value="update_password">
 
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold text-dark">Kata Sandi Saat Ini</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
-                                            <input type="password" name="password_lama" class="form-control border-start-0" placeholder="Masukkan kata sandi lama" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold text-dark">Kata Sandi Baru</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-check"></i></span>
-                                            <input type="password" name="password_baru" class="form-control border-start-0" placeholder="Minimal 6 karakter" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold text-dark">Ulangi Kata Sandi Baru</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-lock"></i></span>
-                                            <input type="password" name="password_konfirmasi" class="form-control border-start-0" placeholder="Konfirmasi kata sandi baru" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="p-2.5 rounded-3 bg-light border mb-3 small text-muted" style="font-size: 0.75rem;">
-                                        <i class="bi bi-info-circle text-primary me-1"></i>Gunakan kombinasi minimal 6 karakter dengan huruf dan angka untuk keamanan maksimal.
-                                    </div>
-
-                                    <button type="submit" class="btn btn-tahfiz w-100 py-2.5 rounded-3 fw-bold shadow-sm">
-                                        <i class="bi bi-shield-lock me-1"></i>Perbarui Sandi Ustadz
-                                    </button>
-                                </form>
+                            <div class="profil-field">
+                                <label class="profil-label" for="passLama">Password lama</label>
+                                <input type="password" id="passLama" name="password_lama" class="profil-input" placeholder="Masukkan kata sandi lama" required>
                             </div>
 
-                            <!-- Card Info Sesi & Autentikasi -->
-                            <div class="card p-3.5 border-0 shadow-sm rounded-4 bg-white">
-                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <small class="fw-bold text-uppercase text-muted" style="font-size: 0.72rem;">
-                                        <i class="bi bi-shield-fill-check text-success me-1"></i>Informasi Keamanan Sesi
-                                    </small>
-                                    <span class="badge bg-success-subtle text-success small">Tersambung</span>
-                                </div>
-                                <div class="small text-muted" style="font-size: 0.78rem;">
-                                    <div class="d-flex justify-content-between py-1 border-bottom">
-                                        <span>Peran Pengguna:</span>
-                                        <strong class="text-dark">Asatidz Pembimbing</strong>
-                                    </div>
-                                    <div class="d-flex justify-content-between py-1 border-bottom">
-                                        <span>Alamat Host:</span>
-                                        <code class="text-dark">localhost (127.0.0.1)</code>
-                                    </div>
-                                    <div class="d-flex justify-content-between py-1">
-                                        <span>Sesi Login:</span>
-                                        <span class="text-dark"><?= date('d F Y, H:i') ?> WIB</span>
-                                    </div>
-                                </div>
+                            <div class="profil-field">
+                                <label class="profil-label" for="passBaru">Password Baru</label>
+                                <input type="password" id="passBaru" name="password_baru" class="profil-input" placeholder="Minimal 6 Karakter" required>
                             </div>
 
-                        </div>
+                            <div class="profil-field">
+                                <label class="profil-label" for="passKonfirmasi">Konfirmasi Password Baru</label>
+                                <input type="password" id="passKonfirmasi" name="password_konfirmasi" class="profil-input" placeholder="Ulangi kata sandi baru" required>
+                            </div>
+
+                            <div class="profil-actions">
+                                <button type="submit" class="profil-btn profil-btn-primary">
+                                    <i class="bi bi-floppy"></i>Simpan perubahan
+                                </button>
+                            </div>
+                        </form>
                     </div>
-
                 </div>
             <?php endif; ?>
 

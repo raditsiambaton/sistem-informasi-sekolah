@@ -314,7 +314,7 @@ foreach ($users_list as $u) {
         :root {
             --color-primary: #11756D;
             --color-primary-dark: #0D5C56;
-            --color-primary-deep: #0A2E2B;
+            --color-primary-deep: #0A2922;
             --color-accent: #11756D;
             --color-soft: #E6F4F1;
             --color-soft-light: #F4F7F6;
@@ -330,35 +330,194 @@ foreach ($users_list as $u) {
         }
         .admin-sidebar {
             width: 260px;
-            background: #0A2E2B;
-            min-height: 100vh;
+            min-width: 260px;
+            background: #0A2922 !important;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
             color: #ffffff;
             flex-shrink: 0;
-            padding: 24px 16px;
+            padding: 0 !important;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .admin-content-wrapper {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-brand {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar-brand .sidebar-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+        .sidebar-brand-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #FFFFFF;
+            line-height: 1.2;
+        }
+        .sidebar-brand-subtitle {
+            font-size: 12px;
+            color: #8FA8A1;
+            font-weight: 500;
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+        .sidebar-user-card {
+            margin: 16px 14px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar-user-avatar {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #FFFFFF;
+            background: #11756D;
+            flex-shrink: 0;
+        }
+        .sidebar-user-info {
+            overflow: hidden;
+            min-width: 0;
+        }
+        .sidebar-user-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #FFFFFF;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+        }
+        .sidebar-user-status {
+            font-size: 11px;
+            color: #10B981;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1.2;
+        }
+        .sidebar-menu-label {
+            padding: 8px 24px 6px;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            color: #7A968E;
+            text-transform: uppercase;
+            font-weight: 700;
+            display: block;
         }
         .admin-nav-link {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 14px;
-            color: #A2D5D2;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border-radius: 8px;
+            padding: 11px 14px;
+            margin: 2px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #C8D6D2;
             text-decoration: none;
-            transition: all 0.2s;
-            margin-bottom: 4px;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+        .admin-nav-link i {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 16px;
         }
         .admin-nav-link:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.12);
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.06);
         }
         .admin-nav-link.active {
-            background: #11756D;
-            color: #ffffff;
-            font-weight: 700;
-            border-left: 3px solid #80C8C4;
-            box-shadow: 0 4px 12px rgba(17, 117, 109, 0.35);
+            background: linear-gradient(135deg, #136F5B 0%, #0E5A49 100%);
+            color: #FFFFFF;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+        }
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px 14px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn-sidebar-web {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: transparent;
+            color: #FFFFFF;
+            gap: 8px;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .btn-sidebar-web:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #FFFFFF;
+        }
+        .btn-sidebar-logout {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            background: #DC2626;
+            border: 1px solid #DC2626;
+            color: #FFFFFF;
+            gap: 8px;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .btn-sidebar-logout:hover {
+            background: #B91C1C;
+            border-color: #B91C1C;
+            color: #FFFFFF;
         }
         .kpi-card {
             background: #ffffff;
@@ -368,10 +527,25 @@ foreach ($users_list as $u) {
             box-shadow: 0 2px 8px rgba(17, 117, 109, 0.04);
             height: 100%;
         }
-        .chart-bar-clean {
-            background: #11756D;
-            border-radius: 6px 6px 0 0;
+        .chart-bar-track {
+            width: 38px;
+            height: 140px;
+            background: #E2E8F0;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+            margin: 0 auto 10px;
+            position: relative;
+        }
+        .chart-bar-fill, .chart-bar-clean {
+            width: 100%;
+            background: linear-gradient(180deg, #136F5B 0%, #0F766E 100%);
+            border-radius: 8px 8px 0 0;
             transition: height 0.4s ease;
+        }
+        .chart-bar-fill:hover, .chart-bar-clean:hover {
+            filter: brightness(1.08);
         }
         .badge-status-green {
             background: #E6F4F1;
@@ -412,64 +586,64 @@ foreach ($users_list as $u) {
 <body>
 
 <div class="d-flex">
-    <!-- SIDEBAR ADMIN -->
-    <aside class="admin-sidebar d-flex flex-column">
-        <!-- Brand -->
-        <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom border-secondary border-opacity-25">
-            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" style="width: 38px; height: 38px; object-fit: contain; border-radius: 8px;" class="sidebar-logo">
-            <div>
-                <div class="fw-bold fs-6 text-white lh-1">SMA IT Al-Fadhilah</div>
-                <small class="text-white-50 fw-semibold" style="font-size: 0.72rem;">Admin Panel</small>
+    <!-- SIDEBAR ADMIN (Fixed Left Sidebar, lebar 260px, background #0A2922) -->
+    <aside class="admin-sidebar d-flex flex-column" style="width: 260px; height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; background: #0A2922 !important; padding: 0; z-index: 1000; overflow-y: auto;">
+        <!-- Brand Header -->
+        <div class="sidebar-brand" style="padding: 20px 20px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; gap: 12px;">
+            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Sekolah" class="sidebar-logo" style="width: 38px; height: 38px; object-fit: contain; border-radius: 8px; flex-shrink: 0;">
+            <div class="overflow-hidden">
+                <div class="sidebar-brand-title text-white text-truncate" style="font-size: 15px; font-weight: 700; line-height: 1.2;">SMA IT Al-Fadhilah</div>
+                <div class="sidebar-brand-subtitle text-truncate" style="font-size: 12px; color: #8FA8A1; font-weight: 500; line-height: 1.2; margin-top: 2px;">Admin Panel</div>
             </div>
         </div>
 
-        <!-- User Info -->
-        <div class="p-2 rounded-3 mb-4 bg-dark bg-opacity-25 d-flex align-items-center gap-2">
-            <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold" style="width: 36px; height: 36px; font-size: 0.85rem; background: #11756D;">
+        <!-- Kartu Profil User -->
+        <div class="sidebar-user-card" style="margin: 16px 14px; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+            <div class="sidebar-user-avatar" style="width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 700; font-size: 14px; color: #FFFFFF; background: #11756D; flex-shrink: 0;">
                 AD
             </div>
-            <div class="overflow-hidden">
-                <div class="fw-bold text-white small text-truncate"><?= htmlspecialchars($admin_name) ?></div>
-                <small class="text-success fw-semibold" style="font-size: 0.7rem;">● Online</small>
+            <div class="sidebar-user-info overflow-hidden" style="min-width: 0;">
+                <div class="sidebar-user-name text-white fw-semibold text-truncate" style="font-size: 13px; line-height: 1.3;"><?= htmlspecialchars($admin_name) ?></div>
+                <small class="sidebar-user-status fw-semibold" style="font-size: 11px; color: #10B981; line-height: 1.2; display: flex; align-items: center; gap: 4px;">● Online</small>
             </div>
         </div>
 
         <!-- Navigation Menu -->
         <nav class="flex-grow-1">
-            <small class="text-uppercase fw-bold text-white-50 px-2 mb-2 d-block" style="font-size: 0.68rem; letter-spacing: 0.06em;">Menu Utama</small>
+            <small class="sidebar-menu-label text-uppercase fw-bold d-block" style="padding: 8px 24px 6px; font-size: 11px; letter-spacing: 0.08em; color: #7A968E;">Menu Utama</small>
             <a href="?tab=rekap" class="admin-nav-link <?= $page_tab === 'rekap' ? 'active' : '' ?>">
-                <i class="bi bi-grid-1x2-fill"></i>Rekap Tahfiz
+                <i class="bi bi-grid-1x2-fill"></i><span>Rekap Tahfiz</span>
             </a>
             <a href="?tab=pengguna" class="admin-nav-link <?= $page_tab === 'pengguna' ? 'active' : '' ?>">
-                <i class="bi bi-people-fill"></i>Data Pengguna
+                <i class="bi bi-people-fill"></i><span>Data Pengguna</span>
             </a>
             <a href="?tab=halaqah" class="admin-nav-link <?= $page_tab === 'halaqah' ? 'active' : '' ?>">
-                <i class="bi bi-diagram-3-fill"></i>Kelompok Halaqah
+                <i class="bi bi-diagram-3-fill"></i><span>Kelompok Halaqah</span>
             </a>
             <a href="?tab=konten" class="admin-nav-link <?= $page_tab === 'konten' ? 'active' : '' ?>">
-                <i class="bi bi-newspaper"></i>Konten Informasi
+                <i class="bi bi-newspaper"></i><span>Konten Informasi</span>
             </a>
             <a href="?tab=laporan" class="admin-nav-link <?= $page_tab === 'laporan' ? 'active' : '' ?>">
-                <i class="bi bi-file-earmark-bar-graph-fill"></i>Laporan Rekapitulasi
+                <i class="bi bi-file-earmark-bar-graph-fill"></i><span>Laporan Rekapitulasi</span>
             </a>
             <a href="?tab=profil" class="admin-nav-link <?= $page_tab === 'profil' ? 'active' : '' ?>">
-                <i class="bi bi-person-circle"></i>Profil Pribadi
+                <i class="bi bi-person-circle"></i><span>Profil Pribadi</span>
             </a>
         </nav>
 
-        <!-- Bottom Actions -->
-        <div class="pt-3 border-top border-secondary border-opacity-25 mt-auto">
-            <a href="../../index.php" class="btn btn-outline-light btn-sm w-100 mb-2 fw-semibold" target="_blank">
+        <!-- Footer Sidebar (Tombol Bawah) -->
+        <div class="sidebar-footer" style="margin-top: auto; padding: 16px 14px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 10px;">
+            <a href="../../index.php" class="btn-sidebar-web" target="_blank">
                 <i class="bi bi-box-arrow-up-right me-1"></i>Web Sekolah
             </a>
-            <a href="../auth/logout.php" class="btn btn-danger btn-sm w-100 fw-semibold">
+            <a href="../auth/logout.php" class="btn-sidebar-logout">
                 <i class="bi bi-box-arrow-right me-1"></i>Keluar Sesi
             </a>
         </div>
     </aside>
 
     <!-- CONTENT WRAPPER -->
-    <div class="flex-grow-1 d-flex flex-column" style="min-width: 0;">
+    <div class="flex-grow-1 d-flex flex-column admin-content-wrapper" style="min-width: 0; margin-left: 260px;">
         <!-- Top Navbar -->
         <header class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center shadow-sm">
             <div class="d-flex align-items-center gap-3">
@@ -575,13 +749,43 @@ foreach ($users_list as $u) {
                                 <h5 class="fw-bold mb-0" style="color: #11756D;">Capaian per Kelompok Halaqah</h5>
                                 <span class="badge bg-light text-muted border">Bulan Berjalan</span>
                             </div>
-                            <div class="d-flex align-items-end justify-content-between pt-4 pb-2 border-bottom" style="height: 180px;">
-                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 82%; width: 36px; background:#11756D;"></div><small class="fw-bold d-block mt-2">Furqan<br>82%</small></div>
-                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 78%; width: 36px; background:#11756D;"></div><small class="fw-bold d-block mt-2">Ikhlas<br>78%</small></div>
-                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 69%; width: 36px; background:#D97706;"></div><small class="fw-bold d-block mt-2">Falaq<br>69%</small></div>
-                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 85%; width: 36px; background:#059669;"></div><small class="fw-bold d-block mt-2">Nas<br>85%</small></div>
-                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 74%; width: 36px; background:#11756D;"></div><small class="fw-bold d-block mt-2">Kautsar<br>74%</small></div>
-                                <div class="text-center flex-fill"><div class="chart-bar-clean mx-auto" style="height: 80%; width: 36px; background:#11756D;"></div><small class="fw-bold d-block mt-2">Asr<br>80%</small></div>
+                            <div class="d-flex align-items-end justify-content-between pt-4 pb-2 border-bottom" style="height: 200px;">
+                                <div class="text-center flex-fill px-1">
+                                    <div class="chart-bar-track mx-auto" style="height: 140px; width: 38px; background: #E2E8F0; border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; overflow: hidden;" title="Furqan: 82%">
+                                        <div class="chart-bar-clean chart-bar-fill" style="height: 82%; width: 100%; background: #0F766E !important; border-radius: 8px 8px 0 0; transition: height 0.4s ease;"></div>
+                                    </div>
+                                    <small class="fw-bold d-block mt-2">Furqan<br><span class="text-muted fw-semibold">82%</span></small>
+                                </div>
+                                <div class="text-center flex-fill px-1">
+                                    <div class="chart-bar-track mx-auto" style="height: 140px; width: 38px; background: #E2E8F0; border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; overflow: hidden;" title="Ikhlas: 78%">
+                                        <div class="chart-bar-clean chart-bar-fill" style="height: 78%; width: 100%; background: #0F766E !important; border-radius: 8px 8px 0 0; transition: height 0.4s ease;"></div>
+                                    </div>
+                                    <small class="fw-bold d-block mt-2">Ikhlas<br><span class="text-muted fw-semibold">78%</span></small>
+                                </div>
+                                <div class="text-center flex-fill px-1">
+                                    <div class="chart-bar-track mx-auto" style="height: 140px; width: 38px; background: #E2E8F0; border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; overflow: hidden;" title="Falaq: 69%">
+                                        <div class="chart-bar-clean chart-bar-fill" style="height: 69%; width: 100%; background: #0F766E !important; border-radius: 8px 8px 0 0; transition: height 0.4s ease;"></div>
+                                    </div>
+                                    <small class="fw-bold d-block mt-2">Falaq<br><span class="text-muted fw-semibold">69%</span></small>
+                                </div>
+                                <div class="text-center flex-fill px-1">
+                                    <div class="chart-bar-track mx-auto" style="height: 140px; width: 38px; background: #E2E8F0; border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; overflow: hidden;" title="Nas: 85%">
+                                        <div class="chart-bar-clean chart-bar-fill" style="height: 85%; width: 100%; background: #0F766E !important; border-radius: 8px 8px 0 0; transition: height 0.4s ease;"></div>
+                                    </div>
+                                    <small class="fw-bold d-block mt-2">Nas<br><span class="text-muted fw-semibold">85%</span></small>
+                                </div>
+                                <div class="text-center flex-fill px-1">
+                                    <div class="chart-bar-track mx-auto" style="height: 140px; width: 38px; background: #E2E8F0; border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; overflow: hidden;" title="Kautsar: 74%">
+                                        <div class="chart-bar-clean chart-bar-fill" style="height: 74%; width: 100%; background: #0F766E !important; border-radius: 8px 8px 0 0; transition: height 0.4s ease;"></div>
+                                    </div>
+                                    <small class="fw-bold d-block mt-2">Kautsar<br><span class="text-muted fw-semibold">74%</span></small>
+                                </div>
+                                <div class="text-center flex-fill px-1">
+                                    <div class="chart-bar-track mx-auto" style="height: 140px; width: 38px; background: #E2E8F0; border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; overflow: hidden;" title="Asr: 80%">
+                                        <div class="chart-bar-clean chart-bar-fill" style="height: 80%; width: 100%; background: #0F766E !important; border-radius: 8px 8px 0 0; transition: height 0.4s ease;"></div>
+                                    </div>
+                                    <small class="fw-bold d-block mt-2">Asr<br><span class="text-muted fw-semibold">80%</span></small>
+                                </div>
                             </div>
                         </div>
                     </div>

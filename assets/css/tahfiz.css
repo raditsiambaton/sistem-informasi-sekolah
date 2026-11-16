@@ -8,7 +8,7 @@
 :root {
     --color-primary:       #11756D; /* Primary Teal-Green */
     --color-primary-dark:  #0D5C56; /* Hover / Dark Teal-Green */
-    --color-primary-deep:  #0A2E2B; /* Deep Teal-Green untuk Sidebar (#0A2E2B) */
+    --color-primary-deep:  #0A2922; /* Deep Teal-Green untuk Sidebar (#0A2922) */
     --color-accent:        #11756D;
     --color-soft:          #E6F4F1; /* Soft Teal-Green Tint */
     --color-soft-light:    #F4F7F6; /* Page Background / Light Soft */
@@ -29,7 +29,7 @@ body.tahfiz-body, .tahfiz-app {
 }
 
 /* ── Sidebar Sistem Monitoring Tahfiz ──────────────────────── */
-.tahfiz-sidebar, .ustadz-sidebar, .admin-sidebar, .siswa-sidebar {
+.tahfiz-sidebar, .ustadz-sidebar, .siswa-sidebar {
     width: 260px;
     background: var(--color-primary-deep) !important;
     min-height: 100vh;
@@ -38,7 +38,7 @@ body.tahfiz-body, .tahfiz-app {
     padding: 24px 16px;
 }
 
-.tahfiz-nav-link, .ustadz-nav-link, .admin-nav-link, .siswa-nav-link {
+.tahfiz-nav-link, .ustadz-nav-link, .siswa-nav-link {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -52,16 +52,234 @@ body.tahfiz-body, .tahfiz-app {
     margin-bottom: 4px;
 }
 
-.tahfiz-nav-link:hover, .ustadz-nav-link:hover, .admin-nav-link:hover, .siswa-nav-link:hover {
+.tahfiz-nav-link:hover, .ustadz-nav-link:hover, .siswa-nav-link:hover {
     color: #FFFFFF !important;
     background: rgba(255, 255, 255, 0.12) !important;
 }
 
-.tahfiz-nav-link.active, .ustadz-nav-link.active, .admin-nav-link.active, .siswa-nav-link.active {
+.tahfiz-nav-link.active, .ustadz-nav-link.active, .siswa-nav-link.active {
     background: var(--color-primary) !important;
     color: #FFFFFF !important;
     font-weight: 700;
     box-shadow: 0 4px 12px rgba(17, 117, 109, 0.35) !important;
+}
+
+/* ── Admin Sidebar (Figma Presisi: 260px, #0A2922) ─────────── */
+.admin-sidebar {
+    width: 260px;
+    min-width: 260px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: #0A2922 !important;
+    color: #FFFFFF !important;
+    flex-shrink: 0;
+    padding: 0 !important;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.admin-content-wrapper {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sidebar Brand Header */
+.sidebar-brand {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-brand .sidebar-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.sidebar-brand-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1.2;
+}
+
+.sidebar-brand-subtitle {
+    font-size: 12px;
+    color: #8FA8A1;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-top: 2px;
+}
+
+/* Sidebar User Profile Card */
+.sidebar-user-card {
+    margin: 16px 14px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-user-avatar {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #FFFFFF;
+    background: #11756D;
+    flex-shrink: 0;
+}
+
+.sidebar-user-info {
+    overflow: hidden;
+    min-width: 0;
+}
+
+.sidebar-user-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #FFFFFF;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+
+.sidebar-user-status {
+    font-size: 11px;
+    color: #10B981;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1.2;
+}
+
+/* Sidebar Section Label */
+.sidebar-menu-label {
+    padding: 8px 24px 6px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: #7A968E;
+    text-transform: uppercase;
+    font-weight: 700;
+    display: block;
+}
+
+/* Sidebar Navigation Item */
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    margin: 2px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #C8D6D2;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.admin-nav-link i {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+}
+
+.admin-nav-link:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #FFFFFF;
+}
+
+.admin-nav-link.active {
+    background: linear-gradient(135deg, #136F5B 0%, #0E5A49 100%);
+    color: #FFFFFF;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+/* Sidebar Footer Actions */
+.sidebar-footer {
+    margin-top: auto;
+    padding: 16px 14px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-sidebar-web {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: transparent;
+    color: #FFFFFF;
+    gap: 8px;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.btn-sidebar-web:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #FFFFFF;
+}
+
+.btn-sidebar-logout {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    background: #DC2626;
+    border: 1px solid #DC2626;
+    color: #FFFFFF;
+    gap: 8px;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.btn-sidebar-logout:hover {
+    background: #B91C1C;
+    border-color: #B91C1C;
+    color: #FFFFFF;
 }
 
 /* ── Top Header / Navbar Dashboard ─────────────────────────── */
@@ -192,4 +410,342 @@ body.tahfiz-body, .tahfiz-app {
 .form-control:focus, .form-select:focus {
     border-color: var(--color-primary) !important;
     box-shadow: 0 0 0 3px rgba(17, 117, 109, 0.2) !important;
+}
+
+/* ── Grafik Batang / Chart Capaian Halaqah ──────────────────── */
+.chart-bar-track {
+    width: 38px;
+    height: 140px;
+    background: #E2E8F0;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    margin: 0 auto 10px;
+    position: relative;
+}
+
+.chart-bar-fill, .chart-bar-clean {
+    width: 100%;
+    background: linear-gradient(180deg, #136F5B 0%, #0F766E 100%);
+    border-radius: 8px 8px 0 0;
+    transition: height 0.4s ease;
+}
+
+.chart-bar-fill:hover, .chart-bar-clean:hover {
+    filter: brightness(1.08);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   USTADZ SIDEBAR — Figma Presisi (240px, solid #11756D)
+   ═══════════════════════════════════════════════════════════════ */
+.ustadz-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    height: 100vh;
+    background: #11756D !important;
+    color: #FFFFFF !important;
+    padding: 0 !important;
+    min-height: 100vh;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+/* Brand Header */
+.ustadz-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ustadz-sidebar-brand .sidebar-logo {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.ustadz-brand-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FACC15;
+    line-height: 1.2;
+}
+
+.ustadz-brand-subtitle {
+    font-size: 11px;
+    color: #FFFFFF;
+    opacity: 0.9;
+    line-height: 1.3;
+    margin-top: 2px;
+}
+
+/* Info Pengguna */
+.ustadz-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 20px 14px;
+}
+
+.ustadz-user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #E5E7EB;
+    color: #11756D;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ustadz-user-text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.ustadz-user-role {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.ustadz-user-name {
+    font-size: 12px;
+    color: #A7F3D0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Menu Navigasi */
+.ustadz-nav {
+    padding: 0 0 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.ustadz-nav-label {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    opacity: 0.75;
+    padding: 12px 20px 6px;
+    color: #FFFFFF;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.ustadz-nav .ustadz-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 2px 12px;
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.ustadz-nav .ustadz-nav-link i {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.ustadz-nav .ustadz-nav-link:hover {
+    background: rgba(255, 255, 255, 0.10);
+    color: #FFFFFF !important;
+}
+
+.ustadz-nav .ustadz-nav-link.active {
+    background: rgba(255, 255, 255, 0.16) !important;
+    color: #FFFFFF !important;
+    font-weight: 700;
+    box-shadow: none !important;
+}
+
+/* Footer Sidebar */
+.ustadz-sidebar-footer {
+    margin-top: auto;
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ustadz-logout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 4px;
+    transition: opacity 0.2s ease;
+}
+
+.ustadz-logout:hover {
+    opacity: 0.8;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.ustadz-logout i {
+    font-size: 16px;
+}
+
+/* Konten utama — geser sejajar sidebar 240px */
+.ustadz-content-wrapper {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #F6F6F2;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROFIL SAYA — Figma Presisi (2 kolom kartu putih)
+   ═══════════════════════════════════════════════════════════════ */
+.ustadz-content-wrapper:has(.profil-grid) main {
+    background-color: #F6F6F2;
+}
+
+.profil-page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 24px;
+}
+
+.profil-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: stretch;
+}
+
+.profil-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.profil-card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 24px;
+}
+
+.profil-field {
+    margin-bottom: 18px;
+}
+
+.profil-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.profil-input {
+    width: 100%;
+    height: 44px;
+    border-radius: 8px;
+    border: none;
+    padding: 0 14px;
+    font-size: 14px;
+    color: #374151;
+    background: #EEF2F6;
+    outline: none;
+    transition: box-shadow 0.2s ease;
+}
+
+.profil-input:focus {
+    box-shadow: 0 0 0 3px rgba(17, 117, 109, 0.2);
+}
+
+.profil-input[readonly] {
+    background: #EEF2F6;
+    color: #374151;
+    cursor: default;
+}
+
+.profil-hint {
+    display: block;
+    font-size: 11px;
+    color: #9CA3AF;
+    margin-top: 6px;
+}
+
+.profil-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 28px;
+}
+
+.profil-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.profil-btn:active {
+    transform: translateY(1px);
+}
+
+.profil-btn-primary {
+    background: #11756D;
+    color: #FFFFFF;
+}
+
+.profil-btn-primary:hover {
+    background: #0D5C56;
+    color: #FFFFFF;
+}
+
+.profil-btn-reset {
+    background: #E5E7EB;
+    color: #DC2626;
+    padding: 11px 24px;
+}
+
+.profil-btn-reset i {
+    color: #DC2626;
+}
+
+.profil-btn-reset:hover {
+    background: #D1D5DB;
+}
+
+@media (max-width: 991.98px) {
+    .profil-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
 }
