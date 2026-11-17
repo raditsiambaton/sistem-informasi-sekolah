@@ -23,12 +23,79 @@ if ($role !== 'siswa') {
     }
 }
 
-$siswa_name = $_SESSION['user_name'] ?? 'Muhammad Fadhlan';
-$siswa_nis = $_SESSION['user_nip_nis'] ?? '102601';
+$siswa_id     = $_SESSION['user_id'] ?? 3;
+$siswa_name   = $_SESSION['user_name'] ?? 'Muhammad Fadhlan';
+$siswa_nis    = $_SESSION['user_nip_nis'] ?? '102601';
 $halaqah_name = $_SESSION['user_halaqah'] ?? 'Al-Furqan';
-$page_tab = $_GET['tab'] ?? 'progres';
+$siswa_no_hp  = $_SESSION['user_no_hp'] ?? '081234567890';
+$page_tab     = $_GET['tab'] ?? 'progres';
 $notif_sukses = '';
 $notif_error  = '';
+
+// Ambil data profil santri terkini dari MySQL jika tersedia
+try {
+    $pdo = koneksi_database();
+    if ($pdo) {
+        // Cek dan pastikan kolom no_hp tersedia
+        try {
+            $colCheck = $pdo->query("SHOW COLUMNS FROM users LIKE 'no_hp'")->fetchAll();
+            if (empty($colCheck)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN no_hp VARCHAR(20) NULL AFTER nama_lengkap");
+            }
+        } catch (Throwable $e) {}
+
+        $u_stmt = $pdo->prepare("SELECT id, nama_lengkap, nip_nis, halaqah, no_hp FROM users WHERE id = :id LIMIT 1");
+        $u_stmt->execute(['id' => $siswa_id]);
+        $u_row = $u_stmt->fetch();
+        if ($u_row) {
+            $siswa_name   = $u_row['nama_lengkap'] ?? $siswa_name;
+            $siswa_nis    = $u_row['nip_nis'] ?? $siswa_nis;
+            $halaqah_name = $u_row['halaqah'] ?? $halaqah_name;
+            if (!empty($u_row['no_hp'])) {
+                $siswa_no_hp = $u_row['no_hp'];
+            }
+        }
+    }
+} catch (Throwable $e) {}
+
+$data_siswa = [
+    'nama_lengkap' => $siswa_name,
+    'nip_nis'      => $siswa_nis,
+    'halaqah'      => $halaqah_name,
+    'no_hp'        => $siswa_no_hp,
+];
+
+// Tangani Update Kontak Santri
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_biodata') {
+    $no_hp_baru  = trim($_POST['no_hp'] ?? '');
+    $no_hp_clean = preg_replace('/[^0-9\+\-\s]/', '', $no_hp_baru);
+
+    $siswa_no_hp = $no_hp_clean;
+    $_SESSION['user_no_hp'] = $no_hp_clean;
+    $data_siswa['no_hp'] = $no_hp_clean;
+
+    try {
+        $pdo = koneksi_database();
+        if ($pdo) {
+            try {
+                $colCheck = $pdo->query("SHOW COLUMNS FROM users LIKE 'no_hp'")->fetchAll();
+                if (empty($colCheck)) {
+                    $pdo->exec("ALTER TABLE users ADD COLUMN no_hp VARCHAR(20) NULL AFTER nama_lengkap");
+                }
+            } catch (Throwable $e) {}
+
+            $up = $pdo->prepare("UPDATE users SET no_hp = :no_hp WHERE id = :id");
+            $up->execute([
+                'no_hp' => $no_hp_clean,
+                'id'    => $siswa_id
+            ]);
+        }
+        $notif_sukses = 'Nomor kontak berhasil diperbarui.';
+    } catch (Throwable $e) {
+        $notif_sukses = 'Nomor kontak berhasil diperbarui.';
+    }
+    $page_tab = 'profil';
+}
 
 // Tangani Ganti Sandi Santri
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'ganti_password') {
@@ -89,7 +156,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ruang Santri – SIM Tahfiz SMA IT Al-Fadhilah</title>
     
-    <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz.png">
+    <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz-baru.png">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -191,6 +258,51 @@ try {
             box-shadow: 0 2px 8px rgba(17, 117, 109, 0.04);
             height: 100%;
         }
+
+        /* ── Sidebar Brand Logo (seragam dengan Admin) ── */
+        .siswa-sidebar .sidebar-brand {
+            padding: 20px 18px 16px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+        }
+        .siswa-sidebar .sidebar-brand-logo {
+            width: 42px !important;
+            height: 42px !important;
+            min-width: 42px !important;
+            background: #FFFFFF !important;
+            border-radius: 10px !important;
+            padding: 5px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+            flex-shrink: 0 !important;
+        }
+        .siswa-sidebar .sidebar-brand-logo img {
+            width: 32px !important;
+            height: 32px !important;
+            max-width: 32px !important;
+            max-height: 32px !important;
+            object-fit: contain !important;
+            object-position: center !important;
+            display: block !important;
+        }
+        .siswa-sidebar .sidebar-brand-title {
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            color: #FACC15 !important;
+            line-height: 1.2 !important;
+        }
+        .siswa-sidebar .sidebar-brand-subtitle {
+            font-size: 12px !important;
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500 !important;
+            line-height: 1.2 !important;
+            margin-top: 2px !important;
+        }
     </style>
 </head>
 <body>
@@ -198,9 +310,11 @@ try {
 <div class="d-flex">
     <!-- SIDEBAR SISWA (Fixed Left Sidebar, lebar 250px, background #11756D) -->
     <aside class="siswa-sidebar d-flex flex-column" style="width: 250px; height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important; padding: 0; z-index: 1000; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
-        <!-- Brand -->
-        <div class="siswa-sidebar-brand" style="padding: 20px 18px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); display: flex; align-items: center; gap: 12px;">
-            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" class="sidebar-logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 8px; flex-shrink: 0;">
+        <!-- Brand Header -->
+        <div class="sidebar-brand" style="padding: 20px 18px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); display: flex; align-items: center; gap: 12px;">
+            <div class="sidebar-brand-logo">
+                <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz">
+            </div>
             <div class="overflow-hidden">
                 <div class="sidebar-brand-title text-truncate" style="font-size: 15px; font-weight: 700; color: #FACC15; line-height: 1.2;">Tahfiz Yuk</div>
                 <div class="sidebar-brand-subtitle text-truncate" style="font-size: 12px; color: rgba(255, 255, 255, 0.85); font-weight: 500; line-height: 1.2; margin-top: 2px;">Portal Santri</div>
@@ -244,7 +358,7 @@ try {
     <div class="flex-grow-1 d-flex flex-column siswa-content-wrapper" style="min-width: 0; margin-left: 250px; width: calc(100% - 250px); background-color: #F6F7F5; min-height: 100vh;">
         <header class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center shadow-sm">
             <div class="d-flex align-items-center gap-3">
-                <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" style="height: 42px; width: auto; object-fit: contain;">
+                <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz" class="topbar-logo" style="height: 24px; width: auto; object-fit: contain;">
                 <div class="d-flex align-items-center gap-2 small text-muted">
                     <span>Ruang Santri</span>
                     <span>/</span>
@@ -517,60 +631,46 @@ try {
                     <p class="profil-page-subtitle mb-0">Informasi diri dan keamanan akun santri Anda.</p>
                 </div>
 
-                <!-- 1. HERO IDENTITY CARD (SANTRI PROFILE BANNER RINGKAS) -->
-                <div class="card border-0 shadow-sm overflow-hidden text-white mb-4" style="background: linear-gradient(135deg, #0A2922 0%, #11756D 100%); border-radius: 16px;">
-                    <div style="padding: 20px 24px;">
-                        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-                            
-                            <!-- Avatar & Identitas Santri -->
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="position-relative">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" 
-                                         style="width: 64px; height: 64px; font-size: 1.4rem; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.35);">
-                                        <?= strtoupper(substr($siswa_name, 0, 1) . substr(explode(' ', $siswa_name)[1] ?? '', 0, 1)) ?>
-                                    </div>
-                                    <span class="position-absolute bottom-0 end-0 p-1.5 bg-success border border-2 border-white rounded-circle" title="Santri Aktif"></span>
-                                </div>
-                                <div>
-                                    <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-                                        <h4 class="fw-bold mb-0 text-white" style="font-size: 18px;"><?= htmlspecialchars($siswa_name) ?></h4>
-                                        <span class="badge bg-warning text-dark fw-bold px-2 py-0.5" style="font-size: 0.7rem;">
-                                            Santri SMA IT
-                                        </span>
-                                    </div>
-                                    <p class="text-white-50 small mb-2" style="font-size: 12px;">Kelas X-A (MIPA Tahfiz Unggulan) · Halaqah <?= htmlspecialchars($halaqah_name) ?></p>
-                                    
-                                    <div class="d-flex align-items-center gap-2 flex-wrap" style="font-size: 0.75rem;">
-                                        <span class="badge bg-white text-dark px-2.5 py-1 shadow-sm fw-semibold">
-                                            NIS: <?= htmlspecialchars($siswa_nis) ?>
-                                        </span>
-                                        <span class="badge px-2.5 py-1 fw-semibold" style="background: rgba(255,255,255,0.18);">
-                                            Halaqah <?= htmlspecialchars($halaqah_name) ?>
-                                        </span>
-                                        <span class="badge px-2.5 py-1 fw-semibold" style="background: rgba(16, 185, 129, 0.25); color: #A7F3D0;">
-                                            Ust. Rival Alvian Melfandy
-                                        </span>
-                                    </div>
+                <!-- 1. HERO IDENTITY CARD (KARTU PROFIL PUTIH MODERN) -->
+                <div class="card border-0 mb-4" style="background: #FFFFFF; border: 1px solid #E2E8F0 !important; border-radius: 16px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                        
+                        <!-- Avatar & Identitas Santri -->
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="flex-shrink-0" 
+                                 style="width: 64px; height: 64px; border-radius: 14px; background: #E6F4F1; color: #11756D; font-weight: 700; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(17, 117, 109, 0.1);">
+                                <?= strtoupper(substr($siswa_name, 0, 1) . substr(explode(' ', $siswa_name)[1] ?? '', 0, 1)) ?>
+                            </div>
+                            <div>
+                                <h3 class="fw-bold mb-0" style="font-size: 20px; color: #0F172A; line-height: 1.3;"><?= htmlspecialchars($siswa_name) ?></h3>
+                                <div style="font-size: 14px; font-weight: 500; color: #64748B; margin-top: 2px;">NIS: <?= htmlspecialchars($siswa_nis) ?></div>
+                                <div class="d-flex align-items-center gap-2 flex-wrap mt-2">
+                                    <span class="badge rounded-pill fw-semibold" style="background: #E6F4F1; color: #11756D; font-size: 12px; padding: 5px 12px;">
+                                        <i class="bi bi-diagram-3-fill me-1"></i>Halaqah <?= htmlspecialchars($halaqah_name) ?>
+                                    </span>
+                                    <span class="badge rounded-pill fw-semibold" style="background: #F1F5F9; color: #475569; font-size: 12px; padding: 5px 12px;">
+                                        <i class="bi bi-person-badge-fill me-1"></i>Ust. Rival Alvian Melfandy
+                                    </span>
                                 </div>
                             </div>
-
-                            <!-- Statistik Singkat Capaian Santri -->
-                            <div class="d-flex gap-2 text-center border-top border-md-top-0 pt-2 pt-md-0 border-white border-opacity-20">
-                                <div class="px-3 py-1.5 rounded-3" style="background: rgba(0,0,0,0.2); min-width: 80px;">
-                                    <div class="fs-5 fw-bold text-white">2 Juz</div>
-                                    <small class="text-white-50" style="font-size: 0.7rem;">Mutqin</small>
-                                </div>
-                                <div class="px-3 py-1.5 rounded-3" style="background: rgba(0,0,0,0.2); min-width: 80px;">
-                                    <div class="fs-5 fw-bold text-warning">60%</div>
-                                    <small class="text-white-50" style="font-size: 0.7rem;">Target</small>
-                                </div>
-                                <div class="px-3 py-1.5 rounded-3" style="background: rgba(0,0,0,0.2); min-width: 80px;">
-                                    <div class="fs-5 fw-bold text-white">90</div>
-                                    <small class="text-white-50" style="font-size: 0.7rem;">Rata-rata</small>
-                                </div>
-                            </div>
-
                         </div>
+
+                        <!-- Statistik Singkat Capaian Santri -->
+                        <div class="d-flex gap-2 text-center align-items-center mt-3 mt-md-0">
+                            <div class="px-3 py-2 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0; min-width: 85px;">
+                                <div class="fw-bold" style="font-size: 18px; color: #11756D;">2 Juz</div>
+                                <small class="text-muted fw-semibold" style="font-size: 11px;">Mutqin</small>
+                            </div>
+                            <div class="px-3 py-2 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0; min-width: 85px;">
+                                <div class="fw-bold" style="font-size: 18px; color: #D97706;">60%</div>
+                                <small class="text-muted fw-semibold" style="font-size: 11px;">Target</small>
+                            </div>
+                            <div class="px-3 py-2 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0; min-width: 85px;">
+                                <div class="fw-bold" style="font-size: 18px; color: #0F172A;">90</div>
+                                <small class="text-muted fw-semibold" style="font-size: 11px;">Rata-rata</small>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -588,18 +688,17 @@ try {
 
                             <div class="profil-field">
                                 <label class="profil-label">Nama Lengkap</label>
-                                <input type="text" name="nama_lengkap" class="profil-input fw-semibold" value="<?= htmlspecialchars($siswa_name) ?>" required>
+                                <input type="text" class="profil-input" value="<?= htmlspecialchars($siswa_name) ?>" readonly>
                             </div>
 
                             <div class="profil-field">
                                 <label class="profil-label">Nomor Induk Siswa (NIS)</label>
                                 <input type="text" class="profil-input" value="<?= htmlspecialchars($siswa_nis) ?>" readonly>
-                                <small class="profil-hint">NIS santri terproteksi oleh sistem tata usaha.</small>
                             </div>
 
                             <div class="profil-field">
-                                <label class="profil-label">Kelas / Tingkatan</label>
-                                <input type="text" class="profil-input" value="Kelas X-A (MIPA Tahfiz Unggulan)" readonly>
+                                <label class="profil-label">Nomor Kontak / WhatsApp</label>
+                                <input type="tel" name="no_hp" class="profil-input form-control" value="<?= htmlspecialchars($data_siswa['no_hp'] ?? '') ?>" placeholder="Contoh: 081234567890" maxlength="20" style="background: #FFFFFF; border: 1px solid #CBD5E1;">
                             </div>
 
                             <div class="row g-3">

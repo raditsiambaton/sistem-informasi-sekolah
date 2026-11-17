@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `username` VARCHAR(50) NOT NULL UNIQUE,
     `password` VARCHAR(255) NOT NULL,
     `nama_lengkap` VARCHAR(100) NOT NULL,
+    `no_hp` VARCHAR(20) NULL,
     `role` ENUM('admin', 'ustadz', 'siswa') NOT NULL,
     `nip_nis` VARCHAR(30) NULL,
     `halaqah` VARCHAR(50) NULL DEFAULT 'Al-Furqan',
@@ -88,12 +89,12 @@ CREATE TABLE IF NOT EXISTS `konten_informasi` (
 -- Ustadz  : ustadz / ustadz123 (NIP: 199205142023031004)
 -- Siswa   : siswa / siswa123 (NIS: 102601)
 -- ---------------------------------------------------------------------
-INSERT INTO `users` (`id`, `username`, `password`, `nama_lengkap`, `role`, `nip_nis`, `halaqah`, `status`) VALUES
-(1, 'admin', 'admin123', 'Administrator Sekolah', 'admin', '198700', 'Koordinator Pusat', 'aktif'),
-(2, 'ustadz', 'ustadz123', 'Ust. Rival Alvian Melfandy', 'ustadz', '199205142023031004', 'Al-Furqan', 'aktif'),
-(3, 'siswa', 'siswa123', 'Muhammad Fadhlan', 'siswa', '102601', 'Al-Furqan', 'aktif'),
-(4, '102602', 'siswa123', 'Ahmad Zaid', 'siswa', '102602', 'Al-Furqan', 'aktif'),
-(5, '102603', 'siswa123', 'Radit Gilang Ramadhan S', 'siswa', '102603', 'Al-Furqan', 'aktif')
+INSERT INTO `users` (`id`, `username`, `password`, `nama_lengkap`, `no_hp`, `role`, `nip_nis`, `halaqah`, `status`) VALUES
+(1, 'admin', 'admin123', 'Administrator Sekolah', '081234567800', 'admin', '198700', 'Koordinator Pusat', 'aktif'),
+(2, 'ustadz', 'ustadz123', 'Ust. Rival Alvian Melfandy', '081278901234', 'ustadz', '199205142023031004', 'Al-Furqan', 'aktif'),
+(3, 'siswa', 'siswa123', 'Muhammad Fadhlan', '081234567890', 'siswa', '102601', 'Al-Furqan', 'aktif'),
+(4, '102602', 'siswa123', 'Ahmad Zaid', '081234567891', 'siswa', '102602', 'Al-Furqan', 'aktif'),
+(5, '102603', 'siswa123', 'Radit Gilang Ramadhan S', '081234567892', 'siswa', '102603', 'Al-Furqan', 'aktif')
 ON DUPLICATE KEY UPDATE `username`=`username`;
 
 INSERT INTO `halaqah` (`kode_halaqah`, `nama_halaqah`, `ustadz_id`, `nama_ustadz`, `target_juz`) VALUES

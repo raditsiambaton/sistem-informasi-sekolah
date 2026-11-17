@@ -298,7 +298,7 @@ foreach ($users_list as $u) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Administrator – SMA IT Al-Fadhilah</title>
     
-    <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz.png">
+    <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz-baru.png">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -358,6 +358,27 @@ foreach ($users_list as $u) {
             display: flex;
             align-items: center;
             gap: 12px;
+        }
+        .sidebar-brand-logo {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            background: #FFFFFF;
+            border-radius: 11px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            flex-shrink: 0;
+        }
+        .sidebar-brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            display: block;
         }
         .sidebar-brand .sidebar-logo {
             width: 38px;
@@ -567,7 +588,9 @@ foreach ($users_list as $u) {
     <aside class="admin-sidebar d-flex flex-column" style="width: 250px; height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important; padding: 0; z-index: 1000; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
         <!-- Brand Header -->
         <div class="sidebar-brand" style="padding: 20px 18px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); display: flex; align-items: center; gap: 12px;">
-            <img src="../../assets/images/logo-tahfiz.png" alt="Logo Sekolah" class="sidebar-logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 8px; flex-shrink: 0;">
+            <div class="sidebar-brand-logo">
+                <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz">
+            </div>
             <div class="overflow-hidden">
                 <div class="sidebar-brand-title text-truncate" style="font-size: 15px; font-weight: 700; color: #FACC15; line-height: 1.2;">Tahfiz Yuk</div>
                 <div class="sidebar-brand-subtitle text-truncate" style="font-size: 12px; color: rgba(255, 255, 255, 0.85); font-weight: 500; line-height: 1.2; margin-top: 2px;">Admin Panel</div>
@@ -621,7 +644,7 @@ foreach ($users_list as $u) {
         <!-- Top Navbar -->
         <header class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center shadow-sm">
             <div class="d-flex align-items-center gap-3">
-                <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz" style="height: 42px; width: auto; object-fit: contain;">
+                <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz" class="topbar-logo" style="height: 24px; width: auto; object-fit: contain;">
                 <div class="d-flex align-items-center gap-2 small text-muted">
                     <span>Ruang Admin</span>
                     <span>/</span>

@@ -67,34 +67,61 @@ body.tahfiz-body, .tahfiz-app {
     background-color: #F6F7F5 !important;
 }
 
-/* ── Brand Header Sidebar (Seragam) ────────────────────────── */
-.sidebar-brand, .ustadz-sidebar-brand, .siswa-sidebar-brand {
-    padding: 20px 18px 16px !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
+/* ── Brand Header Sidebar (Seragam – Admin / Ustadz / Siswa) ── */
+.admin-sidebar .sidebar-brand,
+.ustadz-sidebar .sidebar-brand,
+.siswa-sidebar .sidebar-brand {
     display: flex !important;
     align-items: center !important;
     gap: 12px !important;
+    padding: 20px 18px 16px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
 }
 
-.sidebar-logo, .sidebar-brand .sidebar-logo, .ustadz-sidebar-brand .sidebar-logo, .siswa-sidebar-brand .sidebar-logo {
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 8px !important;
-    object-fit: contain !important;
-    background-color: #FFFFFF !important;
-    padding: 2px !important;
+/* Kotak putih pembungkus logo */
+.admin-sidebar .sidebar-brand-logo,
+.ustadz-sidebar .sidebar-brand-logo,
+.siswa-sidebar .sidebar-brand-logo {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    background: #FFFFFF !important;
+    border-radius: 10px !important;
+    padding: 5px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
     flex-shrink: 0 !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
 }
 
-.sidebar-brand-title, .ustadz-brand-title, .siswa-brand-title {
+/* Gambar logo – max 32×32px di dalam kotak 42px, selalu proporsional di tengah */
+.admin-sidebar .sidebar-brand-logo img,
+.ustadz-sidebar .sidebar-brand-logo img,
+.siswa-sidebar .sidebar-brand-logo img {
+    width: 32px !important;
+    height: 32px !important;
+    max-width: 32px !important;
+    max-height: 32px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    display: block !important;
+}
+
+/* Judul & subjudul brand – identik di semua peran */
+.admin-sidebar .sidebar-brand-title,
+.ustadz-sidebar .sidebar-brand-title,
+.siswa-sidebar .sidebar-brand-title {
     font-size: 15px !important;
     font-weight: 700 !important;
-    color: #FACC15 !important; /* Emas #FACC15 */
+    color: #FACC15 !important;
     line-height: 1.2 !important;
 }
 
-.sidebar-brand-subtitle, .ustadz-brand-subtitle, .siswa-brand-subtitle {
+.admin-sidebar .sidebar-brand-subtitle,
+.ustadz-sidebar .sidebar-brand-subtitle,
+.siswa-sidebar .sidebar-brand-subtitle {
     font-size: 12px !important;
     color: rgba(255, 255, 255, 0.85) !important;
     font-weight: 500 !important;
@@ -253,15 +280,13 @@ body.tahfiz-body, .tahfiz-app {
     object-fit: contain;
 }
 
-.sidebar-logo {
-    width: 38px;
-    height: 38px;
-    object-fit: contain;
-    border-radius: 8px;
-    background-color: #FFFFFF;
-    padding: 3px;
-    flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+/* Logo di topbar/breadcrumb – sejajar teks (24px) */
+.topbar-logo, .tahfiz-topbar-logo {
+    height: 24px !important;
+    width: auto !important;
+    object-fit: contain !important;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /* ── Tombol Simpan & Aksi Tahfiz ───────────────────────────── */

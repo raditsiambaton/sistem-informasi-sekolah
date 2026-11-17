@@ -15,7 +15,7 @@ if (sudah_login()) {
         header('Location: ../admin/index.php');
         exit;
     } elseif ($role === 'ustadz' || $role === 'guru') {
-        header('Location: ../ustadz/index.php');
+        header('Location: ../ustadz/index.php?tab=rekap');
         exit;
     } elseif ($role === 'siswa') {
         header('Location: ../siswa/index.php');
@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: ../admin/index.php');
                 exit;
             } elseif ($user_data['role'] === 'ustadz' || $user_data['role'] === 'guru') {
-                header('Location: ../ustadz/index.php');
+                header('Location: ../ustadz/index.php?tab=rekap');
                 exit;
             } elseif ($user_data['role'] === 'siswa') {
                 header('Location: ../siswa/index.php');
@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Log in Tahfiz Yuk – Sistem Monitoring Tahfiz</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz.png">
+    <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz-baru.png">
 
     <!-- Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -344,7 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-card">
         
         <!-- Header: Logo, App Title, Subtitle -->
-        <img src="../../assets/images/logo-tahfiz.png" alt="Logo Tahfiz Yuk" class="logo-tahfiz">
+        <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz Yuk" class="logo-tahfiz">
         <h1 class="app-title">Tahfiz Yuk</h1>
         <p class="app-subtitle">Sistem Monitoring Tahfiz</p>
 
