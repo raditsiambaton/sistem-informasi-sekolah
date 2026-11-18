@@ -1,173 +1,380 @@
 <?php
 /**
  * tabs/murajaah.php
- * Tampilan tab Dashboard & Catat Murajaah.
- * Variabel yang dipakai: $halaqah_name, $total_murajaah_count,
- *                        $santri_list, $riwayat_murajaah
+ * Tab Murajaah – 2 kolom, struktur & styling identik dengan tab Hafalan.
+ * Variabel dari index.php: $santri_list, $riwayat_setoran
  */
+
+// ── Kelompokkan riwayat setoran berdasarkan nama_siswa ───────
+$setoran_per_siswa = [];
+foreach ($riwayat_setoran as $baris) {
+    $nama = trim($baris['nama_siswa'] ?? '');
+    if ($nama === '') continue;
+    $awal    = (int)($baris['ayat_awal']  ?? 1);
+    $akhir   = (int)($baris['ayat_akhir'] ?? 1);
+    $tgl_raw = $baris['tanggal_setor'] ?? date('Y-m-d');
+    $setoran_per_siswa[$nama][] = [
+        'id'          => (int)($baris['id'] ?? 0),
+        'tanggal'     => date('d M Y', strtotime($tgl_raw)),
+        'tanggal_iso' => date('Y-m-d', strtotime($tgl_raw)),
+        'surah'       => htmlspecialchars($baris['surah'] ?? '–'),
+        'ayat_awal'   => $awal,
+        'ayat_akhir'  => $akhir,
+        'rentang'     => "Ayat {$awal}–{$akhir}",
+        'kualitas'    => htmlspecialchars($baris['kualitas'] ?? 'Lancar'),
+        'catatan'     => htmlspecialchars($baris['catatan'] ?? ''),
+    ];
+}
+
+// ── Fallback 3 baris contoh ──────────────────────────────────
+$fallback_setoran_default = [
+    ['id'=>0,'tanggal'=>date('d M Y'),'tanggal_iso'=>date('Y-m-d'),
+     'surah'=>'Al-Baqarah','ayat_awal'=>1,'ayat_akhir'=>10,
+     'rentang'=>'Ayat 1–10','kualitas'=>'Kurang Lancar','catatan'=>''],
+    ['id'=>0,'tanggal'=>date('d M Y',strtotime('-2 days')),'tanggal_iso'=>date('Y-m-d',strtotime('-2 days')),
+     'surah'=>'Al-Fatihah','ayat_awal'=>1,'ayat_akhir'=>7,
+     'rentang'=>'Ayat 1–7','kualitas'=>'Lancar','catatan'=>''],
+    ['id'=>0,'tanggal'=>date('d M Y',strtotime('-5 days')),'tanggal_iso'=>date('Y-m-d',strtotime('-5 days')),
+     'surah'=>'An-Nas','ayat_awal'=>1,'ayat_akhir'=>6,
+     'rentang'=>'Ayat 1–6','kualitas'=>'Lancar','catatan'=>''],
+];
+
+$setoran_json  = json_encode($setoran_per_siswa,       JSON_UNESCAPED_UNICODE | JSON_HEX_APOS | JSON_HEX_QUOT);
+$fallback_json = json_encode($fallback_setoran_default, JSON_UNESCAPED_UNICODE | JSON_HEX_APOS | JSON_HEX_QUOT);
+$total_santri  = count($santri_list);
 ?>
-<div class="mb-4">
-    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">MONITORING MURAJAAH</span>
-    <h2 class="fw-bold mb-1" style="color: #11756D;">Dashboard &amp; Catat Murajaah</h2>
-    <p class="text-muted small mb-0">Lihat total capaian murajaah seluruh siswa dan catat pengulangan hafalan mutqin.</p>
-</div>
 
-<!-- 3 KPI Dashboard Murajaah -->
-<div class="row g-3 mb-4">
-    <div class="col-12 col-md-4">
-        <div class="kpi-stat-card">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="small fw-bold text-muted text-uppercase">Total Sesi Murajaah</span>
-                <i class="bi bi-arrow-repeat fs-4 text-success"></i>
-            </div>
-            <div class="fs-2 fw-bold text-dark"><?= $total_murajaah_count ?> Sesi</div>
-            <small class="text-muted">Tercatat di Halaqah <?= htmlspecialchars($halaqah_name) ?></small>
+<!-- ═══════════════════════════════════════════════════════════
+     LAYOUT 2 KOLOM — identik dengan tab Hafalan
+     ═══════════════════════════════════════════════════════════ -->
+<div class="hafalan-layout">
+
+    <!-- ══ PANEL KIRI: PILIH SISWA ══════════════════════════════ -->
+    <section class="hafalan-panel hafalan-panel-siswa" aria-label="Pilih siswa murajaah">
+        <h2 class="hafalan-panel-title">
+            <i class="bi bi-person"></i>
+            <span>Pilih siswa</span>
+        </h2>
+
+        <!-- Input pencarian — struktur identik #searchHafalanSiswa -->
+        <div class="hafalan-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="search" id="searchMurajaahSiswa"
+                   placeholder="Cari nama atau NIS" autocomplete="off">
         </div>
-    </div>
-    <div class="col-12 col-md-4">
-        <div class="kpi-stat-card">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="small fw-bold text-muted text-uppercase">Tingkat Mutqin</span>
-                <i class="bi bi-shield-check fs-4" style="color: #11756D;"></i>
-            </div>
-            <div class="fs-2 fw-bold text-success">92%</div>
-            <small class="text-muted">Kategori Sangat Mutqin &amp; Lancar</small>
-        </div>
-    </div>
-    <div class="col-12 col-md-4">
-        <div class="kpi-stat-card">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="small fw-bold text-muted text-uppercase">Fokus Juz Murajaah</span>
-                <i class="bi bi-book fs-4 text-warning"></i>
-            </div>
-            <div class="fs-2 fw-bold text-dark">Juz 29 &amp; 30</div>
-            <small class="text-muted">Penguatan Sambungan Antar Ayat</small>
-        </div>
-    </div>
-</div>
 
-<div class="row g-4">
-    <!-- Form Catat Murajaah -->
-    <div class="col-12 col-lg-5">
-        <div class="card p-4 border-0 shadow-sm rounded-4 bg-white h-100">
-            <h5 class="fw-bold mb-3" style="color: #11756D;">
-                <i class="bi bi-pencil-square me-2"></i>Catat Pengulangan (Murajaah)
-            </h5>
-            <form action="?tab=murajaah" method="POST">
-                <input type="hidden" name="action" value="simpan_murajaah">
-
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">Santri yang Murajaah</label>
-                    <select name="santri_nama" class="form-select fw-semibold" required>
-                        <?php foreach ($santri_list as $s): ?>
-                            <option value="<?= htmlspecialchars($s['nama_lengkap']) ?>"
-                                <?= (isset($_GET['santri']) && $_GET['santri'] === $s['nama_lengkap']) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($s['nama_lengkap']) ?> (NIS: <?= htmlspecialchars($s['nip_nis']) ?>)
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">Surah / Juz yang Diulang</label>
-                    <select name="surah_diulang" class="form-select fw-semibold">
-                        <optgroup label="Juz Lengkap">
-                            <option value="Juz 30 (Lengkap)">Juz 30 (Lengkap 37 Surah)</option>
-                            <option value="Juz 29 (Lengkap)">Juz 29 (Lengkap 11 Surah)</option>
-                            <option value="Juz 28 (Lengkap)">Juz 28 (Lengkap 9 Surah)</option>
-                        </optgroup>
-                        <optgroup label="Surah Pilihan">
-                            <option value="Surah An-Naba'">Surah An-Naba'</option>
-                            <option value="Surah An-Nazi'at">Surah An-Nazi'at</option>
-                            <option value="Surah 'Abasa">Surah 'Abasa</option>
-                            <option value="Surah Al-Mulk">Surah Al-Mulk (Juz 29)</option>
-                            <option value="Surah Al-Qalam">Surah Al-Qalam</option>
-                        </optgroup>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">Rentang Ayat</label>
-                    <input type="text" name="ayat_range" class="form-control" value="Seluruh Ayat"
-                        placeholder="Contoh: Ayat 1–30 atau Seluruh Ayat">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">Hasil Evaluasi Kelancaran</label>
-                    <select name="evaluasi" class="form-select fw-semibold">
-                        <option value="Sangat Mutqin (Nilai 90-100)">Sangat Mutqin (Nilai 90–100)</option>
-                        <option value="Lancar (Nilai 80-89)" selected>Lancar (Hanya 1-2 kali diingatkan)</option>
-                        <option value="Cukup (Nilai 70-79)">Cukup (Perlu Pembiasaan)</option>
-                        <option value="Perlu Diulang / Belum Mutqin">Perlu Tambahan Waktu Murajaah</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">Catatan Evaluasi Ustadz</label>
-                    <textarea name="catatan_murajaah" class="form-control" rows="2"
-                        placeholder="Catatan makhraj atau ayat yang masih ragu..."></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-tahfiz w-100 fw-bold rounded-3">
-                    <i class="bi bi-save me-1"></i>Simpan Catatan Murajaah
+        <!-- Daftar kartu siswa -->
+        <div id="listMurajaahSiswa">
+            <?php foreach ($santri_list as $s):
+                $kata    = explode(' ', trim($s['nama_lengkap']));
+                $inisial = strtoupper(substr($kata[0], 0, 1));
+                if (isset($kata[1])) $inisial .= strtoupper(substr($kata[1], 0, 1));
+            ?>
+                <button type="button"
+                        class="hafalan-siswa-card"
+                        data-nama="<?= htmlspecialchars($s['nama_lengkap'], ENT_QUOTES) ?>"
+                        data-nis="<?= htmlspecialchars($s['nip_nis'], ENT_QUOTES) ?>"
+                        data-id="<?= (int)$s['id'] ?>">
+                    <span class="hafalan-avatar" aria-hidden="true"><?= $inisial ?></span>
+                    <span class="hafalan-siswa-meta">
+                        <span class="hafalan-siswa-nama"><?= htmlspecialchars($s['nama_lengkap']) ?></span>
+                        <span class="hafalan-siswa-nis">NIS: <?= htmlspecialchars($s['nip_nis']) ?></span>
+                    </span>
                 </button>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Footer info panel kiri -->
+        <p id="infoMurajaahSiswa" class="mt-3 mb-0"
+           style="font-size:12px; color:#94A3B8; text-align:center;">
+            Menampilkan <?= $total_santri ?> dari <?= $total_santri ?> santri
+        </p>
+    </section>
+
+    <!-- ══ PANEL KANAN: RIWAYAT SETORAN & EVALUASI ══════════════ -->
+    <section class="hafalan-panel hafalan-panel-surah"
+             aria-label="Riwayat setoran dan evaluasi murajaah">
+
+        <!-- State kosong -->
+        <div id="murajaahEmpty" class="hafalan-empty">
+            <p>Pilih santri di panel kiri untuk melihat riwayat setoran dan menambahkan evaluasi murajaah.</p>
+        </div>
+
+        <!-- State aktif -->
+        <div id="murajaahRiwayatArea" hidden>
+            <div class="hafalan-surah-head">
+                <div>
+                    <h2>Riwayat Setoran &amp; Evaluasi Murajaah</h2>
+                    <p>Pilih baris setoran untuk memperbaiki kualitas hafalan melalui murajaah</p>
+                </div>
+                <span class="hafalan-santri-pill" id="badgeSantriMurajaah">Santri: –</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="hafalan-table">
+                    <thead>
+                        <tr>
+                            <th style="width:130px;">Tanggal</th>
+                            <th>Nama Surah</th>
+                            <th style="width:135px;">Rentang Ayat</th>
+                            <th style="width:165px;">Kualitas Hafalan</th>
+                            <th class="col-aksi">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyRiwayatMurajaah"></tbody>
+                </table>
+            </div>
+
+            <!-- Footer info panel kanan -->
+            <div class="d-flex justify-content-between align-items-center mt-3"
+                 style="font-size:12px; color:#94A3B8;">
+                <span id="infoJumlahSetoran">Menampilkan 0 setoran</span>
+                <span>Tekan <strong style="color:#11756D;">+</strong> untuk menambahkan evaluasi murajaah</span>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL EVALUASI MURAJAAH — identik 100% dengan #modalInputSetoran
+     ═══════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="modalEvaluasiMurajaah" tabindex="-1"
+     aria-labelledby="judulEvaluasiMurajaah" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered hafalan-modal-setoran">
+        <div class="modal-content">
+            <form action="?tab=murajaah" method="POST">
+
+                <!-- Hidden inputs -->
+                <input type="hidden" name="action"       value="simpan_murajaah">
+                <input type="hidden" name="setoran_id"   id="murajaahSetoranId"    value="0">
+                <input type="hidden" name="santri_nama"  id="murajaahSantriNama"   value="">
+                <input type="hidden" name="surah_diulang" id="murajaahSurahHidden" value="">
+                <input type="hidden" name="ayat_awal"    id="murajaahAyatAwalHidden"  value="">
+                <input type="hidden" name="ayat_akhir"   id="murajaahAyatAkhirHidden" value="">
+                <input type="hidden" name="ayat_range"   id="murajaahAyatRangeHidden" value="">
+
+                <!-- Header -->
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title" id="judulEvaluasiMurajaah">Evaluasi Murajaah</h5>
+                        <p class="hafalan-modal-sub" id="subjudulEvaluasiMurajaah"></p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body">
+                    <div class="hafalan-form-grid">
+
+                        <!-- Kiri atas: Ayat Awal (dikunci) -->
+                        <div>
+                            <label class="hafalan-label" for="murajaahAyatAwal">Ayat Awal</label>
+                            <select id="murajaahAyatAwal"
+                                    class="form-select hafalan-field"
+                                    disabled
+                                    style="background:#F1F5F9; color:#64748B; cursor:not-allowed;">
+                            </select>
+                        </div>
+
+                        <!-- Kanan atas: Ayat Akhir (dikunci) -->
+                        <div>
+                            <label class="hafalan-label" for="murajaahAyatAkhir">Ayat Akhir</label>
+                            <select id="murajaahAyatAkhir"
+                                    class="form-select hafalan-field"
+                                    disabled
+                                    style="background:#F1F5F9; color:#64748B; cursor:not-allowed;">
+                            </select>
+                        </div>
+
+                        <!-- Kiri bawah: Kualitas Hafalan (aktif) -->
+                        <div>
+                            <label class="hafalan-label" for="inputKualitasMurajaah">Kualitas Hafalan</label>
+                            <select id="inputKualitasMurajaah" name="evaluasi"
+                                    class="form-select hafalan-field" required>
+                                <option value="Sangat Mutqin">Sangat Mutqin</option>
+                                <option value="Lancar" selected>Lancar</option>
+                                <option value="Kurang Lancar">Kurang Lancar</option>
+                                <option value="Tidak Lancar">Tidak Lancar</option>
+                            </select>
+                        </div>
+
+                        <!-- Kanan bawah: Tanggal (aktif) -->
+                        <div>
+                            <label class="hafalan-label" for="inputTanggalMurajaah">Tanggal Murajaah</label>
+                            <input type="date" id="inputTanggalMurajaah"
+                                   name="tanggal_murajaah"
+                                   class="form-control hafalan-field"
+                                   value="<?= date('Y-m-d') ?>"
+                                   data-hari-ini="<?= date('Y-m-d') ?>"
+                                   required>
+                        </div>
+
+                        <!-- Baris penuh: Catatan -->
+                        <div class="hafalan-form-full">
+                            <label class="hafalan-label" for="inputCatatanMurajaah">Catatan (Opsional)</label>
+                            <textarea id="inputCatatanMurajaah" name="catatan_murajaah"
+                                      class="form-control hafalan-field" rows="3"
+                                      placeholder="Catatan murajaah (opsional)..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button type="submit" class="btn-simpan-setoran">
+                        <i class="bi bi-floppy"></i>
+                        <span>Simpan Evaluasi</span>
+                    </button>
+                    <button type="button" class="btn-batal-setoran" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i>
+                        <span>Batal</span>
+                    </button>
+                </div>
+
             </form>
         </div>
     </div>
-
-    <!-- Tabel Riwayat Murajaah Seluruh Santri -->
-    <div class="col-12 col-lg-7">
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white h-100">
-            <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
-                <h6 class="fw-bold mb-0 text-dark">Riwayat Murajaah Santri</h6>
-                <span class="badge bg-light text-muted border"><?= count($riwayat_murajaah) ?> Catatan</span>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0 small">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-3">Tanggal</th>
-                            <th>Nama Santri</th>
-                            <th>Juz / Surah</th>
-                            <th>Evaluasi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($riwayat_murajaah)): ?>
-                            <?php foreach ($riwayat_murajaah as $rm): ?>
-                            <tr>
-                                <td class="ps-3"><?= htmlspecialchars($rm['tanggal_murajaah'] ?? date('d M Y')) ?></td>
-                                <td><strong><?= htmlspecialchars($rm['nama_siswa']) ?></strong></td>
-                                <td>
-                                    <?= htmlspecialchars($rm['surah']) ?>
-                                    <small class="text-muted">(<?= htmlspecialchars($rm['ayat_range'] ?? 'Semua') ?>)</small>
-                                </td>
-                                <td><span class="badge bg-success-subtle text-success"><?= htmlspecialchars($rm['status_mutqin']) ?></span></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td class="ps-3">Hari Ini</td>
-                                <td><strong>Muhammad Fadhlan</strong></td>
-                                <td>Juz 30 (Lengkap)</td>
-                                <td><span class="badge bg-success-subtle text-success">Sangat Mutqin</span></td>
-                            </tr>
-                            <tr>
-                                <td class="ps-3">Kemarin</td>
-                                <td><strong>Ahmad Zaid</strong></td>
-                                <td>Surah Al-Mulk (Ayat 1–30)</td>
-                                <td><span class="badge bg-success-subtle text-success">Lancar</span></td>
-                            </tr>
-                            <tr>
-                                <td class="ps-3">3 Nov</td>
-                                <td><strong>Radit Gilang Ramadhan S</strong></td>
-                                <td>Surah An-Naba' (1–40)</td>
-                                <td><span class="badge bg-warning-subtle text-warning">Perlu Pengulangan</span></td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 </div>
+
+<script>
+(function () {
+    const SETORAN_PER_SISWA = <?= $setoran_json ?>;
+    const FALLBACK_DEFAULT  = <?= $fallback_json ?>;
+    let siswaMurajaahAktif  = null;
+    let daftarAktif         = [];
+
+    // ── Helper: class badge ──────────────────────────────────
+    function kelasBadge(kualitas) {
+        const q = (kualitas || '').toLowerCase();
+        if (q.includes('sangat') || (q.includes('mutqin') && !q.includes('kurang'))) return 'hafalan-badge-selesai';
+        if (q.includes('lancar') && !q.includes('kurang'))                           return 'hafalan-badge-selesai';
+        if (q.includes('kurang'))                                                    return 'hafalan-badge-berjalan';
+        return 'hafalan-badge-belum';
+    }
+
+    // ── Render baris tabel ───────────────────────────────────
+    function renderBaris(daftar) {
+        daftarAktif = (daftar && daftar.length > 0) ? daftar : FALLBACK_DEFAULT;
+        const html = daftarAktif.map(function (s, idx) {
+            const kelas = kelasBadge(s.kualitas);
+            return '<tr>'
+                + '<td style="font-size:13px;color:#64748B;">' + s.tanggal + '</td>'
+                + '<td><span class="hafalan-surah-nama" style="font-weight:600;color:#1E293B;">' + s.surah + '</span></td>'
+                + '<td style="font-size:13px;color:#64748B;">' + s.rentang + '</td>'
+                + '<td><span class="hafalan-badge ' + kelas + '">' + s.kualitas + '</span></td>'
+                + '<td class="col-aksi">'
+                +   '<button type="button" class="btn-setoran-plus" data-idx="' + idx + '"'
+                +   ' aria-label="Evaluasi murajaah ' + s.surah + '">'
+                +   '<i class="bi bi-plus-lg"></i></button>'
+                + '</td>'
+                + '</tr>';
+        }).join('');
+        document.getElementById('tbodyRiwayatMurajaah').innerHTML = html;
+        document.getElementById('infoJumlahSetoran').textContent =
+            'Menampilkan ' + daftarAktif.length + ' setoran';
+    }
+
+    // ── Buka modal evaluasi ──────────────────────────────────
+    function bukaModalEvaluasi(idx) {
+        const item = daftarAktif[idx];
+        if (!item || !siswaMurajaahAktif) return;
+
+        // Subjudul
+        document.getElementById('subjudulEvaluasiMurajaah').textContent =
+            'Santri: ' + siswaMurajaahAktif.nama + ' \u2022 Surah ' + item.surah;
+
+        // Dropdown Ayat Awal (dikunci)
+        const selAwal = document.getElementById('murajaahAyatAwal');
+        selAwal.innerHTML = '<option value="' + item.ayat_awal + '" selected>' + item.ayat_awal + '</option>';
+        selAwal.disabled  = true;
+
+        // Dropdown Ayat Akhir (dikunci)
+        const selAkhir = document.getElementById('murajaahAyatAkhir');
+        selAkhir.innerHTML = '<option value="' + item.ayat_akhir + '" selected>' + item.ayat_akhir + '</option>';
+        selAkhir.disabled  = true;
+
+        // Kualitas — cocokkan nilai atau default Lancar
+        const selKualitas = document.getElementById('inputKualitasMurajaah');
+        const opsi = Array.from(selKualitas.options).find(function (o) {
+            return o.value.toLowerCase() === (item.kualitas || '').toLowerCase();
+        });
+        selKualitas.value = opsi ? opsi.value : 'Lancar';
+
+        // Tanggal — reset ke hari ini
+        const tglInput = document.getElementById('inputTanggalMurajaah');
+        tglInput.value = tglInput.dataset.hariIni || '<?= date('Y-m-d') ?>';
+
+        // Catatan — kosongkan
+        document.getElementById('inputCatatanMurajaah').value = '';
+
+        // Hidden inputs
+        document.getElementById('murajaahSetoranId').value       = item.id;
+        document.getElementById('murajaahSantriNama').value      = siswaMurajaahAktif.nama;
+        document.getElementById('murajaahSurahHidden').value     = item.surah;
+        document.getElementById('murajaahAyatAwalHidden').value  = item.ayat_awal;
+        document.getElementById('murajaahAyatAkhirHidden').value = item.ayat_akhir;
+        document.getElementById('murajaahAyatRangeHidden').value = item.rentang;
+
+        bootstrap.Modal.getOrCreateInstance(
+            document.getElementById('modalEvaluasiMurajaah')
+        ).show();
+    }
+
+    // ── Pilih siswa ──────────────────────────────────────────
+    function pilihSiswa(kartu) {
+        document.querySelectorAll('#listMurajaahSiswa .hafalan-siswa-card')
+            .forEach(function (el) { el.classList.remove('aktif'); });
+        kartu.classList.add('aktif');
+
+        siswaMurajaahAktif = { nama: kartu.dataset.nama, nis: kartu.dataset.nis };
+        document.getElementById('badgeSantriMurajaah').textContent =
+            'Santri: ' + siswaMurajaahAktif.nama;
+
+        renderBaris(SETORAN_PER_SISWA[siswaMurajaahAktif.nama] || null);
+
+        document.getElementById('murajaahEmpty').hidden       = true;
+        document.getElementById('murajaahRiwayatArea').hidden = false;
+    }
+
+    // ── Event: klik kartu siswa ──────────────────────────────
+    document.getElementById('listMurajaahSiswa').addEventListener('click', function (e) {
+        const kartu = e.target.closest('.hafalan-siswa-card');
+        if (kartu) pilihSiswa(kartu);
+    });
+
+    // ── Event: klik tombol + di baris tabel ──────────────────
+    document.getElementById('tbodyRiwayatMurajaah').addEventListener('click', function (e) {
+        const btn = e.target.closest('.btn-setoran-plus');
+        if (btn) bukaModalEvaluasi(parseInt(btn.dataset.idx, 10));
+    });
+
+    // ── Event: pencarian real-time ───────────────────────────
+    document.getElementById('searchMurajaahSiswa').addEventListener('input', function () {
+        const kata = this.value.trim().toLowerCase();
+        let tampil  = 0;
+        const total = <?= $total_santri ?>;
+        document.querySelectorAll('#listMurajaahSiswa .hafalan-siswa-card').forEach(function (kartu) {
+            const cocok = (kartu.dataset.nama || '').toLowerCase().includes(kata)
+                       || (kartu.dataset.nis  || '').toLowerCase().includes(kata);
+            kartu.style.display = cocok ? '' : 'none';
+            if (cocok) tampil++;
+        });
+        document.getElementById('infoMurajaahSiswa').textContent =
+            'Menampilkan ' + tampil + ' dari ' + total + ' santri';
+    });
+
+    // ── Auto-pilih dari URL ?santri=... ──────────────────────
+    (function () {
+        const preset = new URLSearchParams(window.location.search).get('santri');
+        if (!preset) return;
+        const kunci = preset.toLowerCase();
+        const kartu = Array.from(document.querySelectorAll('#listMurajaahSiswa .hafalan-siswa-card'));
+        const cocok = kartu.find(function (el) {
+                return (el.dataset.nama || '').toLowerCase() === kunci;
+            }) || kartu.find(function (el) {
+                return (el.dataset.nama || '').toLowerCase().includes(kunci);
+            });
+        if (cocok) pilihSiswa(cocok);
+    })();
+})();
+</script>

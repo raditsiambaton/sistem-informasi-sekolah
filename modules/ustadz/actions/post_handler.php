@@ -66,23 +66,52 @@ if ($action === 'simpan_setoran' && $pdo) {
         $_GET['santri'] = $santri_nama;
     }
 
-// 2. SIMPAN CATATAN MURAJAAH
+// 2. SIMPAN EVALUASI MURAJAAH (dari modal per baris setoran)
 } elseif ($action === 'simpan_murajaah' && $pdo) {
-    $santri_nama = htmlspecialchars(trim($_POST['santri_nama'] ?? ''));
-    $surah       = htmlspecialchars(trim($_POST['surah_diulang'] ?? 'Juz 30'));
-    $ayat_range  = htmlspecialchars(trim($_POST['ayat_range'] ?? 'Semua Ayat'));
-    $evaluasi    = htmlspecialchars(trim($_POST['evaluasi'] ?? 'Lancar'));
-    $catatan     = htmlspecialchars(trim($_POST['catatan_murajaah'] ?? ''));
+    $setoran_id    = (int)($_POST['setoran_id']        ?? 0);
+    $santri_nama   = htmlspecialchars(trim($_POST['santri_nama']       ?? ''));
+    $surah         = htmlspecialchars(trim($_POST['surah_diulang']     ?? ''));
+    $ayat_awal_raw = (int)($_POST['ayat_awal']  ?? 0);
+    $ayat_akhir_raw= (int)($_POST['ayat_akhir'] ?? 0);
+    // Gunakan ayat_range dari POST; jika kosong, bentuk dari ayat_awal & ayat_akhir
+    $ayat_range_raw = trim($_POST['ayat_range'] ?? '');
+    if ($ayat_range_raw === '' && $ayat_awal_raw > 0 && $ayat_akhir_raw > 0) {
+        $ayat_range_raw = "Ayat {$ayat_awal_raw}–{$ayat_akhir_raw}";
+    }
+    $ayat_range  = htmlspecialchars($ayat_range_raw ?: 'Semua Ayat');
+    $evaluasi    = htmlspecialchars(trim($_POST['evaluasi']           ?? 'Lancar'));
+    $catatan     = htmlspecialchars(trim($_POST['catatan_murajaah']   ?? ''));
 
-    if (empty($santri_nama)) {
-        $notif_error = "Silakan pilih santri yang melakukan murajaah.";
+    // Validasi & normalisasi tanggal murajaah
+    $tgl_raw = trim($_POST['tanggal_murajaah'] ?? '');
+    $tanggal_murajaah = preg_match('/^\d{4}-\d{2}-\d{2}$/', $tgl_raw) ? $tgl_raw : date('Y-m-d');
+
+    if (empty($santri_nama) || empty($surah)) {
+        $notif_error = "Data santri atau surah tidak lengkap.";
     } else {
         try {
+            // Cari siswa_id
             $s_stmt = $pdo->prepare("SELECT id FROM users WHERE nama_lengkap = :nama LIMIT 1");
             $s_stmt->execute(['nama' => $santri_nama]);
             $s_row    = $s_stmt->fetch();
             $siswa_id = $s_row['id'] ?? 3;
 
+            // Jika ada setoran_id valid, perbarui kualitas (dan catatan jika diisi)
+            if ($setoran_id > 0) {
+                $upd = $pdo->prepare(
+                    "UPDATE setoran_hafalan
+                     SET kualitas = :kualitas,
+                         catatan  = COALESCE(NULLIF(:catatan, ''), catatan)
+                     WHERE id = :id"
+                );
+                $upd->execute([
+                    'kualitas' => $evaluasi,
+                    'catatan'  => $catatan,
+                    'id'       => $setoran_id,
+                ]);
+            }
+
+            // Catat sesi murajaah baru
             $stmt = $pdo->prepare(
                 "INSERT INTO murajaah
                     (siswa_id, nama_siswa, ustadz_id, nama_ustadz, surah, ayat_range, status_mutqin, tanggal_murajaah)
@@ -97,14 +126,18 @@ if ($action === 'simpan_setoran' && $pdo) {
                 'surah'         => $surah,
                 'ayat_range'    => $ayat_range,
                 'status_mutqin' => $evaluasi,
-                'tgl'           => date('Y-m-d'),
+                'tgl'           => $tanggal_murajaah,
             ]);
-            $notif_sukses = "Catatan murajaah {$santri_nama} ({$surah}) berhasil disimpan!";
+
+            $notif_sukses = "Evaluasi murajaah {$santri_nama} untuk QS. {$surah} ({$ayat_range}) berhasil disimpan!";
         } catch (Throwable $e) {
-            $notif_error = "Gagal mencatat murajaah: " . $e->getMessage();
+            $notif_error = "Gagal menyimpan evaluasi murajaah: " . $e->getMessage();
         }
     }
     $page_tab = 'murajaah';
+    if (!empty($santri_nama)) {
+        $_GET['santri'] = $santri_nama;
+    }
 
 // 3. TETAPKAN TARGET HAFALAN
 } elseif ($action === 'simpan_target') {
