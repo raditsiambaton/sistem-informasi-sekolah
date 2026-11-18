@@ -1,11 +1,11 @@
-﻿<?php
+<?php
 /**
  * modules/ustadz/index.php
- * Ruang Asatidz Pembimbing Halaqah – SIM Tahfiz SMA IT Al-Fadhilah Pekanbaru
+ * Ruang Asatidz Pembimbing Halaqah � SIM Tahfiz SMA IT Al-Fadhilah Pekanbaru
  * 
  * Menu Utama:
  * 1. Siswa Binaan (tab=binaan)       - Dashboard utama halaqah & ringkasan progres santri
- * 2. Catat Hafalan Baru (tab=hafalan)- Alur: Pilih Siswa -> Pilih Juz & Surah -> Kertas Setoran Per Surah
+ * 2. Hafalan (tab=hafalan)            - Pilih siswa, daftar surah target, input setoran, dan baca ayat
  * 3. Dashboard Murajaah (tab=murajaah)- Monitoring total santri murajaah & form catat murajaah
  * 4. Target Hafalan (tab=target)     - Menetapkan target capaian hafalan per santri
  * 5. Rekap Tahfiz (tab=rekap)        - Rekapitulasi progres hafalan & nilai seluruh santri
@@ -95,23 +95,23 @@ $juz30_target_sumber = [
 ];
 $label_juz30_target = [];
 foreach ($juz30_target_sumber as $item_juz30) {
-    $label_juz30_target[] = 'Juz 30 • ' . $item_juz30[0] . ' (Ayat 1–' . $item_juz30[1] . ')';
+    $label_juz30_target[] = 'Juz 30 � ' . $item_juz30[0] . ' (Ayat 1�' . $item_juz30[1] . ')';
 }
 $kurikulum_target = [
     'Juz 1' => [
-        'Juz 1 • Al-Fatihah (Ayat 1–7)',
-        'Juz 1 • Al-Baqarah (Ayat 1–141)',
+        'Juz 1 � Al-Fatihah (Ayat 1�7)',
+        'Juz 1 � Al-Baqarah (Ayat 1�141)',
     ],
     'Juz 2' => [
-        'Juz 2 • Al-Baqarah (Ayat 142–252)',
+        'Juz 2 � Al-Baqarah (Ayat 142�252)',
     ],
     'Juz 3' => [
-        'Juz 3 • Al-Baqarah (Ayat 253–286)',
-        "Juz 3 • Ali 'Imran (Ayat 1–92)",
+        'Juz 3 � Al-Baqarah (Ayat 253�286)',
+        "Juz 3 � Ali 'Imran (Ayat 1�92)",
     ],
     'Juz 4' => [
-        "Juz 4 • Ali 'Imran (Ayat 93–200)",
-        "Juz 4 • An-Nisa' (Ayat 1–23)",
+        "Juz 4 � Ali 'Imran (Ayat 93�200)",
+        "Juz 4 � An-Nisa' (Ayat 1�23)",
     ],
     'Juz 30' => $label_juz30_target,
 ];
@@ -129,9 +129,9 @@ $target_old = [
     'tanggal_akhir' => '',
 ];
 
-// ─────────────────────────────────────────────────────────────
+// -------------------------------------------------------------
 // PROSES AKSI POST
-// ─────────────────────────────────────────────────────────────
+// -------------------------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
@@ -169,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'catatan'    => $catatan,
                     'tgl'        => date('Y-m-d')
                 ]);
-                $notif_sukses = "Alhamdulillah! Setoran santri {$santri_nama} untuk Surah {$surah} (Ayat {$ayat_awal}–{$ayat_akhir}) berhasil dicatat!";
+                $notif_sukses = "Alhamdulillah! Setoran santri {$santri_nama} untuk Surah {$surah} (Ayat {$ayat_awal}�{$ayat_akhir}) berhasil dicatat!";
             } catch (Throwable $e) {
                 $notif_error = "Gagal menyimpan setoran: " . $e->getMessage();
             }
@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $page_tab = 'murajaah';
     }
 
-    // 3. TETAPKAN TARGET HAFALAN (Juz / Surah → tabel target_hafalan)
+    // 3. TETAPKAN TARGET HAFALAN (Juz / Surah ? tabel target_hafalan)
     elseif ($action === 'simpan_target') {
         $siswa_id      = (int)($_POST['siswa_id'] ?? 0);
         $surah_awal    = trim($_POST['surah_awal'] ?? '');
@@ -410,7 +410,7 @@ $total_murajaah_count = count($riwayat_murajaah);
 // Data Kamus Al-Qur'an per Juz (Juz 30, 29, 28)
 $quran_juz = [
     '30' => [
-        'nama' => 'Juz 30 (An-Naba – An-Nas)',
+        'nama' => 'Juz 30 (An-Naba � An-Nas)',
         'surah' => [
             ['no' => 78, 'nama' => "An-Naba'", 'ayat' => 40],
             ['no' => 79, 'nama' => "An-Nazi'at", 'ayat' => 46],
@@ -452,7 +452,7 @@ $quran_juz = [
         ]
     ],
     '29' => [
-        'nama' => 'Juz 29 (Al-Mulk – Al-Mursalat)',
+        'nama' => 'Juz 29 (Al-Mulk � Al-Mursalat)',
         'surah' => [
             ['no' => 67, 'nama' => 'Al-Mulk', 'ayat' => 30],
             ['no' => 68, 'nama' => 'Al-Qalam', 'ayat' => 52],
@@ -468,7 +468,7 @@ $quran_juz = [
         ]
     ],
     '28' => [
-        'nama' => 'Juz 28 (Al-Mujadilah – At-Tahrim)',
+        'nama' => 'Juz 28 (Al-Mujadilah � At-Tahrim)',
         'surah' => [
             ['no' => 58, 'nama' => 'Al-Mujadilah', 'ayat' => 22],
             ['no' => 59, 'nama' => 'Al-Hasyr', 'ayat' => 24],
@@ -488,7 +488,7 @@ $quran_juz = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruang Asatidz – SIM Tahfiz SMA IT Al-Fadhilah</title>
+    <title>Ruang Asatidz � SIM Tahfiz SMA IT Al-Fadhilah</title>
     
     <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz-baru.png">
     
@@ -644,7 +644,7 @@ $quran_juz = [
             box-shadow: 0 4px 14px rgba(13, 92, 86, 0.35);
         }
 
-        /* ── Sidebar Brand Logo (seragam dengan Admin) ── */
+        /* -- Sidebar Brand Logo (seragam dengan Admin) -- */
         .ustadz-sidebar .sidebar-brand {
             padding: 20px 18px 16px !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
@@ -778,14 +778,389 @@ $quran_juz = [
             background-color: #CBD5E1;
             color: #DC2626;
         }
+
+        /* --------------------------------------------------
+           HAFALAN TAB � Override CSS (anti-cache, Figma-exact)
+           -------------------------------------------------- */
+        .hafalan-layout {
+            display: grid !important;
+            grid-template-columns: 330px 1fr !important;
+            gap: 24px !important;
+            align-items: start !important;
+        }
+        .hafalan-panel {
+            background: #FFFFFF !important;
+            border-radius: 16px !important;
+            border: 1px solid #E2E8F0 !important;
+            box-shadow: 0 2px 12px rgba(15,23,42,0.04) !important;
+        }
+        .hafalan-panel-siswa {
+            padding: 24px !important;
+        }
+        .hafalan-panel-surah {
+            padding: 24px !important;
+            min-height: 520px;
+        }
+        /* Panel Kiri � Search */
+        .hafalan-panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 16px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #1E293B;
+        }
+        .hafalan-search-wrap {
+            position: relative;
+        }
+        .hafalan-search-wrap i {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94A3B8;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        #searchHafalanSiswa {
+            width: 100% !important;
+            height: 42px !important;
+            padding: 0 14px 0 38px !important;
+            background: #F1F5F9 !important;
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 10px !important;
+            font-size: 13.5px;
+            color: #1E293B;
+            outline: none;
+        }
+        #searchHafalanSiswa::placeholder { color: #94A3B8; }
+        #searchHafalanSiswa:focus {
+            border-color: #11756D !important;
+            box-shadow: 0 0 0 3px rgba(17,117,109,0.15) !important;
+        }
+        /* Panel Kiri � Daftar Santri */
+        #listHafalanSiswa {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+            margin-top: 14px !important;
+            max-height: 480px !important;
+            overflow-y: auto !important;
+        }
+        .hafalan-siswa-card {
+            width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            text-align: left !important;
+            padding: 12px 14px !important;
+            background: #F8FAFC !important;
+            border: 1.5px solid transparent !important;
+            border-radius: 12px !important;
+            cursor: pointer;
+            margin-bottom: 0 !important;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+        .hafalan-siswa-card:hover {
+            border-color: #11756D !important;
+        }
+        .hafalan-siswa-card.aktif,
+        .hafalan-siswa-card.active {
+            border-color: #11756D !important;
+            background: #F0FDF9 !important;
+        }
+        .hafalan-avatar {
+            width: 38px !important;
+            height: 38px !important;
+            min-width: 38px !important;
+            border-radius: 50% !important;
+            background: #E2E8F0 !important;
+            color: #64748B !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            flex-shrink: 0 !important;
+        }
+        .hafalan-siswa-meta {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .hafalan-siswa-nama {
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            color: #1E293B !important;
+            line-height: 1.3;
+        }
+        .hafalan-siswa-nis {
+            font-size: 11.5px !important;
+            color: #64748B !important;
+            margin-top: 2px;
+        }
+        /* Panel Kanan � Header */
+        .hafalan-surah-head {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            gap: 16px !important;
+            border-bottom: 1px solid #F1F5F9 !important;
+            padding-bottom: 16px !important;
+            margin-bottom: 18px !important;
+        }
+        .hafalan-surah-head h2 {
+            margin: 0 0 4px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F172A;
+        }
+        .hafalan-surah-head > div > p {
+            margin: 0;
+            color: #64748B;
+            font-size: 13.5px;
+        }
+        .hafalan-santri-pill {
+            background: #E6F4F1 !important;
+            color: #11756D !important;
+            border-radius: 999px !important;
+            padding: 6px 14px !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        /* Panel Kanan � Tabel */
+        .hafalan-table { width: 100%; border-collapse: collapse; }
+        .hafalan-table th {
+            font-size: 12.5px !important;
+            font-weight: 600 !important;
+            color: #64748B !important;
+            text-align: left;
+            padding: 12px 14px !important;
+            border-bottom: 1px solid #F1F5F9 !important;
+        }
+        .hafalan-table td {
+            padding: 16px 14px !important;
+            border-bottom: 1px solid #F1F5F9 !important;
+            vertical-align: middle !important;
+            font-size: 14px;
+            color: #1E293B;
+        }
+        .hafalan-table th.col-aksi,
+        .hafalan-table td.col-aksi {
+            text-align: center;
+            width: 72px;
+        }
+        .hafalan-surah-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .hafalan-surah-nama { font-weight: 600; color: #1E293B; }
+        .hafalan-arab {
+            font-family: 'Amiri', serif;
+            font-weight: 700;
+            font-size: 17px;
+        }
+        /* Ikon Buku */
+        .btn-baca-ayat {
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
+            border: 1px solid #FFEDD5 !important;
+            border-radius: 8px !important;
+            background: #FFF7ED !important;
+            color: #EA580C !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer;
+            font-size: 14px !important;
+            flex-shrink: 0;
+            margin-left: 4px;
+        }
+        .btn-baca-ayat:hover { background: #FFEDD5 !important; }
+        /* Tombol + Aksi */
+        .btn-setoran-plus {
+            width: 34px !important;
+            height: 34px !important;
+            min-width: 34px !important;
+            border: none !important;
+            border-radius: 8px !important;
+            background: #11756D !important;
+            color: #FFFFFF !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-setoran-plus:hover { background: #0D5C56 !important; }
+        /* Badge Status */
+        .hafalan-badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px !important;
+            padding: 5px 12px !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            white-space: nowrap;
+        }
+        .hafalan-badge-selesai  { background: #DCFCE7 !important; color: #15803D !important; }
+        .hafalan-badge-berjalan { background: #FEF3C7 !important; color: #B45309 !important; }
+        .hafalan-badge-belum    { background: #F1F5F9 !important; color: #64748B !important; }
+        /* Empty State */
+        .hafalan-empty {
+            min-height: 440px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 32px 24px;
+        }
+        .hafalan-empty p {
+            max-width: 420px;
+            margin: 0;
+            color: #64748B;
+            font-size: 14.5px;
+            line-height: 1.65;
+        }
+        /* Modal Setoran */
+        #modalInputSetoran .modal-content {
+            border: none !important;
+            border-radius: 16px !important;
+            padding: 24px !important;
+            box-shadow: 0 24px 60px rgba(15,23,42,0.18);
+        }
+        #modalInputSetoran .modal-header,
+        #modalInputSetoran .modal-body,
+        #modalInputSetoran .modal-footer { padding: 0 !important; border: 0 !important; }
+        #modalInputSetoran .modal-header { align-items: flex-start; margin-bottom: 18px; }
+        #modalInputSetoran .modal-title  { font-size: 18px; font-weight: 700; color: #0F172A; }
+        #modalInputSetoran .modal-body   { margin-bottom: 18px; }
+        #modalInputSetoran .modal-footer { display: flex; gap: 12px; }
+        .hafalan-modal-sub { margin: 4px 0 0; color: #64748B; font-size: 13px; }
+        .hafalan-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px 16px;
+        }
+        .hafalan-form-full { grid-column: 1 / -1; }
+        .hafalan-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #64748B; }
+        #modalInputSetoran .hafalan-field {
+            background-color: #EEF2F6 !important;
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 10px !important;
+            padding: 10px 14px !important;
+            height: 44px;
+            font-size: 14px;
+            color: #1E293B;
+            box-shadow: none !important;
+        }
+        #modalInputSetoran textarea.hafalan-field {
+            height: auto !important;
+            min-height: 88px;
+            resize: vertical;
+        }
+        #modalInputSetoran .hafalan-field:focus {
+            border-color: #11756D !important;
+            box-shadow: 0 0 0 3px rgba(17,117,109,0.15) !important;
+        }
+        .hafalan-ayat-error { margin: 10px 0 0; color: #DC2626; font-size: 12.5px; font-weight: 600; }
+        .hafalan-modal-setoran { max-width: 560px !important; }
+        .btn-simpan-setoran {
+            flex: 1; border: none; border-radius: 10px; height: 46px;
+            background: #11756D !important; color: #FFFFFF !important;
+            font-weight: 700; font-size: 14px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-simpan-setoran:hover { background: #0D5C56 !important; }
+        .btn-batal-setoran {
+            flex: 1; border: none; border-radius: 10px; height: 46px;
+            background: #F1F5F9 !important; color: #EF4444 !important;
+            font-weight: 700; font-size: 14px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-batal-setoran:hover { background: #E2E8F0 !important; color: #DC2626 !important; }
+        /* Modal Mushaf */
+        .hafalan-modal-mushaf { max-width: 680px !important; }
+        #modalBacaSurah .modal-content {
+            border: none !important;
+            border-radius: 16px !important;
+            overflow: hidden !important;
+            box-shadow: 0 24px 60px rgba(15,23,42,0.18);
+        }
+        .mushaf-header {
+            background: #E6F4F1 !important;
+            padding: 20px 24px !important;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .mushaf-header h5 { margin: 0 0 4px; color: #11756D !important; font-size: 18px; font-weight: 700; }
+        .mushaf-judul-arab { font-family: 'Amiri', serif; font-size: 22px; }
+        .mushaf-header p { margin: 0; color: #64748B; font-size: 13px; }
+        .mushaf-header-tools { display: flex; align-items: flex-end; gap: 12px; }
+        .mushaf-filter { display: flex; flex-direction: column; gap: 4px; }
+        .mushaf-filter label { font-size: 12px; font-weight: 600; color: #64748B; margin: 0; }
+        #filterAyatMushaf {
+            width: 148px; height: 38px; border-radius: 10px;
+            border: none; background-color: #FFFFFF; font-size: 13px; box-shadow: none;
+        }
+        .mushaf-body { background: #FFFFFF; max-height: 440px; overflow-y: auto; padding: 8px 24px 12px; }
+        .mushaf-ayat { padding: 14px 8px 16px; border-bottom: 1px solid #F1F5F9; }
+        .mushaf-ayat.aktif { background: #F0FDF9; border-radius: 12px; }
+        .mushaf-ayat-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+        .mushaf-no {
+            width: 36px; height: 36px; min-width: 36px;
+            border-radius: 10px; background: #E6F4F1; color: #11756D;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px;
+        }
+        .mushaf-arab {
+            flex: 1; margin: 0; text-align: right; direction: rtl;
+            font-family: 'Amiri', serif; font-size: 24px; line-height: 2; color: #0F172A;
+        }
+        .mushaf-latin  { margin: 8px 0 2px; color: #11756D; font-weight: 700; font-size: 14.5px; }
+        .mushaf-terjemah { margin: 0; color: #475569; font-size: 14px; }
+        .mushaf-ket { margin: 6px 0 0; color: #94A3B8; font-size: 12px; }
+        .mushaf-footer {
+            display: flex; justify-content: flex-end;
+            padding: 16px 24px 20px; background: #FFFFFF;
+        }
+        .btn-tutup-mushaf {
+            border: none; border-radius: 10px; height: 46px;
+            background: #11756D !important; color: #FFFFFF !important;
+            font-weight: 700; font-size: 14px; padding: 0 22px;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .btn-tutup-mushaf:hover { background: #0D5C56 !important; }
+        /* Toast */
+        #toastHafalan {
+            border: none; border-radius: 12px; background: #FFFFFF;
+            box-shadow: 0 10px 30px rgba(15,23,42,0.12);
+        }
+        #toastHafalan .toast-body {
+            display: flex; align-items: flex-start; gap: 10px;
+            color: #14532D; font-size: 13.5px; font-weight: 600;
+        }
+        /* Responsive */
+        @media (max-width: 991.98px) {
+            .hafalan-layout { grid-template-columns: 1fr !important; }
+            .hafalan-form-grid { grid-template-columns: 1fr !important; }
+            .hafalan-surah-head { flex-direction: column !important; }
+        }
     </style>
 </head>
 <body>
 
 <div class="d-flex">
-    <!-- ═══════════════════════════════════════════════════════════
+    <!-- -----------------------------------------------------------
          SIDEBAR UTAMA ASATIDZ (SEMUA MENU KEMBALI LENGKAP)
-    ════════════════════════════════════════════════════════════ -->
+    ------------------------------------------------------------ -->
     <aside class="ustadz-sidebar d-flex flex-column" style="width: 250px; height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important; padding: 0; z-index: 1000; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
         <!-- Brand Header -->
         <div class="sidebar-brand" style="padding: 20px 18px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); display: flex; align-items: center; gap: 12px;">
@@ -805,7 +1180,7 @@ $quran_juz = [
             </div>
             <div class="ustadz-user-text overflow-hidden" style="min-width: 0;">
                 <div class="ustadz-user-role text-white fw-semibold text-truncate" style="font-size: 13px; line-height: 1.3;"><?= htmlspecialchars($ustadz_name) ?></div>
-                <div class="ustadz-user-name fw-semibold text-truncate" style="font-size: 11px; color: #A7F3D0; line-height: 1.2;">● Halaqah <?= htmlspecialchars($halaqah_name) ?></div>
+                <div class="ustadz-user-name fw-semibold text-truncate" style="font-size: 11px; color: #A7F3D0; line-height: 1.2;">? Halaqah <?= htmlspecialchars($halaqah_name) ?></div>
             </div>
         </div>
 
@@ -842,9 +1217,9 @@ $quran_juz = [
         </div>
     </aside>
 
-    <!-- ═══════════════════════════════════════════════════════════
+    <!-- -----------------------------------------------------------
          MAIN CONTENT AREA
-    ════════════════════════════════════════════════════════════ -->
+    ------------------------------------------------------------ -->
     <div class="ustadz-content-wrapper">
         
         <!-- Top Bar Header -->
@@ -853,12 +1228,12 @@ $quran_juz = [
                 <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz" class="topbar-logo" style="height: 24px; width: auto; object-fit: contain;">
                 <div class="d-flex align-items-center gap-2 small text-muted">
                     <span>Ruang Ustadz</span>
-                    <span>›</span>
+                    <span>�</span>
                     <span class="fw-bold text-dark text-capitalize">
                         <?php
                         $tab_titles = [
                             'binaan'   => 'Siswa Binaan (Dashboard Halaqah)',
-                            'hafalan'  => 'Catat Hafalan Baru',
+                            'hafalan'  => 'Hafalan',
                             'murajaah' => 'Dashboard & Catat Murajaah',
                             'target'   => 'Target Hafalan Santri',
                             'rekap'    => 'Rekap Tahfiz',
@@ -899,9 +1274,9 @@ $quran_juz = [
                 </div>
             <?php endif; ?>
 
-            <!-- ═══════════════════════════════════════════════════════════
+            <!-- -----------------------------------------------------------
                  MENU 1: DASHBOARD SISWA BINAAN (OVERVIEW HALAQAH)
-            ════════════════════════════════════════════════════════════ -->
+            ------------------------------------------------------------ -->
             <?php if ($page_tab === 'binaan'): ?>
                 <div class="mb-4">
                     <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">HALAQAH AL-FURQAN</span>
@@ -918,7 +1293,7 @@ $quran_juz = [
                                 <i class="bi bi-people fs-4" style="color: #11756D;"></i>
                             </div>
                             <div class="fs-2 fw-bold text-dark"><?= $total_santri_binaan ?></div>
-                            <small class="text-muted">Halaqah <?= htmlspecialchars($halaqah_name) ?> · Aktif</small>
+                            <small class="text-muted">Halaqah <?= htmlspecialchars($halaqah_name) ?> � Aktif</small>
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
@@ -986,7 +1361,7 @@ $quran_juz = [
                                             <small class="fw-bold" style="font-size: 0.75rem;"><?= 60 + ($i * 15) ?>%</small>
                                         </div>
                                     </td>
-                                    <td><span class="badge bg-light text-dark border">Al-Mulk: 13–18</span></td>
+                                    <td><span class="badge bg-light text-dark border">Al-Mulk: 13�18</span></td>
                                     <td><span class="badge bg-success-subtle text-success fw-bold">90 / 100</span></td>
                                     <td class="text-end pe-4">
                                         <a href="?tab=hafalan&santri=<?= urlencode($s['nama_lengkap']) ?>" class="btn btn-sm btn-outline-success fw-semibold">
@@ -1003,153 +1378,448 @@ $quran_juz = [
                     </div>
                 </div>
 
-            <!-- ═══════════════════════════════════════════════════════════
-                 MENU 2: CATAT HAFALAN BARU (ALUR PILIH SISWA -> JUZ/SURAH -> LEMBAR SETORAN)
-            ════════════════════════════════════════════════════════════ -->
+            <!-- -----------------------------------------------------------
+                 MENU 2: HAFALAN (PILIH SISWA -> DAFTAR SURAH TARGET -> MODAL)
+            ------------------------------------------------------------ -->
             <?php elseif ($page_tab === 'hafalan'): ?>
-                <div class="mb-4">
-                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">FORMULIR SETORAN HAFALAN</span>
-                    <h2 class="fw-bold mb-1" style="color: #11756D;">Pencatatan Hafalan Baru</h2>
-                    <p class="text-muted small mb-0">Pilih santri terlebih dahulu di kolom kiri, lalu tentukan surah dan batas ayat setoran.</p>
-                </div>
+                <div class="hafalan-layout">
+                    <section class="hafalan-panel hafalan-panel-siswa" aria-label="Pilih siswa">
+                        <h2 class="hafalan-panel-title">
+                            <i class="bi bi-person"></i>
+                            <span>Pilih siswa</span>
+                        </h2>
+                        <div class="hafalan-search-wrap">
+                            <i class="bi bi-search"></i>
+                            <input type="search" id="searchHafalanSiswa" placeholder="Cari nama atau NIS" autocomplete="off">
+                        </div>
+                        <div id="listHafalanSiswa">
+                            <?php foreach ($santri_list as $s):
+                                // Ambil 2 huruf inisial dari nama santri
+                                $kata = explode(' ', trim($s['nama_lengkap']));
+                                $inisial = strtoupper(substr($kata[0], 0, 1));
+                                if (isset($kata[1])) $inisial .= strtoupper(substr($kata[1], 0, 1));
+                            ?>
+                                <button type="button"
+                                    class="hafalan-siswa-card"
+                                    data-id="<?= (int)$s['id'] ?>"
+                                    data-nama="<?= htmlspecialchars($s['nama_lengkap'], ENT_QUOTES) ?>"
+                                    data-nis="<?= htmlspecialchars($s['nip_nis'], ENT_QUOTES) ?>">
+                                    <span class="hafalan-avatar" aria-hidden="true"><?= $inisial ?></span>
+                                    <span class="hafalan-siswa-meta">
+                                        <span class="hafalan-siswa-nama"><?= htmlspecialchars($s['nama_lengkap']) ?></span>
+                                        <span class="hafalan-siswa-nis">NIS: <?= htmlspecialchars($s['nip_nis']) ?></span>
+                                    </span>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                    </section>
 
-                <div class="row g-4">
-                    <!-- KOLOM KIRI: PILIH SISWA -->
-                    <div class="col-12 col-lg-4">
-                        <div class="card p-3 border-0 shadow-sm rounded-4 bg-white h-100">
-                            <h6 class="fw-bold text-dark mb-2">
-                                <i class="bi bi-person-check-fill text-success me-1"></i>1. Pilih Siswa
-                            </h6>
-                            <input type="text" id="cariSantriHafalan" class="form-control form-control-sm mb-3" placeholder="Cari nama atau NIS...">
-                            
-                            <div class="d-flex flex-column gap-2 overflow-y-auto" style="max-height: 520px;" id="listSantriHafalan">
-                                <?php foreach ($santri_list as $s): ?>
-                                    <div class="santri-select-card" onclick="pilihSantriUntukHafalan('<?= htmlspecialchars($s['nama_lengkap']) ?>', '<?= htmlspecialchars($s['nip_nis']) ?>', this)">
-                                        <div class="fw-bold text-dark santri-nama-item"><?= htmlspecialchars($s['nama_lengkap']) ?></div>
-                                        <div class="d-flex justify-content-between small text-muted mt-1">
-                                            <span>NIS: <?= htmlspecialchars($s['nip_nis']) ?></span>
-                                            <span class="badge bg-light text-success border">Halaqah <?= htmlspecialchars($s['halaqah'] ?? 'Al-Furqan') ?></span>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
+                    <section class="hafalan-panel hafalan-panel-surah" aria-label="Daftar surah target hafalan">
+                        <div id="hafalanEmpty" class="hafalan-empty">
+                            <p>Pilih santri terlebih dahulu di panel kiri untuk melihat daftar surah target hafalan.</p>
+                        </div>
+                        <div id="hafalanSurahArea" hidden>
+                            <div class="hafalan-surah-head">
+                                <div>
+                                    <h2>Daftar Surah Target Hafalan</h2>
+                                    <p>Target Aktif: Juz 30 (Adh-Dhuha � An-Nas)</p>
+                                </div>
+                                <span class="hafalan-santri-pill" id="badgeSantriHafalan">Santri: -</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="hafalan-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:52px;">No</th>
+                                            <th>Nama Surah</th>
+                                            <th style="width:130px;">Target Ayat</th>
+                                            <th style="width:160px;">Status</th>
+                                            <th class="col-aksi">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodySurahTarget"></tbody>
+                                </table>
                             </div>
                         </div>
-                    </div>
+                    </section>
+                </div>
 
-                    <!-- KOLOM KANAN: FORMULIR INPUT HAFALAN BERTAHAP -->
-                    <div class="col-12 col-lg-8">
-                        <div class="card p-4 border-0 shadow-sm rounded-4 bg-white h-100">
-                            
-                            <!-- Placeholder jika siswa belum dipilih -->
-                            <div id="placeholderHafalan" class="text-center py-5 my-auto text-muted">
-                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3" style="width: 64px; height: 64px; background: #E6F4F1; color: #11756D;">
-                                    <i class="bi bi-arrow-left-circle-fill fs-2"></i>
+                <div class="modal fade" id="modalInputSetoran" tabindex="-1" aria-labelledby="judulInputSetoran" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered hafalan-modal-setoran">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div>
+                                    <h5 class="modal-title" id="judulInputSetoran">Input Setoran Hafalan</h5>
+                                    <p class="hafalan-modal-sub" id="subjudulInputSetoran"></p>
                                 </div>
-                                <h5 class="fw-bold text-dark mb-1">Silakan Pilih Siswa Terlebih Dahulu</h5>
-                                <p class="small text-muted mb-0">Klik nama santri pada daftar di sebelah kiri untuk membuka pilihan surah dan lembar setoran.</p>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                             </div>
-
-                            <!-- Area Form Setoran (Aktif setelah santri dipilih) -->
-                            <div id="areaFormHafalan" style="display: none;">
-                                <div class="p-3 rounded-3 mb-4 d-flex align-items-center justify-content-between" style="background-color: var(--color-tahfiz-light); border: 1px solid #80C8C4;">
+                            <div class="modal-body">
+                                <div class="hafalan-form-grid">
                                     <div>
-                                        <small class="text-muted d-block" style="font-size: 0.72rem;">Santri yang Diuji:</small>
-                                        <h5 class="fw-bold mb-0 text-dark" id="displayNamaSantriHafalan">Muhammad Fadhlan</h5>
+                                        <label class="hafalan-label" for="inputAyatAwal">Ayat Awal</label>
+                                        <select id="inputAyatAwal" class="form-select hafalan-field"></select>
                                     </div>
-                                    <span class="badge bg-white text-dark border px-3 py-2 fw-semibold" id="displayNisSantriHafalan">NIS: 102601</span>
-                                </div>
-
-                                <!-- Langkah 2: Pilihan Target Juz & Surah -->
-                                <div class="mb-4">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <label class="form-label fw-bold small text-dark mb-0">
-                                            <i class="bi bi-book-half text-success me-1"></i>2. Pilih Target Juz &amp; Surah:
-                                        </label>
-                                        <select class="form-select form-select-sm w-auto fw-bold text-dark" onchange="gantiJuzHafalan(this.value)">
-                                            <option value="30" selected>Juz 30 (An-Naba – An-Nas) — 37 Surah</option>
-                                            <option value="29">Juz 29 (Al-Mulk – Al-Mursalat) — 11 Surah</option>
-                                            <option value="28">Juz 28 (Al-Mujadilah – At-Tahrim) — 9 Surah</option>
+                                    <div>
+                                        <label class="hafalan-label" for="inputAyatAkhir">Ayat Akhir</label>
+                                        <select id="inputAyatAkhir" class="form-select hafalan-field"></select>
+                                    </div>
+                                    <div>
+                                        <label class="hafalan-label" for="inputKualitas">Kualitas Hafalan</label>
+                                        <select id="inputKualitas" class="form-select hafalan-field">
+                                            <option value="Lancar">Lancar</option>
+                                            <option value="Kurang Lancar">Kurang Lancar</option>
+                                            <option value="Tidak Lancar">Tidak Lancar</option>
                                         </select>
                                     </div>
-
-                                    <!-- Grid Tombol Surah -->
-                                    <div class="row g-2 overflow-y-auto" style="max-height: 200px;" id="gridSurahHafalan">
-                                        <?php foreach ($quran_juz['30']['surah'] as $sr): ?>
-                                            <div class="col-12 col-md-4 col-sm-6">
-                                                <button type="button" class="surah-select-btn" onclick="pilihSurahHafalan('<?= $sr['nama'] ?>', <?= $sr['ayat'] ?>, <?= $sr['no'] ?>, this)">
-                                                    <div class="fw-bold small text-dark"><?= $sr['no'] ?>. <?= $sr['nama'] ?></div>
-                                                    <small class="text-muted d-block" style="font-size: 0.7rem;"><?= $sr['ayat'] ?> Ayat</small>
-                                                </button>
-                                            </div>
-                                        <?php endforeach; ?>
+                                    <div>
+                                        <label class="hafalan-label" for="inputTanggalSetoran">Tanggal</label>
+                                        <input type="date" id="inputTanggalSetoran" class="form-control hafalan-field" value="<?= date('Y-m-d') ?>" data-hari-ini="<?= date('Y-m-d') ?>">
+                                    </div>
+                                    <div class="hafalan-form-full">
+                                        <label class="hafalan-label" for="inputCatatanSetoran">Catatan (Opsional)</label>
+                                        <textarea id="inputCatatanSetoran" class="form-control hafalan-field" rows="3" placeholder="Catatan hafalan (opsional)..."></textarea>
                                     </div>
                                 </div>
-
-                                <!-- Langkah 3: Formulir Lembar Setoran Eksklusif Surah -->
-                                <div id="lembarSetoranForm" style="display: none;" class="p-3 border rounded-3 bg-light bg-opacity-50">
-                                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                                        <div>
-                                            <span class="badge bg-success-subtle text-success fw-bold px-2 py-0.5 mb-1" style="font-size: 0.7rem;">LEMBAR SETORAN EKSKLUSIF</span>
-                                            <h5 class="fw-bold mb-0 text-dark" id="displaySurahTerpilih">Surah An-Naba'</h5>
-                                        </div>
-                                        <span class="badge rounded-pill text-white px-3 py-1.5" style="background-color: #11756D;" id="displayTotalAyatSurah">Total 40 Ayat</span>
-                                    </div>
-
-                                    <form action="?tab=hafalan" method="POST">
-                                        <input type="hidden" name="action" value="simpan_setoran">
-                                        <input type="hidden" name="santri_nama" id="inputSantriHafalan">
-                                        <input type="hidden" name="surah" id="inputSurahHafalan">
-
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-6">
-                                                <label class="form-label small fw-bold text-muted">Dari Ayat</label>
-                                                <input type="number" name="ayat_awal" id="inputAyatAwalHafalan" class="form-control" value="1" min="1" required>
-                                            </div>
-                                            <div class="col-6">
-                                                <label class="form-label small fw-bold text-muted">Sampai Ayat</label>
-                                                <input type="number" name="ayat_akhir" id="inputAyatAkhirHafalan" class="form-control" value="20" min="1" required>
-                                            </div>
-                                            <small class="text-muted" style="font-size: 0.73rem;">
-                                                *Kertas setoran terkunci khusus surah ini (1 lembar = 1 surah).
-                                             </small>
-                                        </div>
-
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-7">
-                                                <label class="form-label small fw-bold text-muted">Kualitas Hafalan</label>
-                                                <select name="kualitas" class="form-select">
-                                                    <option value="Mumtaz (A)" selected>Mumtaz / Sangat Lancar (A)</option>
-                                                    <option value="Jayyid Jiddan (B)">Jayyid Jiddan / Lancar (B)</option>
-                                                    <option value="Jayyid (C)">Jayyid / Cukup (C)</option>
-                                                    <option value="Perlu Penguatan">Perlu Pengulangan / Remedi</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-5">
-                                                <label class="form-label small fw-bold text-muted">Nilai (0–100)</label>
-                                                <input type="number" name="nilai" class="form-control fw-bold text-center" value="90" min="0" max="100" required>
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label small fw-bold text-muted">Catatan Tajwid / Makhraj Ustadz</label>
-                                            <textarea name="catatan" class="form-control" rows="2" placeholder="Catatan perbaikan tajwid, panjang mad, atau makhraj huruf..."></textarea>
-                                        </div>
-
-                                        <button type="submit" class="btn btn-tahfiz btn-simpan-hafalan w-100 py-2.5 rounded-3 fw-bold text-white" id="btnSubmitSetoran" style="background-color: #11756D;">
-                                            <i class="bi bi-check2-circle me-1"></i>Simpan Hafalan
-                                        </button>
-                                    </form>
-                                </div>
-
+                                <p id="hafalanAyatError" class="hafalan-ayat-error" hidden></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-simpan-setoran" id="btnSimpanHafalan">
+                                    <i class="bi bi-floppy"></i>
+                                    <span>Simpan Hafalan</span>
+                                </button>
+                                <button type="button" class="btn-batal-setoran" data-bs-dismiss="modal">
+                                    <i class="bi bi-x-circle"></i>
+                                    <span>Batal</span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-            <!-- ═══════════════════════════════════════════════════════════
+                <div class="modal fade" id="modalBacaSurah" tabindex="-1" aria-labelledby="mushafJudul" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered hafalan-modal-mushaf">
+                        <div class="modal-content">
+                            <div class="mushaf-header">
+                                <div>
+                                    <h5 id="mushafJudul"></h5>
+                                    <p id="mushafSubjudul"></p>
+                                </div>
+                                <div class="mushaf-header-tools">
+                                    <div class="mushaf-filter">
+                                        <label for="filterAyatMushaf">Ayat</label>
+                                        <select id="filterAyatMushaf" class="form-select"></select>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                </div>
+                            </div>
+                            <div class="mushaf-body" id="mushafBody"></div>
+                            <div class="mushaf-footer">
+                                <button type="button" class="btn-tutup-mushaf" data-bs-dismiss="modal">Tutup Mushaf</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1090;">
+                    <div id="toastHafalan" class="toast" role="status" aria-live="polite" aria-atomic="true">
+                        <div class="toast-body">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span id="toastHafalanPesan"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                (function () {
+                    const MUSHAF_MOCK = {
+                        'adh-dhuha': {
+                            no: 93, nama: 'Adh-Dhuha', arab: '?????', arti: 'Duha', jumlah: 11, golongan: 'Makkiyah',
+                            ayat: [
+                                { arab: '???????????', latin: 'Wa?-?u?a.', arti: 'Demi waktu duha' },
+                                { arab: '??????????? ????? ??????', latin: 'Wal-laili iza saja.', arti: 'dan demi waktu malam apabila telah sunyi' },
+                                { arab: '??? ????????? ??????? ????? ??????', latin: 'Ma wadda�aka rabbuka wa ma qala.', arti: 'Tuhanmu tidak meninggalkan engkau dan tidak (pula) membencimu' },
+                                { arab: '????????????? ?????? ????? ???? ??????????', latin: 'Wa lal-akhiratu khairul laka minal-ula.', arti: 'Dan sungguh, akhirat itu lebih baik bagimu daripada yang permulaan' },
+                                { arab: '?????????? ????????? ??????? ??????????', latin: 'Wa lasaufa yu�?ika rabbuka fa tar?a.', arti: 'Dan sungguh, kelak Tuhanmu pasti memberikan karunia-Nya kepadamu, sehingga engkau menjadi puas' },
+                                { arab: '?????? ???????? ???????? ???????', latin: 'Alam yajidka yatiman fa awa.', arti: 'Bukankah Dia mendapatimu sebagai seorang yatim, lalu Dia melindungi(-mu)' },
+                                { arab: '?????????? ??????? ????????', latin: 'Wa wajadaka ?allan fa hada.', arti: 'Dan Dia mendapatimu sebagai seorang yang bingung, lalu Dia memberikan petunjuk' },
+                                { arab: '?????????? ???????? ??????????', latin: 'Wa wajadaka �a�ilan fa aghna.', arti: 'Dan Dia mendapatimu sebagai seorang yang kekurangan, lalu Dia memberikan kecukupan' },
+                                { arab: '???????? ?????????? ????? ????????', latin: 'Fa ammal-yatima fa la taqhar.', arti: 'Maka terhadap anak yatim janganlah engkau berlaku sewenang-wenang' },
+                                { arab: '???????? ?????????? ????? ????????', latin: 'Wa ammas-sa�ila fa la tanhar.', arti: 'Dan terhadap orang yang meminta-minta janganlah engkau menghardik(-nya)' },
+                                { arab: '???????? ?????????? ??????? ?????????', latin: 'Wa amma bini�mati rabbika fa ?addi?.', arti: 'Dan terhadap nikmat Tuhanmu hendaklah engkau nyatakan (dengan bersyukur)' }
+                            ]
+                        },
+                        'al-insyirah': {
+                            no: 94, nama: 'Al-Insyirah', arab: '?????', arti: 'Kelapangan', jumlah: 8, golongan: 'Makkiyah',
+                            ayat: [
+                                { arab: '?????? ???????? ???? ????????', latin: 'Alam nasyra? laka ?adrak.', arti: 'Bukankah Kami telah melapangkan dadamu (Muhammad)?' },
+                                { arab: '??????????? ????? ????????', latin: 'Wa wa?a�na �anka wizrak.', arti: 'dan Kami pun telah menurunkan bebanmu darimu' },
+                                { arab: '??????? ??????? ????????', latin: 'Allazi anqa?a ?ahrak.', arti: 'yang memberatkan punggungmu' },
+                                { arab: '??????????? ???? ????????', latin: 'Wa rafa�na laka zikrak.', arti: 'dan Kami tinggikan sebutan (nama)mu bagimu' },
+                                { arab: '??????? ???? ????????? ???????', latin: 'Fa inna ma�al-�usri yusra.', arti: 'Maka sesungguhnya beserta kesulitan ada kemudahan' },
+                                { arab: '????? ???? ????????? ???????', latin: 'Inna ma�al-�usri yusra.', arti: 'sesungguhnya beserta kesulitan ada kemudahan' },
+                                { arab: '??????? ???????? ????????', latin: 'Fa iza faraghta fan?ab.', arti: 'Maka apabila engkau telah selesai (dari sesuatu urusan), tetaplah bekerja keras (untuk urusan yang lain)' },
+                                { arab: '???????? ??????? ????????', latin: 'Wa ila rabbika farghab.', arti: 'dan hanya kepada Tuhanmulah engkau berharap' }
+                            ]
+                        },
+                        'at-tin': {
+                            no: 95, nama: 'At-Tin', arab: '?????', arti: 'Buah Tin', jumlah: 8, golongan: 'Makkiyah',
+                            ayat: [
+                                { arab: '?????????? ??????????????', latin: 'Wat-tini waz-zaitun.', arti: 'Demi (buah) Tin dan (buah) Zaitun' },
+                                { arab: '??????? ????????', latin: 'Wa ?uri sinin.', arti: 'demi gunung Sinai' },
+                                { arab: '???????? ????????? ??????????', latin: 'Wa hazal-baladil-amin.', arti: 'dan demi negeri (Mekah) yang aman ini' },
+                                { arab: '?????? ????????? ??????????? ??? ???????? ?????????', latin: 'Laqad khalaqnal-insana fi a?sani taqwim.', arti: 'Sungguh, Kami telah menciptakan manusia dalam bentuk yang sebaik-baiknya' },
+                                { arab: '????? ??????????? ???????? ??????????', latin: '?umma radadnahu asfala safilin.', arti: 'kemudian Kami kembalikan dia ke tempat yang serendah-rendahnya' },
+                                { arab: '?????? ????????? ??????? ?????????? ????????????? ???????? ?????? ?????? ?????????', latin: 'Illal-lazina amanu wa �amilu?-?ali?ati falahum ajrun gairu mamnun.', arti: 'kecuali orang-orang yang beriman dan mengerjakan kebajikan; maka mereka akan mendapat pahala yang tidak putus-putusnya' },
+                                { arab: '????? ??????????? ?????? ??????????', latin: 'Fama yukazzibuka ba�du bid-din.', arti: 'Maka apa yang menyebabkan (mereka) mendustakanmu (tentang) hari pembalasan setelah (adanya keterangan-keterangan) itu?' },
+                                { arab: '???????? ??????? ?????????? ?????????????', latin: 'Alaisallahu bi-a?kamil-?akimin.', arti: 'Bukankah Allah hakim yang paling adil?' }
+                            ]
+                        },
+                        'al-alaq': {
+                            no: 96, nama: "Al-'Alaq", arab: '?????', arti: 'Segumpal Darah', jumlah: 19, golongan: 'Makkiyah',
+                            ayat: [
+                                { arab: '??????? ??????? ??????? ??????? ??????', latin: 'Iqra� bismi rabbikal-lazi khalaq.', arti: 'Bacalah dengan (menyebut) nama Tuhanmu yang menciptakan' },
+                                { arab: '?????? ??????????? ???? ??????', latin: 'Khalaqal-insana min �alaq.', arti: 'Dia telah menciptakan manusia dari segumpal darah' },
+                                { arab: '??????? ????????? ???????????', latin: 'Iqra� wa rabbukal-akram.', arti: 'Bacalah, dan Tuhanmulah Yang Mahamulia' },
+                                { arab: '??????? ??????? ???????????', latin: 'Allazi �allama bil-qalam.', arti: 'Yang mengajar (manusia) dengan pena' },
+                                { arab: '??????? ??????????? ??? ???? ????????', latin: '�Allamal-insana ma lam ya�lam.', arti: 'Dia mengajarkan manusia apa yang tidak diketahuinya' },
+                                { arab: '?????? ????? ??????????? ??????????', latin: 'Kalla innal-insana laya?ga.', arti: 'Sekali-kali tidak! Sungguh, manusia itu benar-benar melampaui batas' },
+                                { arab: '??? ?????? ???????????', latin: 'Ar ra�ahustagna.', arti: 'apabila melihat dirinya serba berkecukupan' },
+                                { arab: '????? ?????? ??????? ???????????', latin: 'Inna ila rabbikar-ruj�a.', arti: 'Sungguh, hanya kepada Tuhanmulah kembalimu' },
+                                { arab: '?????????? ??????? ????????', latin: 'Ara�aital-lazi yanha.', arti: 'Bagaimana pendapatmu tentang orang yang melarang' },
+                                { arab: '??????? ????? ???????', latin: '�Abdan iza ?alla.', arti: 'seorang hamba ketika dia melaksanakan salat' },
+                                { arab: '?????????? ??? ????? ????? ?????????', latin: 'Ara�aita in kana �alal-huda.', arti: 'bagaimana pendapatmu jika dia (yang dilarang salat itu) berada di atas kebenaran' },
+                                { arab: '???? ?????? ?????????????', latin: 'Au amara bit-taqwa.', arti: 'atau dia menyuruh bertakwa (kepada Allah)?' },
+                                { arab: '?????????? ??? ??????? ???????????', latin: 'Ara�aita in kazzaba wa tawalla.', arti: 'Bagaimana pendapatmu jika dia (orang yang melarang) itu mendustakan dan berpaling?' },
+                                { arab: '?????? ??????? ??????? ??????? ??????', latin: 'Alam ya�lam bi�annallaha yara.', arti: 'Tidakkah dia mengetahui bahwa sesungguhnya Allah melihat (segala perbuatannya)?' },
+                                { arab: '?????? ????? ????? ??????? ??????????? ??????????????', latin: 'Kalla la�il lam yantahi lanasfa�am bin-na?iyah.', arti: 'Sekali-kali tidak! Sungguh, jika dia tidak berhenti (berbuat demikian) niscaya Kami tarik ubun-ubunnya' },
+                                { arab: '????????? ????????? ?????????', latin: 'Na?iyatin kazibatin kha?i�ah.', arti: '(yaitu) ubun-ubun orang yang mendustakan dan durhaka' },
+                                { arab: '?????????? ?????????', latin: 'Falyad�u nadiyah.', arti: 'maka biarlah dia memanggil golongannya (untuk menolongnya)' },
+                                { arab: '???????? ??????????????', latin: 'Sanad�uz-zabaniyah.', arti: 'Kelak Kami akan memanggil Malaikat Zabaniyah' },
+                                { arab: '?????? ??? ???????? ????????? ?????????? ?', latin: 'Kalla la tu?i�hu wasjud waqtarib.', arti: 'Sekali-kali tidak! Janganlah kamu patuh kepadanya; dan sujudlah serta dekatkanlah (dirimu kepada Allah)' }
+                            ]
+                        },
+                        'al-qadr': {
+                            no: 97, nama: 'Al-Qadr', arab: '?????', arti: 'Kemuliaan', jumlah: 5, golongan: 'Makkiyah',
+                            ayat: [
+                                { arab: '?????? ???????????? ??? ???????? ?????????', latin: 'Inna anzalnahu fi lailatil-qadr.', arti: 'Sesungguhnya Kami telah menurunkannya (Al-Qur�an) pada malam qadar' },
+                                { arab: '????? ????????? ??? ???????? ?????????', latin: 'Wa ma adraka ma lailatul-qadr.', arti: 'Dan tahukah kamu apakah malam kemuliaan itu?' },
+                                { arab: '???????? ????????? ?????? ????? ?????? ??????', latin: 'Lailatul-qadri khairum min alfi syahr.', arti: 'Malam kemuliaan itu lebih baik daripada seribu bulan' },
+                                { arab: '????????? ?????????????? ?????????? ?????? ???????? ???????? ???? ????? ??????', latin: 'Tanazzalul-mala�ikatu war-ru?u fiha bi�izni rabbihim min kulli amr.', arti: 'Pada malam itu turun para malaikat dan Ruh (Jibril) dengan izin Tuhannya untuk mengatur semua urusan' },
+                                { arab: '??????? ???? ??????? ???????? ?????????', latin: 'Salamun hiya ?atta ma?la�il-fajr.', arti: 'Sejahteralah (malam itu) sampai terbit fajar' }
+                            ]
+                        }
+                    };
+
+                    const SURAH_TARGET_AWAL = [
+                        { key: 'adh-dhuha', status: 'selesai' },
+                        { key: 'al-insyirah', status: 'selesai' },
+                        { key: 'at-tin', status: 'berjalan' },
+                        { key: 'al-alaq', status: 'belum' },
+                        { key: 'al-qadr', status: 'belum' }
+                    ];
+
+                    const STATUS_TAMPILAN = {
+                        selesai: { label: 'Selesai', kelas: 'hafalan-badge-selesai' },
+                        berjalan: { label: 'Sedang Berjalan', kelas: 'hafalan-badge-berjalan' },
+                        belum: { label: 'Belum Setor', kelas: 'hafalan-badge-belum' }
+                    };
+
+                    const hafalanStatusSiswa = {};
+                    let siswaHafalanTerpilih = null;
+                    let surahSetoranAktif = null;
+
+                    function escHtml(nilai) {
+                        return String(nilai)
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;');
+                    }
+
+                    function pastikanState(id) {
+                        if (!hafalanStatusSiswa[id]) {
+                            hafalanStatusSiswa[id] = SURAH_TARGET_AWAL.map(function (item) {
+                                return { key: item.key, status: item.status };
+                            });
+                        }
+                        return hafalanStatusSiswa[id];
+                    }
+
+                    function renderTabelSurah() {
+                        if (!siswaHafalanTerpilih) return;
+                        const daftar = pastikanState(siswaHafalanTerpilih.id);
+                        const tubuh = document.getElementById('tbodySurahTarget');
+                        tubuh.innerHTML = daftar.map(function (item, indeks) {
+                            const meta = MUSHAF_MOCK[item.key];
+                            const status = STATUS_TAMPILAN[item.status] || STATUS_TAMPILAN.belum;
+                            return '<tr>'
+                                + '<td style="color:#94A3B8;font-size:13px;">' + (indeks + 1) + '.</td>'
+                                + '<td><div class="hafalan-surah-cell">'
+                                + '<span class="hafalan-surah-nama">' + escHtml(meta.nama) + ' &ndash; <span class="hafalan-arab">' + meta.arab + '</span></span>'
+                                + '<button type="button" class="btn-baca-ayat" data-aksi="baca" data-key="' + item.key + '" aria-label="Baca Surah ' + escHtml(meta.nama) + '"><i class="bi bi-book"></i></button>'
+                                + '</div></td>'
+                                + '<td style="color:#64748B;font-size:13.5px;">Ayat 1\u2013' + meta.jumlah + '</td>'
+                                + '<td><span class="hafalan-badge ' + status.kelas + '">' + status.label + '</span></td>'
+                                + '<td class="col-aksi"><button type="button" class="btn-setoran-plus" data-aksi="setor" data-key="' + item.key + '" aria-label="Input setoran ' + escHtml(meta.nama) + '"><i class="bi bi-plus-lg"></i></button></td>'
+                                + '</tr>';
+                        }).join('');
+                    }
+
+                    function pilihSiswaHafalan(kartu) {
+                        siswaHafalanTerpilih = {
+                            id: kartu.dataset.id,
+                            nama: kartu.dataset.nama,
+                            nis: kartu.dataset.nis
+                        };
+                        document.querySelectorAll('.hafalan-siswa-card').forEach(function (el) {
+                            el.classList.remove('aktif');
+                        });
+                        kartu.classList.add('aktif');
+                        document.getElementById('hafalanEmpty').hidden = true;
+                        document.getElementById('hafalanSurahArea').hidden = false;
+                        document.getElementById('badgeSantriHafalan').textContent = 'Santri: ' + siswaHafalanTerpilih.nama;
+                        renderTabelSurah();
+                    }
+
+                    function isiOpsiAyat(idSelect, jumlah, terpilih) {
+                        const select = document.getElementById(idSelect);
+                        let html = '';
+                        for (let n = 1; n <= jumlah; n++) {
+                            html += '<option value="' + n + '">' + n + '</option>';
+                        }
+                        select.innerHTML = html;
+                        select.value = String(terpilih);
+                    }
+
+                    function validasiRentangAyat() {
+                        const awal = parseInt(document.getElementById('inputAyatAwal').value, 10);
+                        const akhir = parseInt(document.getElementById('inputAyatAkhir').value, 10);
+                        const pesan = document.getElementById('hafalanAyatError');
+                        if (akhir < awal) {
+                            pesan.textContent = 'Ayat akhir tidak boleh lebih kecil dari ayat awal.';
+                            pesan.hidden = false;
+                            return false;
+                        }
+                        pesan.hidden = true;
+                        return true;
+                    }
+
+                    function bukaSetoran(key) {
+                        const meta = MUSHAF_MOCK[key];
+                        if (!meta || !siswaHafalanTerpilih) return;
+                        surahSetoranAktif = key;
+                        document.getElementById('subjudulInputSetoran').textContent =
+                            'Santri: ' + siswaHafalanTerpilih.nama + ' � Surah ' + meta.nama + ' (' + meta.jumlah + ' Ayat)';
+                        isiOpsiAyat('inputAyatAwal', meta.jumlah, 1);
+                        isiOpsiAyat('inputAyatAkhir', meta.jumlah, meta.jumlah);
+                        document.getElementById('inputKualitas').value = 'Lancar';
+                        document.getElementById('inputCatatanSetoran').value = '';
+                        const tanggal = document.getElementById('inputTanggalSetoran');
+                        tanggal.value = tanggal.dataset.hariIni || tanggal.value;
+                        document.getElementById('hafalanAyatError').hidden = true;
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalInputSetoran')).show();
+                    }
+
+                    function bukaMushaf(key) {
+                        const data = MUSHAF_MOCK[key];
+                        if (!data) return;
+                        document.getElementById('mushafJudul').innerHTML =
+                            escHtml(data.nama) + ' - <span class="mushaf-judul-arab">' + data.arab + '</span> (QS. ' + data.no + ')';
+                        document.getElementById('mushafSubjudul').textContent =
+                            data.arti + ' � ' + data.jumlah + ' Ayat � ' + data.golongan;
+
+                        const select = document.getElementById('filterAyatMushaf');
+                        const tubuh = document.getElementById('mushafBody');
+                        let opsi = '<option value="">Pilih Ayat</option>';
+                        tubuh.innerHTML = data.ayat.map(function (ayat, indeks) {
+                            const nomor = indeks + 1;
+                            opsi += '<option value="' + nomor + '">Ayat ' + nomor + '</option>';
+                            return '<article class="mushaf-ayat" id="mushafAyat-' + nomor + '">'
+                                + '<div class="mushaf-ayat-top"><span class="mushaf-no">' + nomor + '</span><p class="mushaf-arab">' + ayat.arab + '</p></div>'
+                                + '<p class="mushaf-latin">' + escHtml(ayat.latin) + '</p>'
+                                + '<p class="mushaf-terjemah">' + escHtml(ayat.arti) + '</p>'
+                                + '<p class="mushaf-ket"><i class="bi bi-volume-up" aria-hidden="true"></i> QS. ' + escHtml(data.nama) + ' ayat ke-' + nomor + '</p>'
+                                + '</article>';
+                        }).join('');
+                        select.innerHTML = opsi;
+                        select.value = '';
+                        tubuh.scrollTop = 0;
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalBacaSurah')).show();
+                    }
+
+                    function gulirKeAyat() {
+                        const nomor = document.getElementById('filterAyatMushaf').value;
+                        const tubuh = document.getElementById('mushafBody');
+                        tubuh.querySelectorAll('.mushaf-ayat').forEach(function (el) {
+                            el.classList.remove('aktif');
+                        });
+                        if (!nomor) return;
+                        const target = document.getElementById('mushafAyat-' + nomor);
+                        if (!target) return;
+                        target.classList.add('aktif');
+                        tubuh.scrollTo({ top: target.offsetTop - 8, behavior: 'smooth' });
+                    }
+
+                    function simpanSetoran() {
+                        if (!validasiRentangAyat() || !siswaHafalanTerpilih || !surahSetoranAktif) return;
+                        const awal = parseInt(document.getElementById('inputAyatAwal').value, 10);
+                        const akhir = parseInt(document.getElementById('inputAyatAkhir').value, 10);
+                        const meta = MUSHAF_MOCK[surahSetoranAktif];
+                        const daftar = pastikanState(siswaHafalanTerpilih.id);
+                        const item = daftar.find(function (baris) { return baris.key === surahSetoranAktif; });
+                        if (item && meta) {
+                            item.status = (awal === 1 && akhir === meta.jumlah) ? 'selesai' : 'berjalan';
+                        }
+                        renderTabelSurah();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalInputSetoran'));
+                        if (modal) modal.hide();
+                        document.getElementById('toastHafalanPesan').textContent =
+                            'Setoran hafalan ' + siswaHafalanTerpilih.nama + ' untuk Surah ' + meta.nama + ' (Ayat ' + awal + '�' + akhir + ') berhasil disimpan.';
+                        bootstrap.Toast.getOrCreateInstance(document.getElementById('toastHafalan'), { delay: 3400 }).show();
+                    }
+
+                    document.getElementById('listHafalanSiswa').addEventListener('click', function (event) {
+                        const kartu = event.target.closest('.hafalan-siswa-card');
+                        if (kartu) pilihSiswaHafalan(kartu);
+                    });
+
+                    document.getElementById('tbodySurahTarget').addEventListener('click', function (event) {
+                        const tombol = event.target.closest('[data-aksi]');
+                        if (!tombol) return;
+                        if (tombol.dataset.aksi === 'baca') bukaMushaf(tombol.dataset.key);
+                        if (tombol.dataset.aksi === 'setor') bukaSetoran(tombol.dataset.key);
+                    });
+
+                    document.getElementById('searchHafalanSiswa').addEventListener('input', function () {
+                        const kata = this.value.trim().toLowerCase();
+                        document.querySelectorAll('.hafalan-siswa-card').forEach(function (kartu) {
+                            const nama = (kartu.dataset.nama || '').toLowerCase();
+                            const nis = (kartu.dataset.nis || '').toLowerCase();
+                            kartu.style.display = (nama.includes(kata) || nis.includes(kata)) ? '' : 'none';
+                        });
+                    });
+
+                    document.getElementById('inputAyatAwal').addEventListener('change', validasiRentangAyat);
+                    document.getElementById('inputAyatAkhir').addEventListener('change', validasiRentangAyat);
+                    document.getElementById('btnSimpanHafalan').addEventListener('click', simpanSetoran);
+                    document.getElementById('filterAyatMushaf').addEventListener('change', gulirKeAyat);
+
+                    const preset = new URLSearchParams(window.location.search).get('santri');
+                    if (preset) {
+                        const kartu = Array.from(document.querySelectorAll('.hafalan-siswa-card'));
+                        const kunci = preset.toLowerCase();
+                        const cocok = kartu.find(function (el) { return (el.dataset.nama || '').toLowerCase() === kunci; })
+                            || kartu.find(function (el) { return (el.dataset.nama || '').toLowerCase().includes(kunci); });
+                        if (cocok) cocok.click();
+                    }
+                })();
+                </script>
+
+            <!-- -----------------------------------------------------------
                  MENU 3: DASHBOARD & CATAT MURAJAAH
                  (Guru melihat total siswa murajaah, progres kelancaran, & form input)
-            ════════════════════════════════════════════════════════════ -->
+            ------------------------------------------------------------ -->
             <?php elseif ($page_tab === 'murajaah'): ?>
                 <div class="mb-4">
                     <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">MONITORING MURAJAAH</span>
@@ -1233,13 +1903,13 @@ $quran_juz = [
 
                                 <div class="mb-3">
                                     <label class="form-label small fw-bold text-muted">Rentang Ayat</label>
-                                    <input type="text" name="ayat_range" class="form-control" value="Seluruh Ayat" placeholder="Contoh: Ayat 1–30 atau Seluruh Ayat">
+                                    <input type="text" name="ayat_range" class="form-control" value="Seluruh Ayat" placeholder="Contoh: Ayat 1�30 atau Seluruh Ayat">
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label small fw-bold text-muted">Hasil Evaluasi Kelancaran</label>
                                     <select name="evaluasi" class="form-select fw-semibold">
-                                        <option value="Sangat Mutqin (Nilai 90-100)">Sangat Mutqin (Nilai 90–100)</option>
+                                        <option value="Sangat Mutqin (Nilai 90-100)">Sangat Mutqin (Nilai 90�100)</option>
                                         <option value="Lancar (Nilai 80-89)" selected>Lancar (Hanya 1-2 kali diingatkan)</option>
                                         <option value="Cukup (Nilai 70-79)">Cukup (Perlu Pembiasaan)</option>
                                         <option value="Perlu Diulang / Belum Mutqin">Perlu Tambahan Waktu Murajaah</option>
@@ -1295,13 +1965,13 @@ $quran_juz = [
                                             <tr>
                                                 <td class="ps-3">Kemarin</td>
                                                 <td><strong>Ahmad Zaid</strong></td>
-                                                <td>Surah Al-Mulk (Ayat 1–30)</td>
+                                                <td>Surah Al-Mulk (Ayat 1�30)</td>
                                                 <td><span class="badge bg-success-subtle text-success">Lancar</span></td>
                                             </tr>
                                             <tr>
                                                 <td class="ps-3">3 Nov</td>
                                                 <td><strong>Radit Gilang Ramadhan S</strong></td>
-                                                <td>Surah An-Naba' (1–40)</td>
+                                                <td>Surah An-Naba' (1�40)</td>
                                                 <td><span class="badge bg-warning-subtle text-warning">Perlu Pengulangan</span></td>
                                             </tr>
                                         <?php endif; ?>
@@ -1312,9 +1982,9 @@ $quran_juz = [
                     </div>
                 </div>
 
-            <!-- ═══════════════════════════════════════════════════════════
+            <!-- -----------------------------------------------------------
                  MENU 4: TARGET HAFALAN SANTRI
-            ════════════════════════════════════════════════════════════ -->
+            ------------------------------------------------------------ -->
             <?php elseif ($page_tab === 'target'): ?>
                 <div class="mb-4">
                     <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">PENETAPAN TARGET</span>
@@ -1385,7 +2055,7 @@ $quran_juz = [
                                     <div class="badge rounded-pill d-inline-flex align-items-center gap-1.5 px-3 py-2 fw-semibold" style="background-color: #E6F4F1; color: #11756D; font-size: 12.5px;">
                                         <i class="bi bi-person-check-fill"></i>
                                         <span id="targetBadgeNama">-</span>
-                                        <span class="opacity-75">·</span>
+                                        <span class="opacity-75">�</span>
                                         <span id="targetBadgeNis">NIS: -</span>
                                     </div>
                                 </div>
@@ -1484,24 +2154,24 @@ $quran_juz = [
                 </div>
 
 
-            <!-- ═══════════════════════════════════════════════════════════
+            <!-- -----------------------------------------------------------
                  MENU 5: REKAP TAHFIZ HALAQAH (DESAIN FIGMA BARU)
                  Dashboard rekap lengkap dengan KPI, tabel, pencarian, modal
-            ════════════════════════════════════════════════════════════ -->
+            ------------------------------------------------------------ -->
             <?php elseif ($page_tab === 'rekap'): ?>
 <?php
-// ── Data Rekap per Siswa (Fallback lengkap untuk tampilan) ──
+// -- Data Rekap per Siswa (Fallback lengkap untuk tampilan) --
 $rekap_data = [
-    '102601' => ['capaian' => 60, 'tgl_setor' => '15 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Mulk (Ayat 13–18)', 'target' => 'Surah Al-Mulk (Ayat 1–30)', 'ayat_hafal' => 18, 'ayat_total' => 30, 'catatan' => 'Bacaan makhraj dan mad sudah baik, perlu mengulang kelancaran sambungan ayat 15–18 sebelum lanjut ke ayat berikutnya.', 'riwayat' => [['tgl'=>'15 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 13–18','status'=>'Lancar'],['tgl'=>'14 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Mulk: 7–12','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 1–6','status'=>'Lancar']]],
-    '102602' => ['capaian' => 75, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Mulk (Ayat 19–24)', 'target' => 'Surah Al-Mulk (Ayat 1–30)', 'ayat_hafal' => 24, 'ayat_total' => 30, 'catatan' => 'Irama tartil sangat stabil, perhatikan hukum ghunnah pada ayat 21.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 19–24','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Mulk: 13–18','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 13–18','status'=>'Lancar']]],
-    '102603' => ['capaian' => 90, 'tgl_setor' => '12 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Qalam (Ayat 1–42)', 'target' => 'Surah Al-Qalam (Ayat 1–52)', 'ayat_hafal' => 42, 'ayat_total' => 52, 'catatan' => 'Hafalan sangat kuat dan mutqin, siap menyelesaikan 10 ayat terakhir pekan ini.', 'riwayat' => [['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Qalam: 36–42','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Qalam: 29–35','status'=>'Lancar'],['tgl'=>'8 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Qalam: 1–28','status'=>'Lancar']]],
-    '102604' => ['capaian' => 80, 'tgl_setor' => '15 Nov 2026', 'posisi' => 'Juz 30 • Surah An-Naba\' (Ayat 1–32)', 'target' => 'Surah An-Naba\' (Ayat 1–40)', 'ayat_hafal' => 32, 'ayat_total' => 40, 'catatan' => 'Kelancaran meningkat pesat, pertahankan murojaah sebelum tidur.', 'riwayat' => [['tgl'=>'15 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Naba: 27–32','status'=>'Lancar'],['tgl'=>'13 Nov 2026','jenis'=>'Murajaah','surah'=>'An-Naba: 1–26','status'=>'Lancar'],['tgl'=>'11 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Naba: 21–26','status'=>'Lancar']]],
-    '102605' => ['capaian' => 85, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 30 • Surah An-Nazi\'at (Ayat 1–39)', 'target' => 'Surah An-Nazi\'at (Ayat 1–46)', 'ayat_hafal' => 39, 'ayat_total' => 46, 'catatan' => 'Pelafalan huruf qalqalah sudah tepat, lanjutkan 7 ayat terakhir.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Nazi\'at: 34–39','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'An-Nazi\'at: 1–33','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Nazi\'at: 28–33','status'=>'Lancar']]],
-    '102606' => ['capaian' => 50, 'tgl_setor' => '11 Nov 2026', 'posisi' => 'Juz 30 • Surah \'Abasa (Ayat 1–21)', 'target' => 'Surah \'Abasa (Ayat 1–42)', 'ayat_hafal' => 21, 'ayat_total' => 42, 'catatan' => 'Perlu menambah porsi murajaah ayat 10–21 agar tidak tertukar akhir ayatnya.', 'riwayat' => [['tgl'=>'11 Nov 2026','jenis'=>'Ziyadah','surah'=>'\'Abasa: 16–21','status'=>'Lancar'],['tgl'=>'9 Nov 2026','jenis'=>'Murajaah','surah'=>'\'Abasa: 1–15','status'=>'Lancar'],['tgl'=>'7 Nov 2026','jenis'=>'Ziyadah','surah'=>'\'Abasa: 10–15','status'=>'Lancar']]],
-    '102607' => ['capaian' => 95, 'tgl_setor' => '16 Nov 2026', 'posisi' => 'Juz 30 • Surah At-Takwir (Ayat 1–27)', 'target' => 'Surah At-Takwir (Ayat 1–29)', 'ayat_hafal' => 27, 'ayat_total' => 29, 'catatan' => 'Sangat lancar dan tajwid terjaga, tinggal 2 ayat penutup.', 'riwayat' => [['tgl'=>'16 Nov 2026','jenis'=>'Ziyadah','surah'=>'At-Takwir: 22–27','status'=>'Lancar'],['tgl'=>'14 Nov 2026','jenis'=>'Murajaah','surah'=>'At-Takwir: 1–21','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'At-Takwir: 15–21','status'=>'Lancar']]],
-    '102608' => ['capaian' => 65, 'tgl_setor' => '13 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Haqqah (Ayat 1–34)', 'target' => 'Surah Al-Haqqah (Ayat 1–52)', 'ayat_hafal' => 34, 'ayat_total' => 52, 'catatan' => 'Panjang pendek mad thabi\'i sudah bagus, tingkatkan kecepatan transisi antarayat.', 'riwayat' => [['tgl'=>'13 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Haqqah: 28–34','status'=>'Lancar'],['tgl'=>'11 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Haqqah: 1–27','status'=>'Lancar'],['tgl'=>'9 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Haqqah: 21–27','status'=>'Lancar']]],
-    '102609' => ['capaian' => 70, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 30 • Surah Al-Infithar (Ayat 1–14)', 'target' => 'Surah Al-Infithar (Ayat 1–19)', 'ayat_hafal' => 14, 'ayat_total' => 19, 'catatan' => 'Hafalan baru lancar, terus ulangi surah-surah pendek sebelumnya.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Infithar: 10–14','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Infithar: 1–9','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Infithar: 5–9','status'=>'Lancar']]],
-    '102610' => ['capaian' => 55, 'tgl_setor' => '10 Nov 2026', 'posisi' => 'Juz 30 • Surah Al-Muthaffifin (Ayat 1–20)', 'target' => 'Surah Al-Muthaffifin (Ayat 1–36)', 'ayat_hafal' => 20, 'ayat_total' => 36, 'catatan' => 'Fokus perbaiki waqaf dan ibtida pada ayat-ayat panjang.', 'riwayat' => [['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Muthaffifin: 15–20','status'=>'Lancar'],['tgl'=>'8 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Muthaffifin: 1–14','status'=>'Lancar'],['tgl'=>'6 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Muthaffifin: 8–14','status'=>'Lancar']]],
+    '102601' => ['capaian' => 60, 'tgl_setor' => '15 Nov 2026', 'posisi' => 'Juz 29 � Surah Al-Mulk (Ayat 13�18)', 'target' => 'Surah Al-Mulk (Ayat 1�30)', 'ayat_hafal' => 18, 'ayat_total' => 30, 'catatan' => 'Bacaan makhraj dan mad sudah baik, perlu mengulang kelancaran sambungan ayat 15�18 sebelum lanjut ke ayat berikutnya.', 'riwayat' => [['tgl'=>'15 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 13�18','status'=>'Lancar'],['tgl'=>'14 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Mulk: 7�12','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 1�6','status'=>'Lancar']]],
+    '102602' => ['capaian' => 75, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 29 � Surah Al-Mulk (Ayat 19�24)', 'target' => 'Surah Al-Mulk (Ayat 1�30)', 'ayat_hafal' => 24, 'ayat_total' => 30, 'catatan' => 'Irama tartil sangat stabil, perhatikan hukum ghunnah pada ayat 21.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 19�24','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Mulk: 13�18','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 13�18','status'=>'Lancar']]],
+    '102603' => ['capaian' => 90, 'tgl_setor' => '12 Nov 2026', 'posisi' => 'Juz 29 � Surah Al-Qalam (Ayat 1�42)', 'target' => 'Surah Al-Qalam (Ayat 1�52)', 'ayat_hafal' => 42, 'ayat_total' => 52, 'catatan' => 'Hafalan sangat kuat dan mutqin, siap menyelesaikan 10 ayat terakhir pekan ini.', 'riwayat' => [['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Qalam: 36�42','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Qalam: 29�35','status'=>'Lancar'],['tgl'=>'8 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Qalam: 1�28','status'=>'Lancar']]],
+    '102604' => ['capaian' => 80, 'tgl_setor' => '15 Nov 2026', 'posisi' => 'Juz 30 � Surah An-Naba\' (Ayat 1�32)', 'target' => 'Surah An-Naba\' (Ayat 1�40)', 'ayat_hafal' => 32, 'ayat_total' => 40, 'catatan' => 'Kelancaran meningkat pesat, pertahankan murojaah sebelum tidur.', 'riwayat' => [['tgl'=>'15 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Naba: 27�32','status'=>'Lancar'],['tgl'=>'13 Nov 2026','jenis'=>'Murajaah','surah'=>'An-Naba: 1�26','status'=>'Lancar'],['tgl'=>'11 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Naba: 21�26','status'=>'Lancar']]],
+    '102605' => ['capaian' => 85, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 30 � Surah An-Nazi\'at (Ayat 1�39)', 'target' => 'Surah An-Nazi\'at (Ayat 1�46)', 'ayat_hafal' => 39, 'ayat_total' => 46, 'catatan' => 'Pelafalan huruf qalqalah sudah tepat, lanjutkan 7 ayat terakhir.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Nazi\'at: 34�39','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'An-Nazi\'at: 1�33','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Nazi\'at: 28�33','status'=>'Lancar']]],
+    '102606' => ['capaian' => 50, 'tgl_setor' => '11 Nov 2026', 'posisi' => 'Juz 30 � Surah \'Abasa (Ayat 1�21)', 'target' => 'Surah \'Abasa (Ayat 1�42)', 'ayat_hafal' => 21, 'ayat_total' => 42, 'catatan' => 'Perlu menambah porsi murajaah ayat 10�21 agar tidak tertukar akhir ayatnya.', 'riwayat' => [['tgl'=>'11 Nov 2026','jenis'=>'Ziyadah','surah'=>'\'Abasa: 16�21','status'=>'Lancar'],['tgl'=>'9 Nov 2026','jenis'=>'Murajaah','surah'=>'\'Abasa: 1�15','status'=>'Lancar'],['tgl'=>'7 Nov 2026','jenis'=>'Ziyadah','surah'=>'\'Abasa: 10�15','status'=>'Lancar']]],
+    '102607' => ['capaian' => 95, 'tgl_setor' => '16 Nov 2026', 'posisi' => 'Juz 30 � Surah At-Takwir (Ayat 1�27)', 'target' => 'Surah At-Takwir (Ayat 1�29)', 'ayat_hafal' => 27, 'ayat_total' => 29, 'catatan' => 'Sangat lancar dan tajwid terjaga, tinggal 2 ayat penutup.', 'riwayat' => [['tgl'=>'16 Nov 2026','jenis'=>'Ziyadah','surah'=>'At-Takwir: 22�27','status'=>'Lancar'],['tgl'=>'14 Nov 2026','jenis'=>'Murajaah','surah'=>'At-Takwir: 1�21','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'At-Takwir: 15�21','status'=>'Lancar']]],
+    '102608' => ['capaian' => 65, 'tgl_setor' => '13 Nov 2026', 'posisi' => 'Juz 29 � Surah Al-Haqqah (Ayat 1�34)', 'target' => 'Surah Al-Haqqah (Ayat 1�52)', 'ayat_hafal' => 34, 'ayat_total' => 52, 'catatan' => 'Panjang pendek mad thabi\'i sudah bagus, tingkatkan kecepatan transisi antarayat.', 'riwayat' => [['tgl'=>'13 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Haqqah: 28�34','status'=>'Lancar'],['tgl'=>'11 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Haqqah: 1�27','status'=>'Lancar'],['tgl'=>'9 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Haqqah: 21�27','status'=>'Lancar']]],
+    '102609' => ['capaian' => 70, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 30 � Surah Al-Infithar (Ayat 1�14)', 'target' => 'Surah Al-Infithar (Ayat 1�19)', 'ayat_hafal' => 14, 'ayat_total' => 19, 'catatan' => 'Hafalan baru lancar, terus ulangi surah-surah pendek sebelumnya.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Infithar: 10�14','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Infithar: 1�9','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Infithar: 5�9','status'=>'Lancar']]],
+    '102610' => ['capaian' => 55, 'tgl_setor' => '10 Nov 2026', 'posisi' => 'Juz 30 � Surah Al-Muthaffifin (Ayat 1�20)', 'target' => 'Surah Al-Muthaffifin (Ayat 1�36)', 'ayat_hafal' => 20, 'ayat_total' => 36, 'catatan' => 'Fokus perbaiki waqaf dan ibtida pada ayat-ayat panjang.', 'riwayat' => [['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Muthaffifin: 15�20','status'=>'Lancar'],['tgl'=>'8 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Muthaffifin: 1�14','status'=>'Lancar'],['tgl'=>'6 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Muthaffifin: 8�14','status'=>'Lancar']]],
 ];
 $rekap_total_siswa = count($santri_list);
 $rekap_total_setoran = $total_setoran_count > 0 ? $total_setoran_count : 28;
@@ -1615,11 +2285,11 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                     </div>
                     <!-- Footer -->
                     <div class="px-4 py-3" style="border-top:1px solid #F1F5F9;">
-                        <small class="text-muted" id="footerInfoSiswa">Menampilkan 1–<?= $rekap_total_siswa ?> dari <?= $rekap_total_siswa ?> siswa</small>
+                        <small class="text-muted" id="footerInfoSiswa">Menampilkan 1�<?= $rekap_total_siswa ?> dari <?= $rekap_total_siswa ?> siswa</small>
                     </div>
                 </div>
 
-                <!-- ═══ MODAL: Detail Rekap Tahfiz Siswa ═══ -->
+                <!-- --- MODAL: Detail Rekap Tahfiz Siswa --- -->
                 <div class="modal fade" id="modalDetailSiswa" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" style="max-width:640px;">
                         <div class="modal-content border-0" style="border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.15);">
@@ -1686,7 +2356,7 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                 <!-- JavaScript: Pencarian & Modal -->
                 <script>
                 document.addEventListener('DOMContentLoaded', function() {
-                    // ── Filter Pencarian ──
+                    // -- Filter Pencarian --
                     const searchInput = document.getElementById('searchSiswaInput');
                     const rows = document.querySelectorAll('.siswa-row');
                     const footerInfo = document.getElementById('footerInfoSiswa');
@@ -1711,7 +2381,7 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                         badge.textContent = visible + ' Siswa ' + (q ? 'Ditemukan' : 'Terdaftar');
                     });
 
-                    // ── Modal Detail ──
+                    // -- Modal Detail --
                     const modalEl = document.getElementById('modalDetailSiswa');
                     const bsModal = new bootstrap.Modal(modalEl);
 
@@ -1750,10 +2420,10 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                 </script>
 
 
-            <!-- ═══════════════════════════════════════════════════════════
+            <!-- -----------------------------------------------------------
                  MENU 6: PROFIL USTADZ & GANTI KATA SANDI
                  (Tampilan Eksekutif, Elegan, dan Profesional)
-            ════════════════════════════════════════════════════════════ -->
+            ------------------------------------------------------------ -->
             <?php elseif ($page_tab === 'profil'): ?>
                 <div class="mb-4">
                     <h1 class="profil-page-title mb-1">Profil Pribadi</h1>
@@ -1846,104 +2516,9 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Javascript Interaktif Khusus Tab Catat Hafalan -->
 <script>
-const dataJuzHafalan = <?= json_encode($quran_juz, JSON_UNESCAPED_UNICODE) ?>;
-let santriHafalanAktif = null;
-let surahHafalanAktif  = null;
-
-function pilihSantriUntukHafalan(nama, nis, el) {
-    santriHafalanAktif = { nama, nis };
-
-    document.querySelectorAll('.santri-select-card').forEach(c => c.classList.remove('active'));
-    if (el) el.classList.add('active');
-
-    document.getElementById('placeholderHafalan').style.display = 'none';
-    document.getElementById('areaFormHafalan').style.display    = 'block';
-
-    document.getElementById('displayNamaSantriHafalan').innerText = nama;
-    document.getElementById('displayNisSantriHafalan').innerText  = 'NIS: ' + nis;
-    document.getElementById('inputSantriHafalan').value          = nama;
-
-    // Reset lembar setoran surah sampai surah dipilih
-    surahHafalanAktif = null;
-    document.getElementById('lembarSetoranForm').style.display    = 'none';
-    document.querySelectorAll('.surah-select-btn').forEach(b => b.classList.remove('active'));
-}
-
-function gantiJuzHafalan(juzNo) {
-    const container = document.getElementById('gridSurahHafalan');
-    container.innerHTML = '';
-    const list = dataJuzHafalan[juzNo]?.surah || [];
-
-    list.forEach(sr => {
-        const col = document.createElement('div');
-        col.className = 'col-12 col-md-4 col-sm-6';
-        col.innerHTML = `
-            <button type="button" class="surah-select-btn" onclick="pilihSurahHafalan('${sr.nama}', ${sr.ayat}, ${sr.no}, this)">
-                <div class="fw-bold small text-dark">${sr.no}. ${sr.nama}</div>
-                <small class="text-muted d-block" style="font-size: 0.7rem;">${sr.ayat} Ayat</small>
-            </button>
-        `;
-        container.appendChild(col);
-    });
-
-    document.getElementById('lembarSetoranForm').style.display = 'none';
-}
-
-function pilihSurahHafalan(namaSurah, totalAyat, noSurah, el) {
-    surahHafalanAktif = { namaSurah, totalAyat, noSurah };
-
-    document.querySelectorAll('.surah-select-btn').forEach(b => b.classList.remove('active'));
-    if (el) el.classList.add('active');
-
-    document.getElementById('lembarSetoranForm').style.display   = 'block';
-    document.getElementById('displaySurahTerpilih').innerText     = noSurah + '. Surah ' + namaSurah;
-    document.getElementById('displayTotalAyatSurah').innerText    = 'Total ' + totalAyat + ' Ayat';
-    document.getElementById('inputSurahHafalan').value           = namaSurah;
-
-    const inputAwal  = document.getElementById('inputAyatAwalHafalan');
-    const inputAkhir = document.getElementById('inputAyatAkhirHafalan');
-
-    inputAwal.value = 1;
-    inputAwal.max   = totalAyat;
-    inputAkhir.value = totalAyat;
-    inputAkhir.max   = totalAyat;
-
-    inputAkhir.oninput = function() {
-        if (parseInt(this.value) > totalAyat) this.value = totalAyat;
-    };
-
-    document.getElementById('btnSubmitSetoran').innerHTML = `<i class="bi bi-check2-circle me-1"></i>Simpan Hafalan Surah ${namaSurah}`;
-    inputAkhir.focus();
-}
-
-// Filter Pencarian Santri pada Tab Hafalan
-document.getElementById('cariSantriHafalan')?.addEventListener('input', function() {
-    const val = this.value.toLowerCase();
-    document.querySelectorAll('.santri-select-card').forEach(item => {
-        const text = item.innerText.toLowerCase();
-        item.style.display = text.includes(val) ? 'block' : 'none';
-    });
-});
-
-// Auto-select santri jika ada GET param ?santri=...
-window.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const getSantri = urlParams.get('santri');
-    if (getSantri) {
-        document.querySelectorAll('.santri-select-card').forEach(item => {
-            const nama = item.querySelector('.santri-nama-item')?.innerText;
-            if (nama && nama.toLowerCase().includes(getSantri.toLowerCase())) {
-                item.click();
-            }
-        });
-    }
-});
-
-// ─────────────────────────────────────────────────────────────
 // LOGIKA JAVASCRIPT TAB TARGET HAFALAN
-// ─────────────────────────────────────────────────────────────
+// -------------------------------------------------------------
 const targetAktifMap = <?= json_encode($target_aktif_map, JSON_UNESCAPED_UNICODE) ?>;
 const targetUrutanOpsi = <?= json_encode($urutan_opsi_target, JSON_UNESCAPED_UNICODE) ?>;
 let santriTargetTerpilih = null;
