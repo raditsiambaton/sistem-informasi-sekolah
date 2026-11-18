@@ -95,6 +95,7 @@ $juz30_target_sumber = [
 ];
 $label_juz30_target = [];
 foreach ($juz30_target_sumber as $item_juz30) {
+<<<<<<< HEAD
     $label_juz30_target[] = 'Juz 30 � ' . $item_juz30[0] . ' (Ayat 1�' . $item_juz30[1] . ')';
 }
 $kurikulum_target = [
@@ -112,6 +113,25 @@ $kurikulum_target = [
     'Juz 4' => [
         "Juz 4 � Ali 'Imran (Ayat 93�200)",
         "Juz 4 � An-Nisa' (Ayat 1�23)",
+=======
+    $label_juz30_target[] = 'Juz 30 • ' . $item_juz30[0] . ' (Ayat 1–' . $item_juz30[1] . ')';
+}
+$kurikulum_target = [
+    'Juz 1' => [
+        'Juz 1 • Al-Fatihah (Ayat 1–7)',
+        'Juz 1 • Al-Baqarah (Ayat 1–141)',
+    ],
+    'Juz 2' => [
+        'Juz 2 • Al-Baqarah (Ayat 142–252)',
+    ],
+    'Juz 3' => [
+        'Juz 3 • Al-Baqarah (Ayat 253–286)',
+        "Juz 3 • Ali 'Imran (Ayat 1–92)",
+    ],
+    'Juz 4' => [
+        "Juz 4 • Ali 'Imran (Ayat 93–200)",
+        "Juz 4 • An-Nisa' (Ayat 1–23)",
+>>>>>>> 80c70d0 (p)
     ],
     'Juz 30' => $label_juz30_target,
 ];
@@ -129,10 +149,17 @@ $target_old = [
     'tanggal_akhir' => '',
 ];
 
+<<<<<<< HEAD
 // -------------------------------------------------------------
 // PROSES AKSI POST
 // -------------------------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+=======
+// ─────────────────────────────────────────────────────────────
+// PROSES AKSI POST
+// ─────────────────────────────────────────────────────────────
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+>>>>>>> 80c70d0 (p)
     $action = $_POST['action'] ?? '';
 
     // 1. SIMPAN SETORAN HAFALAN BARU (EKSLUSIF SATU SURAH)
@@ -141,8 +168,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $surah       = htmlspecialchars(trim($_POST['surah'] ?? ''));
         $ayat_awal   = (int)($_POST['ayat_awal'] ?? 1);
         $ayat_akhir  = (int)($_POST['ayat_akhir'] ?? 1);
-        $nilai       = (int)($_POST['nilai'] ?? 90);
         $kualitas    = htmlspecialchars(trim($_POST['kualitas'] ?? 'Mumtaz (A)'));
+        // Nilai default otomatis berdasarkan kualitas untuk integritas kolom database MySQL
+        $nilai_map   = [
+            'Mumtaz (A)'       => 95,
+            'Jayyid Jiddan (B)'=> 85,
+            'Jayyid (C)'       => 75,
+            'Perlu Penguatan'  => 65
+        ];
+        $nilai       = (int)($_POST['nilai'] ?? ($nilai_map[$kualitas] ?? 90));
         $catatan     = htmlspecialchars(trim($_POST['catatan'] ?? ''));
 
         if (empty($santri_nama) || empty($surah)) {
@@ -175,6 +209,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         $page_tab = 'hafalan';
+        if (!empty($santri_nama)) {
+            $_GET['santri'] = $santri_nama;
+        }
     }
 
     // 2. SIMPAN CATATAN MURAJAAH
@@ -214,7 +251,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $page_tab = 'murajaah';
     }
 
+<<<<<<< HEAD
     // 3. TETAPKAN TARGET HAFALAN (Juz / Surah ? tabel target_hafalan)
+=======
+    // 3. TETAPKAN TARGET HAFALAN (Juz / Surah → tabel target_hafalan)
+>>>>>>> 80c70d0 (p)
     elseif ($action === 'simpan_target') {
         $siswa_id      = (int)($_POST['siswa_id'] ?? 0);
         $surah_awal    = trim($_POST['surah_awal'] ?? '');
@@ -386,6 +427,35 @@ if ($pdo) {
     try {
         $stmt_m = $pdo->query("SELECT * FROM murajaah ORDER BY id DESC LIMIT 50");
         $riwayat_murajaah = $stmt_m->fetchAll();
+    } catch (Throwable $e) {}
+
+    // Ambil ringkasan progres hafalan per santri & surah (status Selesai, Sedang Berjalan, Belum Setor)
+    $santri_setoran_progres = [];
+    try {
+        $stmt_sp = $pdo->query("SELECT nama_siswa, surah, MIN(ayat_awal) as min_ayat, MAX(ayat_akhir) as max_ayat, COUNT(*) as jml_setor FROM setoran_hafalan GROUP BY nama_siswa, surah");
+        while ($sp = $stmt_sp->fetch(PDO::FETCH_ASSOC)) {
+            $s_nama = trim($sp['nama_siswa']);
+            $s_surah = preg_replace('/[^a-z0-9]/', '', strtolower(trim($sp['surah'])));
+            $santri_setoran_progres[$s_nama][$s_surah] = [
+                'min_ayat'   => (int)$sp['min_ayat'],
+                'max_ayat'   => (int)$sp['max_ayat'],
+                'jml'        => (int)$sp['jml_setor'],
+                'surah_asli' => $sp['surah']
+            ];
+        }
+    } catch (Throwable $e) {}
+}
+
+$target_aktif_map = [];
+if ($pdo) {
+    try {
+        $stmt_target = $pdo->query("SELECT siswa_id, surah_awal, surah_akhir, tanggal_mulai, tanggal_akhir, status FROM target_hafalan WHERE status = 'Aktif' ORDER BY id DESC");
+        foreach ($stmt_target->fetchAll() as $baris_target) {
+            $kunci_siswa = (string)$baris_target['siswa_id'];
+            if (!isset($target_aktif_map[$kunci_siswa])) {
+                $target_aktif_map[$kunci_siswa] = $baris_target;
+            }
+        }
     } catch (Throwable $e) {}
 }
 
@@ -608,8 +678,42 @@ $quran_juz = [
         }
         .santri-select-card.active {
             border-color: #11756D;
+<<<<<<< HEAD
             background: #F4F7F6;
             border-left: 5px solid #11756D;
+=======
+            background: #E6F4F1;
+            border-left: 5px solid #11756D;
+        }
+        .santri-avatar-initial {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+            background: #F1F5F9;
+            color: #475569;
+            border: 1px solid #E2E8F0;
+            transition: all 0.2s ease;
+        }
+        .santri-select-card.active .santri-avatar-initial {
+            background: #11756D;
+            color: #ffffff;
+            border-color: #11756D;
+        }
+        .row-surah-clickable {
+            transition: background-color 0.15s ease;
+        }
+        .row-surah-clickable:hover {
+            background-color: #F8FAFC !important;
+        }
+        .row-surah-clickable:hover .btn-tahfiz {
+            transform: scale(1.08);
+>>>>>>> 80c70d0 (p)
         }
         .surah-select-btn {
             border: 1.5px solid #E2E8F0;
@@ -644,7 +748,11 @@ $quran_juz = [
             box-shadow: 0 4px 14px rgba(13, 92, 86, 0.35);
         }
 
+<<<<<<< HEAD
         /* -- Sidebar Brand Logo (seragam dengan Admin) -- */
+=======
+        /* ── Sidebar Brand Logo (seragam dengan Admin) ── */
+>>>>>>> 80c70d0 (p)
         .ustadz-sidebar .sidebar-brand {
             padding: 20px 18px 16px !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
@@ -710,10 +818,18 @@ $quran_juz = [
         .target-siswa-card:hover {
             border-color: #11756D;
             background: #F8FFFD;
+<<<<<<< HEAD
+=======
+            transform: translateX(2px);
+>>>>>>> 80c70d0 (p)
         }
         .target-siswa-card.aktif {
             border-color: #11756D !important;
             background: #F0FDF9 !important;
+<<<<<<< HEAD
+=======
+            border-left: 5px solid #11756D !important;
+>>>>>>> 80c70d0 (p)
         }
         .target-field {
             height: 44px;
@@ -778,6 +894,7 @@ $quran_juz = [
             background-color: #CBD5E1;
             color: #DC2626;
         }
+<<<<<<< HEAD
 
         /* --------------------------------------------------
            HAFALAN TAB � Override CSS (anti-cache, Figma-exact)
@@ -1152,6 +1269,56 @@ $quran_juz = [
             .hafalan-layout { grid-template-columns: 1fr !important; }
             .hafalan-form-grid { grid-template-columns: 1fr !important; }
             .hafalan-surah-head { flex-direction: column !important; }
+=======
+        .preset-pill-btn {
+            border: 1.5px solid #CBD5E1;
+            background: #FFFFFF;
+            color: #334155;
+            font-size: 12.5px;
+            font-weight: 600;
+            padding: 7px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .preset-pill-btn:hover {
+            border-color: #11756D;
+            background: #F0FDF9;
+            color: #11756D;
+            transform: translateY(-1px);
+        }
+        .preset-pill-btn.active {
+            border-color: #11756D;
+            background: #11756D;
+            color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(17, 117, 109, 0.25);
+        }
+        .duration-pill-btn {
+            border: 1px solid #E2E8F0;
+            background: #F8FAFC;
+            color: #475569;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .duration-pill-btn:hover, .duration-pill-btn.active {
+            border-color: #11756D;
+            background: #E6F4F1;
+            color: #11756D;
+        }
+        .visual-route-card {
+            background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
+            border: 1.5px solid #86EFAC;
+            border-radius: 14px;
+            padding: 16px 20px;
+            position: relative;
+>>>>>>> 80c70d0 (p)
         }
     </style>
 </head>
@@ -1160,7 +1327,11 @@ $quran_juz = [
 <div class="d-flex">
     <!-- -----------------------------------------------------------
          SIDEBAR UTAMA ASATIDZ (SEMUA MENU KEMBALI LENGKAP)
+<<<<<<< HEAD
     ------------------------------------------------------------ -->
+=======
+    ════════════════════════════════════════════════════════════ -->
+>>>>>>> 80c70d0 (p)
     <aside class="ustadz-sidebar d-flex flex-column" style="width: 250px; height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important; padding: 0; z-index: 1000; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
         <!-- Brand Header -->
         <div class="sidebar-brand" style="padding: 20px 18px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); display: flex; align-items: center; gap: 12px;">
@@ -1180,7 +1351,11 @@ $quran_juz = [
             </div>
             <div class="ustadz-user-text overflow-hidden" style="min-width: 0;">
                 <div class="ustadz-user-role text-white fw-semibold text-truncate" style="font-size: 13px; line-height: 1.3;"><?= htmlspecialchars($ustadz_name) ?></div>
+<<<<<<< HEAD
                 <div class="ustadz-user-name fw-semibold text-truncate" style="font-size: 11px; color: #A7F3D0; line-height: 1.2;">? Halaqah <?= htmlspecialchars($halaqah_name) ?></div>
+=======
+                <div class="ustadz-user-name fw-semibold text-truncate" style="font-size: 11px; color: #A7F3D0; line-height: 1.2;">● Halaqah <?= htmlspecialchars($halaqah_name) ?></div>
+>>>>>>> 80c70d0 (p)
             </div>
         </div>
 
@@ -1219,7 +1394,11 @@ $quran_juz = [
 
     <!-- -----------------------------------------------------------
          MAIN CONTENT AREA
+<<<<<<< HEAD
     ------------------------------------------------------------ -->
+=======
+    ════════════════════════════════════════════════════════════ -->
+>>>>>>> 80c70d0 (p)
     <div class="ustadz-content-wrapper">
         
         <!-- Top Bar Header -->
@@ -1228,12 +1407,20 @@ $quran_juz = [
                 <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz" class="topbar-logo" style="height: 24px; width: auto; object-fit: contain;">
                 <div class="d-flex align-items-center gap-2 small text-muted">
                     <span>Ruang Ustadz</span>
+<<<<<<< HEAD
                     <span>�</span>
+=======
+                    <span>›</span>
+>>>>>>> 80c70d0 (p)
                     <span class="fw-bold text-dark text-capitalize">
                         <?php
                         $tab_titles = [
                             'binaan'   => 'Siswa Binaan (Dashboard Halaqah)',
+<<<<<<< HEAD
                             'hafalan'  => 'Hafalan',
+=======
+                            'hafalan'  => 'Catat Hafalan Baru',
+>>>>>>> 80c70d0 (p)
                             'murajaah' => 'Dashboard & Catat Murajaah',
                             'target'   => 'Target Hafalan Santri',
                             'rekap'    => 'Rekap Tahfiz',
@@ -1343,7 +1530,7 @@ $quran_juz = [
                                     <th>Nama Santri</th>
                                     <th>Capaian Target</th>
                                     <th>Setoran Terakhir</th>
-                                    <th>Nilai</th>
+                                    <th>Kualitas</th>
                                     <th class="text-end pe-4">Aksi Cepat</th>
                                 </tr>
                             </thead>
@@ -1361,8 +1548,13 @@ $quran_juz = [
                                             <small class="fw-bold" style="font-size: 0.75rem;"><?= 60 + ($i * 15) ?>%</small>
                                         </div>
                                     </td>
+<<<<<<< HEAD
                                     <td><span class="badge bg-light text-dark border">Al-Mulk: 13�18</span></td>
                                     <td><span class="badge bg-success-subtle text-success fw-bold">90 / 100</span></td>
+=======
+                                    <td><span class="badge bg-light text-dark border">Al-Mulk: 13–18</span></td>
+                                    <td><span class="badge bg-success-subtle text-success fw-bold">Mumtaz (A)</span></td>
+>>>>>>> 80c70d0 (p)
                                     <td class="text-end pe-4">
                                         <a href="?tab=hafalan&santri=<?= urlencode($s['nama_lengkap']) ?>" class="btn btn-sm btn-outline-success fw-semibold">
                                             <i class="bi bi-journal-plus me-1"></i>Catat Setoran
@@ -1378,6 +1570,7 @@ $quran_juz = [
                     </div>
                 </div>
 
+<<<<<<< HEAD
             <!-- -----------------------------------------------------------
                  MENU 2: HAFALAN (PILIH SISWA -> DAFTAR SURAH TARGET -> MODAL)
             ------------------------------------------------------------ -->
@@ -1439,11 +1632,56 @@ $quran_juz = [
                                     </thead>
                                     <tbody id="tbodySurahTarget"></tbody>
                                 </table>
+=======
+            <!-- ═══════════════════════════════════════════════════════════
+                 MENU 2: CATAT HAFALAN BARU (ALUR PILIH SISWA -> DAFTAR SURAH TARGET -> POP-UP LEMBAR SETORAN)
+            ════════════════════════════════════════════════════════════ -->
+            <?php elseif ($page_tab === 'hafalan'): ?>
+                <div class="mb-4">
+                    <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">FORMULIR SETORAN HAFALAN</span>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Pencatatan Hafalan Baru</h2>
+                    <p class="text-muted small mb-0">Pilih santri terlebih dahulu di kolom kiri, lalu klik baris surah atau tombol tambah untuk membuka lembar setoran.</p>
+                </div>
+
+                <div class="row g-4">
+                    <!-- KOLOM KIRI: PILIH SISWA (SESUAI FOTO 1) -->
+                    <div class="col-12 col-lg-4">
+                        <div class="card p-3 border-0 shadow-sm rounded-4 bg-white h-100">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h6 class="fw-bold text-dark mb-0">
+                                    <i class="bi bi-people-fill text-success me-2"></i>Pilih Siswa
+                                </h6>
+                                <span class="badge bg-light text-muted border"><?= count($santri_list) ?> Santri</span>
+                            </div>
+                            <input type="text" id="cariSantriHafalan" class="form-control form-control-sm mb-3 rounded-3" placeholder="Cari nama atau NIS...">
+                            
+                            <div class="d-flex flex-column gap-2 overflow-y-auto" style="max-height: 520px;" id="listSantriHafalan">
+                                <?php foreach ($santri_list as $s): 
+                                    $nama_s = trim($s['nama_lengkap']);
+                                    $words = preg_split("/\s+/", $nama_s);
+                                    $inisial = '';
+                                    if (!empty($words[0])) $inisial .= mb_strtoupper(mb_substr($words[0], 0, 1));
+                                    if (!empty($words[1])) $inisial .= mb_strtoupper(mb_substr($words[1], 0, 1));
+                                    if (empty($inisial)) $inisial = 'ST';
+                                ?>
+                                    <div class="santri-select-card d-flex align-items-center gap-3" onclick="pilihSantriUntukHafalan('<?= htmlspecialchars($s['nama_lengkap'], ENT_QUOTES) ?>', '<?= htmlspecialchars($s['nip_nis'], ENT_QUOTES) ?>', this)">
+                                        <div class="santri-avatar-initial">
+                                            <?= $inisial ?>
+                                        </div>
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <div class="fw-bold text-dark santri-nama-item text-truncate"><?= htmlspecialchars($s['nama_lengkap']) ?></div>
+                                            <div class="small text-muted" style="font-size: 0.75rem;">NIS: <?= htmlspecialchars($s['nip_nis'] ?: '-') ?></div>
+                                        </div>
+                                        <i class="bi bi-chevron-right text-muted small"></i>
+                                    </div>
+                                <?php endforeach; ?>
+>>>>>>> 80c70d0 (p)
                             </div>
                         </div>
                     </section>
                 </div>
 
+<<<<<<< HEAD
                 <div class="modal fade" id="modalInputSetoran" tabindex="-1" aria-labelledby="judulInputSetoran" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered hafalan-modal-setoran">
                         <div class="modal-content">
@@ -1492,6 +1730,180 @@ $quran_juz = [
                                     <i class="bi bi-x-circle"></i>
                                     <span>Batal</span>
                                 </button>
+=======
+                    <!-- KOLOM KANAN: DAFTAR SURAH TARGET HAFALAN (SESUAI FOTO 1) -->
+                    <div class="col-12 col-lg-8">
+                        <div class="card p-4 border-0 shadow-sm rounded-4 bg-white h-100">
+                            
+                            <!-- Placeholder jika siswa belum dipilih -->
+                            <div id="placeholderHafalan" class="text-center py-5 my-auto text-muted">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3" style="width: 64px; height: 64px; background: #E6F4F1; color: #11756D;">
+                                    <i class="bi bi-person-lines-fill fs-2"></i>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">Silakan Pilih Siswa Terlebih Dahulu</h5>
+                                <p class="small text-muted mb-0">Klik salah satu nama santri pada daftar di sebelah kiri untuk menampilkan daftar target surah dan status setorannya.</p>
+                            </div>
+
+                            <!-- Area Daftar Target Surah (Aktif setelah santri dipilih) -->
+                            <div id="areaFormHafalan" style="display: none;">
+                                
+                                <!-- Header Ringkasan & Filter Target Juz Sesuai Foto 1 -->
+                                <div class="d-flex flex-wrap justify-content-between align-items-center pb-3 mb-3 border-bottom gap-2">
+                                    <div>
+                                        <h5 class="fw-bold mb-1 text-dark">Daftar Surah Target Hafalan</h5>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="small text-muted">Target Aktif:</span>
+                                            <select class="form-select form-select-sm fw-bold border-0 bg-light text-dark py-0.5 px-2" style="width: auto; cursor: pointer;" id="selectJuzHafalan" onchange="gantiJuzHafalan(this.value)">
+                                                <option value="30">Juz 30 (An-Naba – An-Nas) — 37 Surah</option>
+                                                <option value="30_dhuha" selected>Juz 30 (Adh-Dhuha – An-Nas) — 22 Surah</option>
+                                                <option value="29">Juz 29 (Al-Mulk – Al-Mursalat) — 11 Surah</option>
+                                                <option value="28">Juz 28 (Al-Mujadilah – At-Tahrim) — 9 Surah</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fw-semibold rounded-pill" style="font-size: 0.85rem;">
+                                            <i class="bi bi-person-fill me-1"></i>Santri: <span id="displayNamaSantriHafalan" class="fw-bold">Muhammad Fadhlan</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Bar Keterangan Status & Hint Pop-up -->
+                                <div class="d-flex flex-wrap align-items-center justify-content-between p-2.5 px-3 rounded-3 mb-3 gap-2" style="background-color: #F8FAFC; border: 1px dashed #CBD5E1;">
+                                    <div class="small text-muted">
+                                        <i class="bi bi-info-circle text-success me-1"></i>
+                                        Klik baris surah atau tombol <strong><i class="bi bi-plus-lg text-success"></i></strong> untuk membuka <strong>Lembar Setoran Eksklusif (Pop-Up)</strong>.
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 small">
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1">Selesai</span>
+                                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill px-2.5 py-1">Sedang Berjalan</span>
+                                        <span class="badge bg-light text-secondary border rounded-pill px-2.5 py-1">Belum Setor</span>
+                                    </div>
+                                </div>
+
+                                <!-- Tabel Daftar Surah Target Sesuai Foto 1 -->
+                                <div class="table-responsive rounded-3 border" style="max-height: 480px; overflow-y: auto;">
+                                    <table class="table table-hover align-middle mb-0" id="tabelSurahHafalan">
+                                        <thead class="table-light sticky-top" style="z-index: 1;">
+                                            <tr class="small text-muted text-uppercase" style="letter-spacing: 0.5px; font-size: 0.72rem;">
+                                                <th class="ps-3 py-2.5" style="width: 50px;">No</th>
+                                                <th class="py-2.5">Nama Surah</th>
+                                                <th class="py-2.5" style="width: 140px;">Target Ayat</th>
+                                                <th class="py-2.5 text-center" style="width: 180px;">Status</th>
+                                                <th class="pe-3 py-2.5 text-center" style="width: 80px;">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodySurahHafalan">
+                                            <!-- Diisi secara dinamis melalui JavaScript sesuai santri & juz -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════════════════════════
+                     MODAL POP-UP: LEMBAR SETORAN EKSKLUSIF (SESUAI PERMINTAAN USER)
+                ════════════════════════════════════════════════════════════ -->
+                <div class="modal fade" id="modalSetoranEksklusif" tabindex="-1" aria-labelledby="modalSetoranEksklusifLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                            <!-- Modal Header -->
+                            <div class="modal-header border-0 pb-0 pt-4 px-4 align-items-start" style="background: linear-gradient(135deg, #0A2E2B 0%, #11756D 100%); color: #ffffff;">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-3 p-2.5 d-flex align-items-center justify-content-center" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); width: 48px; height: 48px;">
+                                        <i class="bi bi-journal-bookmark-fill fs-3 text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-warning text-dark fw-bold px-2 py-0.5 mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">LEMBAR SETORAN EKSKLUSIF</span>
+                                        <h4 class="fw-bold mb-0 text-white" id="modalJudulSurah">Surah Adh-Dhuha</h4>
+                                        <div class="small text-white-50 mt-0.5" id="modalSubInfo">Target: Ayat 1 s/d 11</div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                            </div>
+
+                            <!-- Modal Body -->
+                            <div class="modal-body p-4 pt-3">
+                                <!-- Card Ringkasan Santri -->
+                                <div class="d-flex flex-wrap align-items-center justify-content-between p-3 rounded-3 mb-3" style="background-color: var(--color-tahfiz-light); border: 1px solid #80C8C4;">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 38px; height: 38px; background: #11756D; font-size: 0.85rem;" id="modalAvatarSantri">
+                                            MF
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block" style="font-size: 0.72rem;">Santri yang Menyetor:</small>
+                                            <h6 class="fw-bold mb-0 text-dark" id="modalNamaSantri">Muhammad Fadhlan</h6>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 mt-2 mt-sm-0">
+                                        <span class="badge bg-white text-dark border px-2.5 py-1.5 fw-semibold" id="modalNisSantri">NIS: 102601</span>
+                                        <span class="badge rounded-pill text-white px-3 py-1.5" style="background-color: #11756D;" id="modalBadgeTotalAyat">Total 11 Ayat</span>
+                                    </div>
+                                </div>
+
+                                <!-- Alert Status Progres Surah (Dinamis via JS: Sedang Berjalan / Selesai / Belum Setor) -->
+                                <div id="modalAlertStatus" class="mb-3"></div>
+
+                                <!-- Formulir Lembar Setoran -->
+                                <form action="?tab=hafalan" method="POST" id="formSetoranModal">
+                                    <input type="hidden" name="action" value="simpan_setoran">
+                                    <input type="hidden" name="santri_nama" id="modalInputSantriNama">
+                                    <input type="hidden" name="surah" id="modalInputSurahNama">
+
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label small fw-bold text-dark mb-1">
+                                                Dari Ayat <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light text-muted small">Ayat</span>
+                                                <input type="number" name="ayat_awal" id="modalInputAyatAwal" class="form-control fw-bold" value="1" min="1" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label small fw-bold text-dark mb-1">
+                                                Sampai Ayat <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light text-muted small">s/d</span>
+                                                <input type="number" name="ayat_akhir" id="modalInputAyatAkhir" class="form-control fw-bold text-success" value="11" min="1" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <small class="text-muted" style="font-size: 0.74rem;">
+                                                <i class="bi bi-info-circle me-1"></i>Aturan: Kertas setoran terkunci khusus surah ini (1 lembar = 1 surah). Jika menyetor surah berbeda, dicatat di lembar surah bersangkutan.
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-dark mb-1">Kualitas Hafalan</label>
+                                        <select name="kualitas" id="modalSelectKualitas" class="form-select py-2">
+                                            <option value="Mumtaz (A)" selected>Mumtaz / Sangat Lancar (A)</option>
+                                            <option value="Jayyid Jiddan (B)">Jayyid Jiddan / Lancar (B)</option>
+                                            <option value="Jayyid (C)">Jayyid / Cukup (C)</option>
+                                            <option value="Perlu Penguatan">Perlu Pengulangan / Remedi</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label small fw-bold text-dark mb-1">Catatan Tajwid / Makhraj Ustadz</label>
+                                        <textarea name="catatan" id="modalTextareaCatatan" class="form-control" rows="3" placeholder="Catatan perbaikan tajwid, panjang harakat mad, atau makhraj huruf santri..."></textarea>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                                        <button type="button" class="btn btn-light border px-4 py-2 fw-semibold rounded-3" data-bs-dismiss="modal">
+                                            Batal
+                                        </button>
+                                        <button type="submit" class="btn btn-tahfiz px-4 py-2 text-white fw-bold rounded-3 shadow-sm" id="modalBtnSubmit">
+                                            <i class="bi bi-check2-circle me-1"></i>Simpan Lembar Setoran
+                                        </button>
+                                    </div>
+                                </form>
+>>>>>>> 80c70d0 (p)
                             </div>
                         </div>
                     </div>
@@ -1986,7 +2398,9 @@ $quran_juz = [
                  MENU 4: TARGET HAFALAN SANTRI
             ------------------------------------------------------------ -->
             <?php elseif ($page_tab === 'target'): ?>
+                <!-- Hero Banner Atas -->
                 <div class="mb-4">
+<<<<<<< HEAD
                     <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">PENETAPAN TARGET</span>
                     <h2 class="fw-bold mb-1" style="color: #11756D;">Target Hafalan Santri</h2>
                     <p class="text-muted small mb-0">Tetapkan sasaran juz atau surah dan rentang tanggal target bagi santri halaqah binaan Anda.</p>
@@ -2032,9 +2446,33 @@ $quran_juz = [
                                     </div>
                                 <?php endforeach; ?>
                             </div>
+=======
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 p-4 rounded-4 text-white position-relative overflow-hidden shadow-sm" style="background: linear-gradient(135deg, #0A2E2B 0%, #11756D 65%, #059669 100%);">
+                        <div class="position-absolute end-0 top-0 bottom-0 opacity-10 d-none d-md-flex align-items-center pe-4" style="pointer-events: none;">
+                            <i class="bi bi-bullseye" style="font-size: 160px; transform: rotate(15deg);"></i>
+                        </div>
+                        <div style="position: relative; z-index: 1;">
+                            <span class="badge bg-warning text-dark fw-bold px-3 py-1 mb-2 rounded-pill shadow-xs" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                                <i class="bi bi-stars me-1"></i>MODUL PENETAPAN TARGET
+                            </span>
+                            <h2 class="fw-bold mb-1 text-white">Target Hafalan Santri Binaan</h2>
+                            <p class="text-white-50 small mb-0" style="max-width: 580px;">
+                                Rencanakan sasaran juz dan surah yang terukur. Pantau tenggat waktu evaluasi dan tingkat capaian setiap santri halaqah.
+                            </p>
+                        </div>
+                        <div class="d-flex align-items-center gap-2" style="position: relative; z-index: 1;">
+                            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 rounded-3 border border-white border-opacity-25">
+                                <i class="bi bi-people-fill me-1"></i><?= count($santri_list) ?> Total Santri
+                            </span>
+                            <span class="badge bg-warning text-dark px-3 py-2 rounded-3 fw-bold">
+                                <i class="bi bi-check-circle-fill me-1"></i><?= count($target_aktif_map) ?> Memiliki Target
+                            </span>
+>>>>>>> 80c70d0 (p)
                         </div>
                     </div>
+                </div>
 
+<<<<<<< HEAD
                     <!-- PANEL KANAN: FORM TAMBAH TARGET + INFO TARGET AKTIF -->
                     <div class="col-12 col-lg-8">
                         <div class="target-panel p-4 bg-white">
@@ -2148,11 +2586,49 @@ $quran_juz = [
                                         </div>
                                     </div>
                                 </div>
+=======
+                <!-- 3 Kartu Metrik Target -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-4">
+                        <div class="card p-3 border-0 shadow-sm rounded-4 bg-white h-100 d-flex flex-row align-items-center gap-3">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center text-white flex-shrink-0" style="width: 50px; height: 50px; background: linear-gradient(135deg, #11756D, #059669); font-size: 24px;">
+                                <i class="bi bi-bullseye"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small fw-semibold">Target Terencana</div>
+                                <div class="fs-4 fw-bold text-dark"><?= count($target_aktif_map) ?> <span class="text-muted fs-6 fw-normal">/ <?= count($santri_list) ?> Santri</span></div>
+                                <div class="small text-success fw-medium"><i class="bi bi-arrow-up-right me-1"></i><?= count($santri_list) > 0 ? round((count($target_aktif_map)/count($santri_list))*100) : 0 ?>% Santri Ditargetkan</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card p-3 border-0 shadow-sm rounded-4 bg-white h-100 d-flex flex-row align-items-center gap-3">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center text-dark flex-shrink-0" style="width: 50px; height: 50px; background: linear-gradient(135deg, #FEF3C7, #FDE68A); font-size: 24px;">
+                                <i class="bi bi-clock-history text-warning-emphasis"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small fw-semibold">Siklus Evaluasi</div>
+                                <div class="fs-4 fw-bold text-dark">30 Hari</div>
+                                <div class="small text-warning-emphasis fw-medium"><i class="bi bi-calendar-check me-1"></i>Evaluasi Rutin Bulanan</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card p-3 border-0 shadow-sm rounded-4 bg-white h-100 d-flex flex-row align-items-center gap-3">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center text-white flex-shrink-0" style="width: 50px; height: 50px; background: linear-gradient(135deg, #3B82F6, #1D4ED8); font-size: 24px;">
+                                <i class="bi bi-journal-bookmark-fill"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small fw-semibold">Fokus Halaqah</div>
+                                <div class="fs-4 fw-bold text-dark">Juz 30 &amp; 29</div>
+                                <div class="small text-primary fw-medium"><i class="bi bi-award me-1"></i>Halaqah <?= htmlspecialchars($halaqah_name) ?></div>
+>>>>>>> 80c70d0 (p)
                             </div>
                         </div>
                     </div>
                 </div>
 
+<<<<<<< HEAD
 
             <!-- -----------------------------------------------------------
                  MENU 5: REKAP TAHFIZ HALAQAH (DESAIN FIGMA BARU)
@@ -2184,6 +2660,380 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                     <p class="text-muted mb-0" style="font-size: 14px;">Ringkasan capaian target dan riwayat setoran hafalan siswa halaqah.</p>
                 </div>
 
+=======
+                <div class="row g-4 align-items-start">
+                    <!-- PANEL KIRI: DAFTAR PILIH SISWA -->
+                    <div class="col-12 col-lg-4">
+                        <div class="target-panel p-3 bg-white">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                                    <i class="bi bi-people-fill text-success"></i>
+                                    <span>Pilih Siswa</span>
+                                </h6>
+                                <span class="badge bg-light text-muted border"><?= count($santri_list) ?> Santri</span>
+                            </div>
+
+                            <div class="mb-3 position-relative">
+                                <i class="bi bi-search position-absolute text-muted" style="top: 13px; left: 14px; font-size: 14px;"></i>
+                                <input type="text" id="cariSantriTarget" class="form-control ps-5" placeholder="Cari nama atau NIS..." style="height: 42px; border-radius: 10px; background-color: #F8FAFC; border: 1px solid #E2E8F0; font-size: 13.5px;">
+                            </div>
+
+                            <div class="d-flex flex-column gap-2 overflow-y-auto" style="max-height: 560px;" id="listSantriTarget">
+                                <?php foreach ($santri_list as $s): 
+                                    $s_id_str = (string)$s['id'];
+                                    $has_target = isset($target_aktif_map[$s_id_str]);
+                                    $is_fokus = ($target_fokus_id === (int)$s['id']);
+
+                                    $words = preg_split("/\s+/", trim($s['nama_lengkap']));
+                                    $inisial = '';
+                                    if (!empty($words[0])) $inisial .= mb_strtoupper(mb_substr($words[0], 0, 1));
+                                    if (!empty($words[1])) $inisial .= mb_strtoupper(mb_substr($words[1], 0, 1));
+                                    if (empty($inisial)) $inisial = 'ST';
+                                ?>
+                                    <div class="target-siswa-card <?= $is_fokus ? 'aktif' : '' ?>"
+                                         data-id="<?= (int)$s['id'] ?>"
+                                         data-nama="<?= htmlspecialchars($s['nama_lengkap'], ENT_QUOTES) ?>"
+                                         data-nis="<?= htmlspecialchars($s['nip_nis'], ENT_QUOTES) ?>"
+                                         onclick="pilihSantriTarget(<?= (int)$s['id'] ?>, '<?= htmlspecialchars($s['nama_lengkap'], ENT_QUOTES) ?>', '<?= htmlspecialchars($s['nip_nis'], ENT_QUOTES) ?>', this)">
+                                        <div class="santri-avatar-initial flex-shrink-0" style="width: 42px; height: 42px; font-size: 0.88rem;">
+                                            <?= $inisial ?>
+                                        </div>
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <div class="fw-bold text-dark text-truncate santri-target-nama" style="font-size: 14px;"><?= htmlspecialchars($s['nama_lengkap']) ?></div>
+                                            <div class="small text-muted text-truncate santri-target-nis" style="font-size: 12px;">NIS: <?= htmlspecialchars($s['nip_nis'] ?: '-') ?></div>
+                                            <?php if ($has_target): ?>
+                                                <div class="small text-success text-truncate fw-semibold mt-0.5" style="font-size: 11px;">
+                                                    <i class="bi bi-bullseye me-1"></i><?= htmlspecialchars($target_aktif_map[$s_id_str]['surah_awal']) ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div>
+                                            <?php if ($has_target): ?>
+                                                <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2.5 py-1 fw-bold" style="font-size: 10.5px;">
+                                                    Aktif
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="badge bg-light text-muted border rounded-pill px-2 py-1" style="font-size: 10px;">
+                                                    Belum
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PANEL KANAN: FORM PENETAPAN TARGET INTERAKTIF -->
+                    <div class="col-12 col-lg-8">
+                        <div class="target-panel p-4 bg-white">
+                            <!-- Empty State Sebelum Siswa Dipilih -->
+                            <div id="targetEmptyState" class="text-center py-5 my-auto" style="<?= $target_fokus_id > 0 ? 'display: none;' : '' ?>">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3 shadow-xs" style="width: 72px; height: 72px; background: #E6F4F1; color: #11756D;">
+                                    <i class="bi bi-person-lines-fill fs-2"></i>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">Silakan Pilih Siswa Terlebih Dahulu</h5>
+                                <p class="text-muted small mb-0" style="max-width: 420px; margin: 0 auto;">Klik salah satu nama santri pada daftar di sebelah kiri untuk melihat target aktif atau menetapkan target hafalan baru.</p>
+                            </div>
+
+                            <!-- Form dan Detail Setelah Siswa Dipilih -->
+                            <div id="targetFormArea" style="<?= $target_fokus_id > 0 ? '' : 'display: none;' ?>">
+                                
+                                <!-- Header Profil Santri Terpilih -->
+                                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 pb-3 mb-4" style="border-bottom: 1.5px solid #E2E8F0;">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-xs" style="width: 46px; height: 46px; background: #11756D; font-size: 1rem;" id="targetHeaderAvatar">
+                                            MF
+                                        </div>
+                                        <div>
+                                            <h5 class="fw-bold mb-0 text-dark" id="targetHeaderNama">Muhammad Fadhlan</h5>
+                                            <div class="small text-muted" id="targetHeaderSub">NIS: 102601 • Halaqah <?= htmlspecialchars($halaqah_name) ?></div>
+                                        </div>
+                                    </div>
+                                    <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3 py-2 fw-semibold" id="targetBadgeStatusSantri">
+                                        <i class="bi bi-shield-check me-1"></i>Santri Terpilih
+                                    </span>
+                                </div>
+
+                                <!-- KARTU VISUAL TARGET AKTIF (Tampil Jika Santri Sudah Punya Target) -->
+                                <div class="visual-route-card mb-4" id="targetAktifSantriBox" style="display: none;">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom border-success-subtle gap-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-success text-white rounded-pill px-3 py-1 fw-bold" style="font-size: 11px;">
+                                                <i class="bi bi-check-circle-fill me-1"></i>TARGET AKTIF SAAT INI
+                                            </span>
+                                            <span class="small text-success-emphasis fw-bold" id="infoTargetSantriNama">-</span>
+                                        </div>
+                                        <span class="badge bg-white text-success border border-success-subtle px-3 py-1.5 fw-semibold rounded-pill" id="infoTargetCountdown">
+                                            <i class="bi bi-calendar-event me-1"></i><span id="infoTargetRentangTanggal">-</span>
+                                        </span>
+                                    </div>
+
+                                    <div class="row align-items-center g-3 text-center text-md-start">
+                                        <div class="col-12 col-md-5">
+                                            <div class="p-3 rounded-3 bg-white border border-success-subtle shadow-xs h-100">
+                                                <small class="text-muted d-block fw-semibold mb-1" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Batas Awal Hafalan:</small>
+                                                <strong class="text-dark d-block text-truncate" id="infoTargetSurahAwal" style="font-size: 13.5px;">-</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-2 text-center">
+                                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success text-white shadow-xs" style="width: 38px; height: 38px;">
+                                                <i class="bi bi-arrow-right-short fs-3"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-5">
+                                            <div class="p-3 rounded-3 bg-white border border-success-subtle shadow-xs h-100">
+                                                <small class="text-muted d-block fw-semibold mb-1" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Batas Akhir Sasaran:</small>
+                                                <strong class="text-success d-block text-truncate" id="infoTargetSurahAkhir" style="font-size: 13.5px;">-</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="small text-muted mt-2 pt-2 border-top border-success-subtle" style="font-size: 11.5px;">
+                                        <i class="bi bi-info-circle me-1 text-success"></i>Santri sedang menjalani target ini. Anda dapat menetapkan target baru di bawah untuk memperbarui capaian sasaran.
+                                    </div>
+                                </div>
+
+                                <!-- PRESET CEPAT TARGET POPULER (ANTI-MONOTON) -->
+                                <div class="mb-4 p-3 rounded-3" style="background: #F8FAFC; border: 1.5px dashed #CBD5E1;">
+                                    <div class="d-flex align-items-center justify-content-between mb-2.5">
+                                        <label class="small fw-bold text-dark mb-0 d-flex align-items-center gap-1.5">
+                                            <i class="bi bi-lightning-charge-fill text-warning fs-6"></i>
+                                            Pilihan Cepat Target Populer (Klik untuk auto-isi):
+                                        </label>
+                                        <span class="badge bg-light text-muted border" style="font-size: 10.5px;">Auto-Fill Cepat</span>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-2" id="presetButtonsContainer">
+                                        <button type="button" class="preset-pill-btn" onclick="applyPresetTarget('juz30_full', this)">
+                                            <i class="bi bi-star-fill text-warning"></i> Juz 30 Penuh (An-Naba – An-Nas)
+                                        </button>
+                                        <button type="button" class="preset-pill-btn" onclick="applyPresetTarget('juz30_pendek', this)">
+                                            <i class="bi bi-bookmark-check-fill text-success"></i> Juz 30 Pendek (Adh-Dhuha – An-Nas)
+                                        </button>
+                                        <button type="button" class="preset-pill-btn" onclick="applyPresetTarget('juz1_full', this)">
+                                            <i class="bi bi-book-fill text-primary"></i> Juz 1 Penuh (Al-Fatihah – Al-Baqarah)
+                                        </button>
+                                        <button type="button" class="preset-pill-btn" onclick="applyPresetTarget('juz2_full', this)">
+                                            <i class="bi bi-journal-text text-secondary"></i> Juz 2 Penuh (Al-Baqarah)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Form Grid 2 Kolom -->
+                                <form action="?tab=target" method="POST" id="formTetapkanTarget" onsubmit="return validasiFormTarget(event)">
+                                    <input type="hidden" name="action" value="simpan_target">
+                                    <input type="hidden" name="siswa_id" id="targetInputSiswaId" value="<?= $target_fokus_id > 0 ? $target_fokus_id : '' ?>">
+
+                                    <div class="row g-3 mb-4">
+                                        <!-- Kolom 1: Mulai Hafalan -->
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label small fw-bold text-dark mb-1">
+                                                <i class="bi bi-journal-arrow-up text-success me-1"></i>Mulai Hafalan (Batas Awal) <span class="text-danger">*</span>
+                                            </label>
+                                            <select name="surah_awal" id="targetSurahAwal" class="form-select target-field target-select fw-medium" required onchange="onSurahAwalChange()">
+                                                <option value="" disabled <?= empty($target_old['surah_awal']) ? 'selected' : '' ?>>-- Pilih Batas Awal --</option>
+                                                <?php foreach ($kurikulum_target as $juz_nama => $daftar_opsi): ?>
+                                                    <optgroup label="<?= htmlspecialchars($juz_nama) ?>">
+                                                        <?php foreach ($daftar_opsi as $opsi_teks): ?>
+                                                            <option value="<?= htmlspecialchars($opsi_teks) ?>" <?= ($target_old['surah_awal'] === $opsi_teks) ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($opsi_teks) ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </optgroup>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+
+                                        <!-- Kolom 2: Tanggal Mulai -->
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label small fw-bold text-dark mb-1">
+                                                <i class="bi bi-calendar-event text-success me-1"></i>Tanggal Mulai <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="date" name="tanggal_mulai" id="targetTanggalMulai" class="form-control target-field fw-medium" value="<?= htmlspecialchars($target_old['tanggal_mulai'] ?: date('Y-m-d')) ?>" required onchange="onTanggalMulaiChange()">
+                                        </div>
+
+                                        <!-- Kolom 3: Batas Akhir Hafalan -->
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label small fw-bold text-dark mb-1">
+                                                <i class="bi bi-flag-fill text-success me-1"></i>Batas Akhir Hafalan (Sasaran) <span class="text-danger">*</span>
+                                            </label>
+                                            <select name="surah_akhir" id="targetSurahAkhir" class="form-select target-field target-select fw-medium" required>
+                                                <option value="" disabled <?= empty($target_old['surah_akhir']) ? 'selected' : '' ?>>-- Pilih Batas Akhir --</option>
+                                                <?php foreach ($kurikulum_target as $juz_nama => $daftar_opsi): ?>
+                                                    <optgroup label="<?= htmlspecialchars($juz_nama) ?>">
+                                                        <?php foreach ($daftar_opsi as $opsi_teks): ?>
+                                                            <option value="<?= htmlspecialchars($opsi_teks) ?>" <?= ($target_old['surah_akhir'] === $opsi_teks) ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($opsi_teks) ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </optgroup>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+
+                                        <!-- Kolom 4: Tanggal Akhir -->
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label small fw-bold text-dark mb-1">
+                                                <i class="bi bi-calendar-check text-success me-1"></i>Tanggal Akhir Target <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="date" name="tanggal_akhir" id="targetTanggalAkhir" class="form-control target-field fw-medium" value="<?= htmlspecialchars($target_old['tanggal_akhir'] ?: date('Y-m-d', strtotime('+30 days'))) ?>" required>
+                                            
+                                            <!-- Pilihan Cepat Durasi Tanggal -->
+                                            <div class="d-flex flex-wrap align-items-center gap-1.5 mt-2">
+                                                <span class="small text-muted" style="font-size: 11px;">Pilihan Cepat:</span>
+                                                <button type="button" class="duration-pill-btn" onclick="setDurasiTarget(14, this)">+14 Hari</button>
+                                                <button type="button" class="duration-pill-btn active" onclick="setDurasiTarget(30, this)">+30 Hari</button>
+                                                <button type="button" class="duration-pill-btn" onclick="setDurasiTarget(60, this)">+60 Hari</button>
+                                                <button type="button" class="duration-pill-btn" onclick="setDurasiTarget(90, this)">+90 Hari</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tombol Aksi -->
+                                    <div class="d-flex align-items-center gap-2 pt-2 border-top">
+                                        <button type="submit" class="btn btn-tahfiz px-4 py-2.5 text-white fw-bold rounded-3 shadow-sm d-inline-flex align-items-center gap-2">
+                                            <i class="bi bi-check2-circle fs-5"></i>
+                                            <span>Simpan &amp; Aktifkan Target</span>
+                                        </button>
+                                        <button type="button" class="btn btn-light border px-4 py-2.5 fw-semibold rounded-3 text-secondary d-inline-flex align-items-center gap-2" onclick="batalPilihTarget()">
+                                            <i class="bi bi-x-circle"></i>
+                                            <span>Batal</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════════════════════════
+                     TABEL MONITORING TARGET SELURUH SANTRI (IKHTISAR HALAQAH)
+                ════════════════════════════════════════════════════════════ -->
+                <div class="mt-4">
+                    <div class="card p-4 border-0 shadow-sm rounded-4 bg-white">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom gap-2">
+                            <div>
+                                <h5 class="fw-bold mb-1 text-dark">
+                                    <i class="bi bi-table text-success me-2"></i>Status Target Seluruh Santri Halaqah
+                                </h5>
+                                <p class="text-muted small mb-0">Daftar lengkap komitmen hafalan santri yang sedang berlangsung di Halaqah <?= htmlspecialchars($halaqah_name) ?>.</p>
+                            </div>
+                            <span class="badge bg-light text-muted border px-3 py-2 fw-semibold">
+                                <?= count($santri_list) ?> Total Santri
+                            </span>
+                        </div>
+
+                        <div class="table-responsive rounded-3 border">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr class="small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                                        <th class="ps-3 py-2.5" style="width: 50px;">No</th>
+                                        <th class="py-2.5">Santri</th>
+                                        <th class="py-2.5">Target Sasaran</th>
+                                        <th class="py-2.5">Rentang Tanggal</th>
+                                        <th class="py-2.5 text-center">Status</th>
+                                        <th class="pe-3 py-2.5 text-center" style="width: 140px;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($santri_list as $idx => $st): 
+                                        $st_id = (string)$st['id'];
+                                        $target_data = $target_aktif_map[$st_id] ?? null;
+                                        
+                                        $words = preg_split("/\s+/", trim($st['nama_lengkap']));
+                                        $ini = '';
+                                        if (!empty($words[0])) $ini .= mb_strtoupper(mb_substr($words[0], 0, 1));
+                                        if (!empty($words[1])) $ini .= mb_strtoupper(mb_substr($words[1], 0, 1));
+                                        if (empty($ini)) $ini = 'ST';
+                                    ?>
+                                        <tr style="cursor: pointer;" onclick="fokuskanSantri(<?= (int)$st['id'] ?>)">
+                                            <td class="ps-3 text-muted fw-semibold"><?= $idx + 1 ?>.</td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2.5">
+                                                    <div class="santri-avatar-initial" style="width: 36px; height: 36px; min-width: 36px; font-size: 0.8rem;">
+                                                        <?= $ini ?>
+                                                    </div>
+                                                    <div>
+                                                        <strong class="text-dark d-block"><?= htmlspecialchars($st['nama_lengkap']) ?></strong>
+                                                        <small class="text-muted" style="font-size: 11px;">NIS: <?= htmlspecialchars($st['nip_nis'] ?: '-') ?></small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <?php if ($target_data): ?>
+                                                    <div class="fw-semibold text-dark small">
+                                                        <span class="text-success"><?= htmlspecialchars($target_data['surah_awal']) ?></span>
+                                                        <span class="text-muted mx-1">s/d</span>
+                                                        <span class="text-success"><?= htmlspecialchars($target_data['surah_akhir']) ?></span>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <span class="text-muted small fst-italic">Belum ditetapkan target</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <?php if ($target_data): ?>
+                                                    <div class="small text-muted">
+                                                        <i class="bi bi-calendar3 me-1"></i><?= htmlspecialchars($target_data['tanggal_mulai']) ?> s/d <?= htmlspecialchars($target_data['tanggal_akhir']) ?>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <span class="text-muted small">-</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <?php if ($target_data): ?>
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5 fw-bold rounded-pill">
+                                                        <i class="bi bi-check-circle-fill me-1"></i>Aktif
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-light text-secondary border px-3 py-1.5 fw-semibold rounded-pill">
+                                                        Belum Ada Target
+                                                    </span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="pe-3 text-center">
+                                                <button type="button" class="btn btn-sm <?= $target_data ? 'btn-outline-success' : 'btn-tahfiz text-white' ?> rounded-2 px-3 py-1 fw-semibold shadow-xs" onclick="event.stopPropagation(); fokuskanSantri(<?= (int)$st['id'] ?>)">
+                                                    <?= $target_data ? '<i class="bi bi-pencil-square me-1"></i>Ubah' : '<i class="bi bi-plus-lg me-1"></i>Tetapkan' ?>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            <!-- ═══════════════════════════════════════════════════════════
+                 MENU 5: REKAP TAHFIZ HALAQAH (DESAIN FIGMA BARU)
+                 Dashboard rekap lengkap dengan KPI, tabel, pencarian, modal
+            ════════════════════════════════════════════════════════════ -->
+            <?php elseif ($page_tab === 'rekap'): ?>
+<?php
+// ── Data Rekap per Siswa (Fallback lengkap untuk tampilan) ──
+$rekap_data = [
+    '102601' => ['capaian' => 60, 'tgl_setor' => '15 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Mulk (Ayat 13–18)', 'target' => 'Surah Al-Mulk (Ayat 1–30)', 'ayat_hafal' => 18, 'ayat_total' => 30, 'catatan' => 'Bacaan makhraj dan mad sudah baik, perlu mengulang kelancaran sambungan ayat 15–18 sebelum lanjut ke ayat berikutnya.', 'riwayat' => [['tgl'=>'15 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 13–18','status'=>'Lancar'],['tgl'=>'14 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Mulk: 7–12','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 1–6','status'=>'Lancar']]],
+    '102602' => ['capaian' => 75, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Mulk (Ayat 19–24)', 'target' => 'Surah Al-Mulk (Ayat 1–30)', 'ayat_hafal' => 24, 'ayat_total' => 30, 'catatan' => 'Irama tartil sangat stabil, perhatikan hukum ghunnah pada ayat 21.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 19–24','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Mulk: 13–18','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 13–18','status'=>'Lancar']]],
+    '102603' => ['capaian' => 90, 'tgl_setor' => '12 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Qalam (Ayat 1–42)', 'target' => 'Surah Al-Qalam (Ayat 1–52)', 'ayat_hafal' => 42, 'ayat_total' => 52, 'catatan' => 'Hafalan sangat kuat dan mutqin, siap menyelesaikan 10 ayat terakhir pekan ini.', 'riwayat' => [['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Qalam: 36–42','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Qalam: 29–35','status'=>'Lancar'],['tgl'=>'8 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Qalam: 1–28','status'=>'Lancar']]],
+    '102604' => ['capaian' => 80, 'tgl_setor' => '15 Nov 2026', 'posisi' => 'Juz 30 • Surah An-Naba\' (Ayat 1–32)', 'target' => 'Surah An-Naba\' (Ayat 1–40)', 'ayat_hafal' => 32, 'ayat_total' => 40, 'catatan' => 'Kelancaran meningkat pesat, pertahankan murojaah sebelum tidur.', 'riwayat' => [['tgl'=>'15 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Naba: 27–32','status'=>'Lancar'],['tgl'=>'13 Nov 2026','jenis'=>'Murajaah','surah'=>'An-Naba: 1–26','status'=>'Lancar'],['tgl'=>'11 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Naba: 21–26','status'=>'Lancar']]],
+    '102605' => ['capaian' => 85, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 30 • Surah An-Nazi\'at (Ayat 1–39)', 'target' => 'Surah An-Nazi\'at (Ayat 1–46)', 'ayat_hafal' => 39, 'ayat_total' => 46, 'catatan' => 'Pelafalan huruf qalqalah sudah tepat, lanjutkan 7 ayat terakhir.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Nazi\'at: 34–39','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'An-Nazi\'at: 1–33','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Nazi\'at: 28–33','status'=>'Lancar']]],
+    '102606' => ['capaian' => 50, 'tgl_setor' => '11 Nov 2026', 'posisi' => 'Juz 30 • Surah \'Abasa (Ayat 1–21)', 'target' => 'Surah \'Abasa (Ayat 1–42)', 'ayat_hafal' => 21, 'ayat_total' => 42, 'catatan' => 'Perlu menambah porsi murajaah ayat 10–21 agar tidak tertukar akhir ayatnya.', 'riwayat' => [['tgl'=>'11 Nov 2026','jenis'=>'Ziyadah','surah'=>'\'Abasa: 16–21','status'=>'Lancar'],['tgl'=>'9 Nov 2026','jenis'=>'Murajaah','surah'=>'\'Abasa: 1–15','status'=>'Lancar'],['tgl'=>'7 Nov 2026','jenis'=>'Ziyadah','surah'=>'\'Abasa: 10–15','status'=>'Lancar']]],
+    '102607' => ['capaian' => 95, 'tgl_setor' => '16 Nov 2026', 'posisi' => 'Juz 30 • Surah At-Takwir (Ayat 1–27)', 'target' => 'Surah At-Takwir (Ayat 1–29)', 'ayat_hafal' => 27, 'ayat_total' => 29, 'catatan' => 'Sangat lancar dan tajwid terjaga, tinggal 2 ayat penutup.', 'riwayat' => [['tgl'=>'16 Nov 2026','jenis'=>'Ziyadah','surah'=>'At-Takwir: 22–27','status'=>'Lancar'],['tgl'=>'14 Nov 2026','jenis'=>'Murajaah','surah'=>'At-Takwir: 1–21','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'At-Takwir: 15–21','status'=>'Lancar']]],
+    '102608' => ['capaian' => 65, 'tgl_setor' => '13 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Haqqah (Ayat 1–34)', 'target' => 'Surah Al-Haqqah (Ayat 1–52)', 'ayat_hafal' => 34, 'ayat_total' => 52, 'catatan' => 'Panjang pendek mad thabi\'i sudah bagus, tingkatkan kecepatan transisi antarayat.', 'riwayat' => [['tgl'=>'13 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Haqqah: 28–34','status'=>'Lancar'],['tgl'=>'11 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Haqqah: 1–27','status'=>'Lancar'],['tgl'=>'9 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Haqqah: 21–27','status'=>'Lancar']]],
+    '102609' => ['capaian' => 70, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 30 • Surah Al-Infithar (Ayat 1–14)', 'target' => 'Surah Al-Infithar (Ayat 1–19)', 'ayat_hafal' => 14, 'ayat_total' => 19, 'catatan' => 'Hafalan baru lancar, terus ulangi surah-surah pendek sebelumnya.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Infithar: 10–14','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Infithar: 1–9','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Infithar: 5–9','status'=>'Lancar']]],
+    '102610' => ['capaian' => 55, 'tgl_setor' => '10 Nov 2026', 'posisi' => 'Juz 30 • Surah Al-Muthaffifin (Ayat 1–20)', 'target' => 'Surah Al-Muthaffifin (Ayat 1–36)', 'ayat_hafal' => 20, 'ayat_total' => 36, 'catatan' => 'Fokus perbaiki waqaf dan ibtida pada ayat-ayat panjang.', 'riwayat' => [['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Muthaffifin: 15–20','status'=>'Lancar'],['tgl'=>'8 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Muthaffifin: 1–14','status'=>'Lancar'],['tgl'=>'6 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Muthaffifin: 8–14','status'=>'Lancar']]],
+];
+$rekap_total_siswa = count($santri_list);
+$rekap_total_setoran = $total_setoran_count > 0 ? $total_setoran_count : 28;
+$rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
+?>
+                <!-- Badge & Header -->
+                <div class="mb-4">
+                    <span class="badge px-3 py-2 fw-bold rounded-pill" style="background-color: #11756D; font-size: 11px; letter-spacing: 0.05em;">REKAPITULASI HALAQAH AL-FURQAN</span>
+                    <h2 class="fw-bold mt-3 mb-1" style="color: #1E293B; font-size: 1.65rem;">Rekap Tahfiz Siswa Binaan</h2>
+                    <p class="text-muted mb-0" style="font-size: 14px;">Ringkasan capaian target dan riwayat setoran hafalan siswa halaqah.</p>
+                </div>
+
+>>>>>>> 80c70d0 (p)
                 <!-- 4 KPI Cards -->
                 <div class="row g-3 mb-4">
                     <div class="col-lg-3 col-md-6">
@@ -2285,11 +3135,19 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                     </div>
                     <!-- Footer -->
                     <div class="px-4 py-3" style="border-top:1px solid #F1F5F9;">
+<<<<<<< HEAD
                         <small class="text-muted" id="footerInfoSiswa">Menampilkan 1�<?= $rekap_total_siswa ?> dari <?= $rekap_total_siswa ?> siswa</small>
                     </div>
                 </div>
 
                 <!-- --- MODAL: Detail Rekap Tahfiz Siswa --- -->
+=======
+                        <small class="text-muted" id="footerInfoSiswa">Menampilkan 1–<?= $rekap_total_siswa ?> dari <?= $rekap_total_siswa ?> siswa</small>
+                    </div>
+                </div>
+
+                <!-- ═══ MODAL: Detail Rekap Tahfiz Siswa ═══ -->
+>>>>>>> 80c70d0 (p)
                 <div class="modal fade" id="modalDetailSiswa" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" style="max-width:640px;">
                         <div class="modal-content border-0" style="border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.15);">
@@ -2356,7 +3214,11 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                 <!-- JavaScript: Pencarian & Modal -->
                 <script>
                 document.addEventListener('DOMContentLoaded', function() {
+<<<<<<< HEAD
                     // -- Filter Pencarian --
+=======
+                    // ── Filter Pencarian ──
+>>>>>>> 80c70d0 (p)
                     const searchInput = document.getElementById('searchSiswaInput');
                     const rows = document.querySelectorAll('.siswa-row');
                     const footerInfo = document.getElementById('footerInfoSiswa');
@@ -2381,7 +3243,11 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                         badge.textContent = visible + ' Siswa ' + (q ? 'Ditemukan' : 'Terdaftar');
                     });
 
+<<<<<<< HEAD
                     // -- Modal Detail --
+=======
+                    // ── Modal Detail ──
+>>>>>>> 80c70d0 (p)
                     const modalEl = document.getElementById('modalDetailSiswa');
                     const bsModal = new bootstrap.Modal(modalEl);
 
@@ -2420,7 +3286,11 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                 </script>
 
 
+<<<<<<< HEAD
             <!-- -----------------------------------------------------------
+=======
+            <!-- ═══════════════════════════════════════════════════════════
+>>>>>>> 80c70d0 (p)
                  MENU 6: PROFIL USTADZ & GANTI KATA SANDI
                  (Tampilan Eksekutif, Elegan, dan Profesional)
             ------------------------------------------------------------ -->
@@ -2517,8 +3387,405 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+<<<<<<< HEAD
 // LOGIKA JAVASCRIPT TAB TARGET HAFALAN
 // -------------------------------------------------------------
+const targetAktifMap = <?= json_encode($target_aktif_map, JSON_UNESCAPED_UNICODE) ?>;
+const targetUrutanOpsi = <?= json_encode($urutan_opsi_target, JSON_UNESCAPED_UNICODE) ?>;
+let santriTargetTerpilih = null;
+
+function pilihSantriTarget(id, nama, nis, el) {
+    santriTargetTerpilih = { id, nama, nis };
+
+    // Update border aktif #11756D dan latar #F0FDF9
+    document.querySelectorAll('.target-siswa-card').forEach(card => card.classList.remove('aktif'));
+    if (el) {
+        el.classList.add('aktif');
+    }
+=======
+const dataJuzHafalan = <?= json_encode($quran_juz, JSON_UNESCAPED_UNICODE) ?>;
+// Opsi khusus Juz 30 (Adh-Dhuha – An-Nas) seperti pada foto referensi teman
+dataJuzHafalan['30_dhuha'] = {
+    nama: 'Juz 30 (Adh-Dhuha – An-Nas)',
+    surah: (dataJuzHafalan['30']?.surah || []).filter(sr => sr.no >= 93)
+};
+
+const santriSetoranProgres = <?= json_encode($santri_setoran_progres, JSON_UNESCAPED_UNICODE) ?>;
+let santriHafalanAktif = null;
+
+function normalizeSurah(str) {
+    return (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function pilihSantriUntukHafalan(nama, nis, el) {
+    const parts = (nama || '').trim().split(/\s+/);
+    let inisial = '';
+    if (parts.length > 0 && parts[0]) inisial += parts[0][0].toUpperCase();
+    if (parts.length > 1 && parts[1]) inisial += parts[1][0].toUpperCase();
+    if (!inisial) inisial = 'ST';
+
+    santriHafalanAktif = { nama, nis, inisial };
+
+    document.querySelectorAll('#listSantriHafalan .santri-select-card').forEach(c => c.classList.remove('active'));
+    if (el) el.classList.add('active');
+>>>>>>> 80c70d0 (p)
+
+    // Sembunyikan empty state dan munculkan form
+    const emptyState = document.getElementById('targetEmptyState');
+    const formArea   = document.getElementById('targetFormArea');
+    if (emptyState) emptyState.style.display = 'none';
+    if (formArea)   formArea.style.display   = 'block';
+
+<<<<<<< HEAD
+    // Update ID siswa di input tersembunyi
+    const inputSiswaId = document.getElementById('targetInputSiswaId');
+    if (inputSiswaId) inputSiswaId.value = id;
+
+    // Header badge pill
+    const badgeNama = document.getElementById('targetBadgeNama');
+    const badgeNis  = document.getElementById('targetBadgeNis');
+    if (badgeNama) badgeNama.textContent = nama;
+    if (badgeNis)  badgeNis.textContent  = 'NIS: ' + nis;
+
+    // Tampilkan kotak target aktif santri terpilih jika sudah ada target aktif
+    const targetBox    = document.getElementById('targetAktifSantriBox');
+    const infoAwal     = document.getElementById('infoTargetSurahAwal');
+    const infoAkhir    = document.getElementById('infoTargetSurahAkhir');
+    const infoTanggal  = document.getElementById('infoTargetRentangTanggal');
+
+    const keyId = String(id);
+    if (targetAktifMap && targetAktifMap[keyId]) {
+        const item = targetAktifMap[keyId];
+        if (infoAwal)    infoAwal.textContent    = item.surah_awal || '-';
+        if (infoAkhir)   infoAkhir.textContent   = item.surah_akhir || '-';
+        if (infoTanggal) infoTanggal.textContent = (item.tanggal_mulai || '') + ' s/d ' + (item.tanggal_akhir || '');
+        if (targetBox)   targetBox.style.display  = 'block';
+    } else {
+        if (targetBox) targetBox.style.display = 'none';
+    }
+}
+
+function batalPilihTarget() {
+    santriTargetTerpilih = null;
+
+    // Reset pilihan aktif kartu siswa
+    document.querySelectorAll('.target-siswa-card').forEach(card => card.classList.remove('aktif'));
+
+    // Sembunyikan form dan kembalikan ke empty state
+    const emptyState = document.getElementById('targetEmptyState');
+    const formArea   = document.getElementById('targetFormArea');
+    if (emptyState) emptyState.style.display = 'block';
+    if (formArea)   formArea.style.display   = 'none';
+
+    // Reset nilai form
+    const form = document.getElementById('formTetapkanTarget');
+    if (form) form.reset();
+
+    const inputSiswaId = document.getElementById('targetInputSiswaId');
+    if (inputSiswaId) inputSiswaId.value = '';
+
+    const targetBox = document.getElementById('targetAktifSantriBox');
+    if (targetBox) targetBox.style.display = 'none';
+}
+
+function onSurahAwalChange() {
+    const selAwal  = document.getElementById('targetSurahAwal');
+    const selAkhir = document.getElementById('targetSurahAkhir');
+    if (!selAwal || !selAkhir) return;
+
+    const valAwal = selAwal.value;
+    const idxAwal = targetUrutanOpsi.indexOf(valAwal);
+
+    // Jika surah akhir belum dipilih atau indeksnya lebih kecil dari surah awal, set sama dengan surah awal
+    if (idxAwal !== -1) {
+        const valAkhir = selAkhir.value;
+        const idxAkhir = targetUrutanOpsi.indexOf(valAkhir);
+        if (idxAkhir === -1 || idxAkhir < idxAwal) {
+            selAkhir.value = valAwal;
+        }
+    }
+}
+
+function validasiFormTarget(e) {
+    const inputSiswaId = document.getElementById('targetInputSiswaId');
+    if (!inputSiswaId || !inputSiswaId.value) {
+        alert('Silakan pilih siswa terlebih dahulu di panel kiri.');
+        if (e) e.preventDefault();
+        return false;
+    }
+
+    const selAwal  = document.getElementById('targetSurahAwal');
+    const selAkhir = document.getElementById('targetSurahAkhir');
+    const tglMulai = document.getElementById('targetTanggalMulai');
+    const tglAkhir = document.getElementById('targetTanggalAkhir');
+
+    if (!selAwal || !selAwal.value) {
+        alert('Silakan pilih batas awal hafalan.');
+        selAwal?.focus();
+        if (e) e.preventDefault();
+        return false;
+    }
+
+    if (!selAkhir || !selAkhir.value) {
+        alert('Silakan pilih batas akhir hafalan.');
+        selAkhir?.focus();
+        if (e) e.preventDefault();
+        return false;
+    }
+
+    const idxAwal  = targetUrutanOpsi.indexOf(selAwal.value);
+    const idxAkhir = targetUrutanOpsi.indexOf(selAkhir.value);
+
+    if (idxAwal === -1 || idxAkhir === -1) {
+        alert('Pilihan juz atau surah tidak valid.');
+        if (e) e.preventDefault();
+        return false;
+    }
+
+    if (idxAkhir < idxAwal) {
+        alert('Batas akhir hafalan tidak boleh lebih kecil dari mulai hafalan.');
+        selAkhir.focus();
+        if (e) e.preventDefault();
+        return false;
+    }
+
+    if (tglMulai && tglAkhir && tglMulai.value && tglAkhir.value) {
+        if (tglAkhir.value < tglMulai.value) {
+            alert('Tanggal akhir tidak boleh lebih awal dari tanggal mulai.');
+            tglAkhir.focus();
+            if (e) e.preventDefault();
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Pencarian Real-Time Siswa Target
+document.getElementById('cariSantriTarget')?.addEventListener('input', function() {
+    const val = this.value.trim().toLowerCase();
+    document.querySelectorAll('.target-siswa-card').forEach(card => {
+        const nama = (card.getAttribute('data-nama') || '').toLowerCase();
+        const nis  = (card.getAttribute('data-nis') || '').toLowerCase();
+        if (nama.includes(val) || nis.includes(val)) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+=======
+    const dispNama = document.getElementById('displayNamaSantriHafalan');
+    if (dispNama) dispNama.innerText = nama;
+
+    renderTabelSurahHafalan();
+}
+
+function gantiJuzHafalan(juzNo) {
+    renderTabelSurahHafalan();
+}
+
+function renderTabelSurahHafalan() {
+    const juzSelect = document.getElementById('selectJuzHafalan');
+    const juzKey = juzSelect ? juzSelect.value : '30_dhuha';
+    const surahList = dataJuzHafalan[juzKey]?.surah || [];
+    const tbody = document.getElementById('tbodySurahHafalan');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    if (!santriHafalanAktif) return;
+
+    const namaSantri = santriHafalanAktif.nama;
+    const santriProgs = santriSetoranProgres[namaSantri] || {};
+
+    surahList.forEach((sr, idx) => {
+        const norm = normalizeSurah(sr.nama);
+        const prog = santriProgs[norm] || null;
+        const maxAyat = prog ? parseInt(prog.max_ayat || 0) : 0;
+
+        let statusBadge = '';
+        let statusKey = 'belum_setor';
+
+        if (maxAyat >= sr.ayat) {
+            statusBadge = `<span class="badge bg-success-subtle text-success border border-success-subtle fw-bold rounded-pill px-3 py-1.5"><i class="bi bi-check-circle-fill me-1"></i>Selesai</span>`;
+            statusKey = 'selesai';
+        } else if (maxAyat > 0) {
+            statusBadge = `<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle fw-bold rounded-pill px-3 py-1.5"><i class="bi bi-clock-history me-1"></i>Sedang Berjalan</span>`;
+            statusKey = 'sedang_berjalan';
+        } else {
+            statusBadge = `<span class="badge bg-light text-secondary border fw-semibold rounded-pill px-3 py-1.5">Belum Setor</span>`;
+            statusKey = 'belum_setor';
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'row-surah-clickable';
+        tr.style.cursor = 'pointer';
+        tr.title = `Klik untuk membuka Lembar Setoran Surah ${sr.nama}`;
+        tr.onclick = function() {
+            bukaModalSetoran(sr.nama, sr.ayat, sr.no, maxAyat, statusKey);
+        };
+
+        tr.innerHTML = `
+            <td class="ps-3 text-muted fw-semibold">${idx + 1}.</td>
+            <td>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded p-1 text-warning-emphasis" style="background:#FEF3C7; width:26px; height:26px; font-size:0.85rem;">
+                        <i class="bi bi-book-half"></i>
+                    </span>
+                    <span class="fw-bold text-dark">${sr.nama}</span>
+                </div>
+            </td>
+            <td class="text-muted small fw-medium">Ayat 1–${sr.ayat}</td>
+            <td class="text-center">${statusBadge}</td>
+            <td class="pe-3 text-center">
+                <button type="button" class="btn btn-sm btn-tahfiz rounded-2 px-2.5 py-1 text-white shadow-sm" style="background:#11756D;" onclick="event.stopPropagation(); bukaModalSetoran('${sr.nama.replace(/'/g, "\\'")}', ${sr.ayat}, ${sr.no}, ${maxAyat}, '${statusKey}')" title="Catat Setoran Surah ${sr.nama}">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            </td>
+        `;
+
+        tbody.appendChild(tr);
+    });
+}
+
+function bukaModalSetoran(namaSurah, totalAyat, noSurah, maxAyat, statusKey) {
+    if (!santriHafalanAktif) {
+        alert('Silakan pilih siswa terlebih dahulu.');
+        return;
+    }
+
+    // Set Info Header & Subtitle
+    const elJudul = document.getElementById('modalJudulSurah');
+    const elSub   = document.getElementById('modalSubInfo');
+    if (elJudul) elJudul.innerText = `${noSurah}. Surah ${namaSurah}`;
+    if (elSub) elSub.innerText = `Target: Ayat 1 s/d ${totalAyat}`;
+
+    // Set Santri Info
+    const elNama   = document.getElementById('modalNamaSantri');
+    const elNis    = document.getElementById('modalNisSantri');
+    const elTot    = document.getElementById('modalBadgeTotalAyat');
+    const elAvatar = document.getElementById('modalAvatarSantri');
+    if (elNama) elNama.innerText = santriHafalanAktif.nama;
+    if (elNis) elNis.innerText = 'NIS: ' + (santriHafalanAktif.nis || '-');
+    if (elTot) elTot.innerText = `Total ${totalAyat} Ayat`;
+    if (elAvatar) elAvatar.innerText = santriHafalanAktif.inisial;
+
+    // Set Hidden Inputs
+    const elInpNama  = document.getElementById('modalInputSantriNama');
+    const elInpSurah = document.getElementById('modalInputSurahNama');
+    if (elInpNama) elInpNama.value = santriHafalanAktif.nama;
+    if (elInpSurah) elInpSurah.value = namaSurah;
+
+    // Set Status Alert & Form Inputs
+    const alertContainer = document.getElementById('modalAlertStatus');
+    const inputAwal  = document.getElementById('modalInputAyatAwal');
+    const inputAkhir = document.getElementById('modalInputAyatAkhir');
+
+    if (inputAwal) {
+        inputAwal.min = 1;
+        inputAwal.max = totalAyat;
+    }
+    if (inputAkhir) {
+        inputAkhir.min = 1;
+        inputAkhir.max = totalAyat;
+    }
+
+    if (statusKey === 'sedang_berjalan') {
+        const nextAyat = Math.min(maxAyat + 1, totalAyat);
+        if (alertContainer) {
+            alertContainer.innerHTML = `
+                <div class="alert alert-warning border border-warning-subtle d-flex align-items-center gap-2 py-2 px-3 small rounded-3 mb-0">
+                    <i class="bi bi-clock-history fs-5 text-warning-emphasis"></i>
+                    <div>
+                        <strong>Status: Sedang Berjalan.</strong> Santri telah menyetor sampai <strong>Ayat ${maxAyat}</strong> dari total ${totalAyat} ayat. Disarankan melanjutkan setoran mulai <strong>Ayat ${nextAyat} s/d ${totalAyat}</strong>.
+                    </div>
+                </div>
+            `;
+        }
+        if (inputAwal) inputAwal.value = nextAyat;
+        if (inputAkhir) inputAkhir.value = totalAyat;
+    } else if (statusKey === 'selesai') {
+        if (alertContainer) {
+            alertContainer.innerHTML = `
+                <div class="alert alert-success border border-success-subtle d-flex align-items-center gap-2 py-2 px-3 small rounded-3 mb-0">
+                    <i class="bi bi-check-circle-fill fs-5 text-success"></i>
+                    <div>
+                        <strong>Status: Selesai.</strong> Seluruh <strong>${totalAyat} Ayat</strong> surah ini telah lengkap disetor. Ustadz dapat mencatat tasmi / pengulangan bila santri mengulang hafalan.
+                    </div>
+                </div>
+            `;
+        }
+        if (inputAwal) inputAwal.value = 1;
+        if (inputAkhir) inputAkhir.value = totalAyat;
+    } else {
+        if (alertContainer) {
+            alertContainer.innerHTML = `
+                <div class="alert alert-secondary border d-flex align-items-center gap-2 py-2 px-3 small rounded-3 mb-0">
+                    <i class="bi bi-info-circle-fill fs-5 text-secondary"></i>
+                    <div>
+                        <strong>Status: Belum Setor.</strong> Santri belum memiliki riwayat setoran untuk surah ini.
+                    </div>
+                </div>
+            `;
+        }
+        if (inputAwal) inputAwal.value = 1;
+        if (inputAkhir) inputAkhir.value = totalAyat;
+    }
+
+    if (inputAkhir) {
+        inputAkhir.oninput = function() {
+            if (parseInt(this.value) > totalAyat) this.value = totalAyat;
+        };
+    }
+    if (inputAwal) {
+        inputAwal.oninput = function() {
+            if (parseInt(this.value) > totalAyat) this.value = totalAyat;
+        };
+    }
+
+    // Tampilkan Pop-Up Modal Bootstrap
+    const modalEl = document.getElementById('modalSetoranEksklusif');
+    if (modalEl) {
+        const modalObj = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modalObj.show();
+    }
+}
+
+// Filter Pencarian Santri pada Tab Hafalan
+document.getElementById('cariSantriHafalan')?.addEventListener('input', function() {
+    const val = this.value.toLowerCase();
+    document.querySelectorAll('#listSantriHafalan .santri-select-card').forEach(item => {
+        const text = item.innerText.toLowerCase();
+        item.style.display = text.includes(val) ? 'flex' : 'none';
+>>>>>>> 80c70d0 (p)
+    });
+});
+
+// Inisialisasi otomatis jika ada siswa yang difokuskan (misalnya setelah POST error/sukses)
+window.addEventListener('DOMContentLoaded', () => {
+<<<<<<< HEAD
+    const cardAktif = document.querySelector('.target-siswa-card.aktif');
+    if (cardAktif) {
+        const id   = parseInt(cardAktif.getAttribute('data-id'), 10);
+        const nama = cardAktif.getAttribute('data-nama');
+        const nis  = cardAktif.getAttribute('data-nis');
+        pilihSantriTarget(id, nama, nis, cardAktif);
+=======
+    const urlParams = new URLSearchParams(window.location.search);
+    const getSantri = urlParams.get('santri');
+    if (getSantri) {
+        document.querySelectorAll('#listSantriHafalan .santri-select-card').forEach(item => {
+            const nama = item.querySelector('.santri-nama-item')?.innerText;
+            if (nama && nama.toLowerCase().includes(getSantri.toLowerCase())) {
+                item.click();
+            }
+        });
+>>>>>>> 80c70d0 (p)
+    }
+});
+
+// ─────────────────────────────────────────────────────────────
+// LOGIKA JAVASCRIPT TAB TARGET HAFALAN
+// ─────────────────────────────────────────────────────────────
 const targetAktifMap = <?= json_encode($target_aktif_map, JSON_UNESCAPED_UNICODE) ?>;
 const targetUrutanOpsi = <?= json_encode($urutan_opsi_target, JSON_UNESCAPED_UNICODE) ?>;
 let santriTargetTerpilih = null;

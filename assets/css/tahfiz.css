@@ -556,6 +556,7 @@ body.tahfiz-body, .tahfiz-app {
         gap: 20px !important;
     }
 }
+ HEAD
 
 /* ── Tab Hafalan Ustadz: panel siswa, tabel surah, modal setoran & mushaf ── */
 .hafalan-layout {
@@ -1174,3 +1175,4 @@ body.tahfiz-body, .tahfiz-app {
         flex-direction: column;
     }
 }
+

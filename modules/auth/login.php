@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo = koneksi_database();
             $check_table = $pdo->query("SHOW TABLES LIKE 'users'")->fetch();
             if ($check_table) {
-                $stmt = $pdo->prepare("SELECT * FROM users WHERE (username = :u OR nip_nis = :u) LIMIT 1");
+                $stmt = $pdo->prepare("SELECT * FROM users WHERE (username = :u OR nip_nis = :u OR nama_lengkap = :u) LIMIT 1");
                 $stmt->execute(['u' => $username]);
                 $row = $stmt->fetch();
 
