@@ -185,115 +185,7 @@ require_once 'includes/header_public.php';
 
 
 <!-- ═══════════════════════════════════════════════════════════════
-     SECTION 3 — KABAR TERBARU
-════════════════════════════════════════════════════════════════ -->
-<section id="berita" class="py-5" style="background-color: #F8FAFC;">
-    <div class="container">
-
-        <!-- Heading -->
-        <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-md-between gap-3 mb-4">
-            <div>
-                <span class="text-uppercase fw-semibold small" style="color:#2563EB; letter-spacing:0.06em;">
-                    <i class="bi bi-newspaper me-1"></i>Informasi Terkini
-                </span>
-                <h3 class="fw-bold mb-0" style="color:#1F4172;">Kabar Terbaru dari Sekolah</h3>
-            </div>
-            <a href="#" class="btn btn-sm btn-outline-primary fw-semibold px-4 flex-shrink-0">
-                Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
-            </a>
-        </div>
-
-        <!-- Grid 3 Card Berita Statis -->
-        <?php
-        $berita = [
-            [
-                'gradient'=> 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-                'icon'    => 'bi-trophy-fill',
-                'tanggal' => '3 November 2026',
-                'judul'   => 'SMA IT Al-Fadhilah Raih Juara 1 Lomba Tahfiz Tingkat Provinsi Riau',
-                'ringkas' => 'Alhamdulillah, siswa-siswi SMA IT Al-Fadhilah berhasil meraih juara pertama dalam ajang Musabaqah Hifzil Qur\'an tingkat Provinsi Riau yang diselenggarakan di Pekanbaru.',
-                'badge'   => 'Prestasi',
-                'badge_warna' => '#16A34A',
-            ],
-            [
-                'gradient'=> 'linear-gradient(135deg, #1F4172 0%, #2563EB 100%)',
-                'icon'    => 'bi-megaphone-fill',
-                'tanggal' => '21 Oktober 2026',
-                'judul'   => 'Penerimaan Peserta Didik Baru (SPMB) Tahun Ajaran 2027/2028 Resmi Dibuka',
-                'ringkas' => 'SMA IT Al-Fadhilah Pekanbaru dengan bangga mengumumkan pembukaan pendaftaran siswa baru untuk tahun ajaran 2027/2028. Daftar sekarang dan bergabunglah bersama keluarga besar Al-Fadhilah.',
-                'badge'   => 'Pengumuman',
-                'badge_warna' => '#D97706',
-            ],
-            [
-                'gradient'=> 'linear-gradient(135deg, #0D9488 0%, #0F766E 100%)',
-                'icon'    => 'bi-mortarboard-fill',
-                'tanggal' => '5 Oktober 2026',
-                'judul'   => 'Workshop Peningkatan Kompetensi Guru: Implementasi Kurikulum Merdeka 2026',
-                'ringkas' => 'Seluruh tenaga pendidik SMA IT Al-Fadhilah mengikuti workshop intensif selama dua hari tentang implementasi Kurikulum Merdeka dalam pembelajaran berbasis nilai-nilai Islam.',
-                'badge'   => 'Kegiatan',
-                'badge_warna' => '#1F4172',
-            ],
-        ];
-        ?>
-
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <?php foreach ($berita as $b): ?>
-            <div class="col">
-                <article class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden berita-card">
-
-                    <!-- Banner Grafis Berita -->
-                    <div class="d-flex align-items-center justify-content-center text-white"
-                         style="height: 180px; background: <?= $b['gradient'] ?>;">
-                        <div class="rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center"
-                             style="width: 70px; height: 70px;">
-                            <i class="bi <?= $b['icon'] ?> fs-2"></i>
-                        </div>
-                    </div>
-
-                    <div class="card-body d-flex flex-column p-4">
-
-                        <!-- Badge Kategori & Tanggal -->
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <span class="badge rounded-pill fw-semibold small px-3 py-1"
-                                  style="background-color: <?= $b['badge_warna'] ?>1A; color: <?= $b['badge_warna'] ?>;">
-                                <?= $b['badge'] ?>
-                            </span>
-                            <small class="text-muted">
-                                <i class="bi bi-calendar3 me-1"></i><?= $b['tanggal'] ?>
-                            </small>
-                        </div>
-
-                        <!-- Judul -->
-                        <h5 class="card-title fw-bold mb-2 lh-sm" style="color:#1F4172; font-size:1rem;">
-                            <?= htmlspecialchars($b['judul']) ?>
-                        </h5>
-
-                        <!-- Ringkasan -->
-                        <p class="card-text small flex-grow-1 mb-3" style="color:#64748B; line-height:1.7;">
-                            <?= htmlspecialchars($b['ringkas']) ?>
-                        </p>
-
-                        <!-- Link Baca Selengkapnya -->
-                        <a href="#"
-                           class="d-inline-flex align-items-center gap-1 fw-semibold small text-decoration-none baca-link"
-                           style="color:#2563EB;">
-                            Baca Selengkapnya
-                            <i class="bi bi-arrow-right transition-arrow"></i>
-                        </a>
-
-                    </div>
-                </article>
-            </div>
-            <?php endforeach; ?>
-        </div>
-
-    </div>
-</section>
-<!-- /BERITA -->
-
-
-<!-- ═══════════════════════════════════════════════════════════════
-     SECTION 4 — CTA (Call to Action) DAFTAR
+     SECTION 3 — CTA (Call to Action) DAFTAR
 ════════════════════════════════════════════════════════════════ -->
 <section id="cta" class="py-5">
     <div class="container">
@@ -321,34 +213,9 @@ require_once 'includes/header_public.php';
 </section>
 <!-- /CTA -->
 
-<?php
-// ── Tambahkan style interaktif card berita inline ──────────────────
-?>
 <style>
     /* Hero spacing */
     .py-md-6 { padding-top: 5rem !important; padding-bottom: 5rem !important; }
-
-    /* Hover efek card berita */
-    .berita-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .berita-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 32px rgba(31, 65, 114, 0.12) !important;
-    }
-    .berita-card:hover .berita-img {
-        transform: scale(1.06);
-    }
-    .baca-link:hover {
-        color: #1F4172 !important;
-    }
-    .baca-link:hover .transition-arrow {
-        transform: translateX(4px);
-        transition: transform 0.2s;
-    }
-    .transition-arrow {
-        transition: transform 0.2s;
-    }
 </style>
 
 <?php require_once 'includes/footer_public.php'; ?>
