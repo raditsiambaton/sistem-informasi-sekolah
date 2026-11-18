@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * tabs/hafalan.php
  * Tampilan tab Hafalan: panel siswa, daftar surah target, modal setoran,
@@ -39,7 +39,7 @@
 
     <section class="hafalan-panel hafalan-panel-surah" aria-label="Daftar surah target hafalan">
         <div id="hafalanEmpty" class="hafalan-empty">
-            <p>Pilih santri terlebih dahulu di panel kiri untuk melihat daftar surah target hafalan.</p>
+            <p>Pilih siswa terlebih dahulu di panel kiri untuk melihat daftar surah target hafalan.</p>
         </div>
         <div id="hafalanSurahArea" hidden>
             <div class="hafalan-surah-head">
@@ -47,7 +47,7 @@
                     <h2>Daftar Surah Target Hafalan</h2>
                     <p>Target Aktif: Juz 30 (Adh-Dhuha – An-Nas)</p>
                 </div>
-                <span class="hafalan-santri-pill" id="badgeSantriHafalan">Santri: -</span>
+                <span class="hafalan-siswa-pill" id="badgeSantriHafalan">Siswa: -</span>
             </div>
             <div class="table-responsive">
                 <table class="hafalan-table">
@@ -297,7 +297,7 @@
         kartu.classList.add('aktif');
         document.getElementById('hafalanEmpty').hidden       = true;
         document.getElementById('hafalanSurahArea').hidden   = false;
-        document.getElementById('badgeSantriHafalan').textContent = 'Santri: ' + siswaHafalanTerpilih.nama;
+        document.getElementById('badgeSantriHafalan').textContent = 'Siswa: ' + siswaHafalanTerpilih.nama;
         renderTabelSurah();
     }
 
@@ -327,7 +327,7 @@
         if (!meta || !siswaHafalanTerpilih) return;
         surahSetoranAktif = key;
         document.getElementById('subjudulInputSetoran').textContent =
-            'Santri: ' + siswaHafalanTerpilih.nama + ' \u2013 Surah ' + meta.nama + ' (' + meta.jumlah + ' Ayat)';
+            'Siswa: ' + siswaHafalanTerpilih.nama + ' \u2013 Surah ' + meta.nama + ' (' + meta.jumlah + ' Ayat)';
         isiOpsiAyat('inputAyatAwal',  meta.jumlah, 1);
         isiOpsiAyat('inputAyatAkhir', meta.jumlah, meta.jumlah);
         document.getElementById('inputKualitas').value      = 'Lancar';

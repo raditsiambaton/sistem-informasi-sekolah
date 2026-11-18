@@ -183,7 +183,7 @@ if (!in_array($page_tab, $tab_whitelist, true)) {
                         $tab_titles = [
                             'hafalan'  => 'Catat Hafalan Baru',
                             'murajaah' => 'Dashboard & Catat Murajaah',
-                            'target'   => 'Target Hafalan Santri',
+                            'target'   => 'Target Hafalan Siswa',
                             'rekap'    => 'Rekap Tahfiz',
                             'profil'   => 'Profil & Kata Sandi',
                         ];
@@ -194,7 +194,7 @@ if (!in_array($page_tab, $tab_whitelist, true)) {
             </div>
             <div class="d-flex align-items-center gap-2">
                 <span class="badge px-3 py-2 fw-semibold text-white" style="background-color: #11756D;">
-                    <i class="bi bi-bookmark-star-fill me-1"></i>Halaqah <?= htmlspecialchars($halaqah_name) ?> (<?= $total_santri_binaan ?> Santri)
+                    <i class="bi bi-bookmark-star-fill me-1"></i>Halaqah <?= htmlspecialchars($halaqah_name) ?> (<?= $total_santri_binaan ?> Siswa)
                 </span>
                 <a href="?tab=hafalan" class="btn btn-tahfiz btn-sm px-3 fw-bold rounded-3">
                     <i class="bi bi-plus-circle me-1"></i>Catat Setoran

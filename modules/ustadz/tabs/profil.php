@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * tabs/profil.php
  * Tampilan tab Profil & Kata Sandi ustadz.
@@ -83,7 +83,7 @@
 
             <div class="p-2 rounded-3 bg-light border mb-3 small text-muted" style="font-size: 12px;">
                 <i class="bi bi-info-circle me-1" style="color: #11756D;"></i>
-                Pastikan kata sandi Anda kuat dan tidak mudah ditebak demi keamanan nilai hafalan santri.
+                Pastikan kata sandi Anda kuat dan tidak mudah ditebak demi keamanan nilai hafalan siswa.
             </div>
 
             <div class="profil-actions mt-0">

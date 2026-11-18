@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 /**
  * tabs/target.php
- * Tampilan tab Target Hafalan Santri + JavaScript logika target.
+ * Tampilan tab Target Hafalan Siswa + JavaScript logika target.
  * Variabel yang dipakai: $santri_list, $target_aktif_map,
  *                        $target_fokus_id, $target_old, $kurikulum_target,
  *                        $urutan_opsi_target
@@ -10,8 +10,8 @@
 <!-- Hero Banner Atas -->
 <div class="mb-4">
     <span class="badge px-3 py-1 text-white mb-2 fw-bold" style="background-color: #11756D;">PENETAPAN TARGET</span>
-    <h2 class="fw-bold mb-1" style="color: #11756D;">Target Hafalan Santri</h2>
-    <p class="text-muted small mb-0">Tetapkan sasaran juz atau surah dan rentang tanggal target bagi santri halaqah binaan Anda.</p>
+    <h2 class="fw-bold mb-1" style="color: #11756D;">Target Hafalan Siswa</h2>
+    <p class="text-muted small mb-0">Tetapkan sasaran juz atau surah dan rentang tanggal target bagi siswa halaqah binaan Anda.</p>
 </div>
 
 <div class="row g-4 align-items-start">
@@ -45,8 +45,8 @@
                             <i class="bi bi-person-fill fs-5"></i>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <div class="fw-bold text-dark text-truncate santri-target-nama" style="font-size: 14px;"><?= htmlspecialchars($s['nama_lengkap']) ?></div>
-                            <div class="small text-muted text-truncate santri-target-nis" style="font-size: 12px;">NIS: <?= htmlspecialchars($s['nip_nis']) ?></div>
+                            <div class="fw-bold text-dark text-truncate siswa-target-nama" style="font-size: 14px;"><?= htmlspecialchars($s['nama_lengkap']) ?></div>
+                            <div class="small text-muted text-truncate siswa-target-nis" style="font-size: 12px;">NIS: <?= htmlspecialchars($s['nip_nis']) ?></div>
                         </div>
                         <?php if ($has_target): ?>
                             <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1" style="font-size: 10.5px;">
@@ -176,7 +176,7 @@
                     </div>
                 </form>
 
-                <!-- Kotak Target Aktif Santri Terpilih -->
+                <!-- Kotak Target Aktif Siswa Terpilih -->
                 <div id="targetAktifSantriBox" class="mt-4 pt-3"
                      style="border-top: 1px dashed #CBD5E1; display: none;">
                     <div class="d-flex align-items-center justify-content-between mb-2">

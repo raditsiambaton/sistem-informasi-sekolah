@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * actions/post_handler.php
  * Memproses semua aksi POST dari halaman ustadz.
@@ -29,7 +29,7 @@ if ($action === 'simpan_setoran' && $pdo) {
     $catatan = htmlspecialchars(trim($_POST['catatan'] ?? ''));
 
     if (empty($santri_nama) || empty($surah)) {
-        $notif_error = "Silakan pilih santri dan surah terlebih dahulu.";
+        $notif_error = "Silakan pilih siswa dan surah terlebih dahulu.";
     } else {
         try {
             $s_stmt = $pdo->prepare("SELECT id FROM users WHERE nama_lengkap = :nama LIMIT 1");
@@ -56,7 +56,7 @@ if ($action === 'simpan_setoran' && $pdo) {
                 'catatan'   => $catatan,
                 'tgl'       => date('Y-m-d'),
             ]);
-            $notif_sukses = "Alhamdulillah! Setoran santri {$santri_nama} untuk Surah {$surah} (Ayat {$ayat_awal}–{$ayat_akhir}) berhasil dicatat!";
+            $notif_sukses = "Alhamdulillah! Setoran siswa {$santri_nama} untuk Surah {$surah} (Ayat {$ayat_awal}–{$ayat_akhir}) berhasil dicatat!";
         } catch (Throwable $e) {
             $notif_error = "Gagal menyimpan setoran: " . $e->getMessage();
         }
@@ -68,26 +68,26 @@ if ($action === 'simpan_setoran' && $pdo) {
 
 // 2. SIMPAN EVALUASI MURAJAAH (dari modal per baris setoran)
 } elseif ($action === 'simpan_murajaah' && $pdo) {
-    $setoran_id    = (int)($_POST['setoran_id']        ?? 0);
-    $santri_nama   = htmlspecialchars(trim($_POST['santri_nama']       ?? ''));
-    $surah         = htmlspecialchars(trim($_POST['surah_diulang']     ?? ''));
-    $ayat_awal_raw = (int)($_POST['ayat_awal']  ?? 0);
-    $ayat_akhir_raw= (int)($_POST['ayat_akhir'] ?? 0);
+    $setoran_id     = (int)($_POST['setoran_id']       ?? 0);
+    $santri_nama    = htmlspecialchars(trim($_POST['santri_nama']      ?? ''));
+    $surah          = htmlspecialchars(trim($_POST['surah_diulang']    ?? ''));
+    $ayat_awal_raw  = (int)($_POST['ayat_awal']  ?? 0);
+    $ayat_akhir_raw = (int)($_POST['ayat_akhir'] ?? 0);
     // Gunakan ayat_range dari POST; jika kosong, bentuk dari ayat_awal & ayat_akhir
     $ayat_range_raw = trim($_POST['ayat_range'] ?? '');
     if ($ayat_range_raw === '' && $ayat_awal_raw > 0 && $ayat_akhir_raw > 0) {
         $ayat_range_raw = "Ayat {$ayat_awal_raw}–{$ayat_akhir_raw}";
     }
-    $ayat_range  = htmlspecialchars($ayat_range_raw ?: 'Semua Ayat');
-    $evaluasi    = htmlspecialchars(trim($_POST['evaluasi']           ?? 'Lancar'));
-    $catatan     = htmlspecialchars(trim($_POST['catatan_murajaah']   ?? ''));
+    $ayat_range = htmlspecialchars($ayat_range_raw ?: 'Semua Ayat');
+    $evaluasi   = htmlspecialchars(trim($_POST['evaluasi']          ?? 'Lancar'));
+    $catatan    = htmlspecialchars(trim($_POST['catatan_murajaah']  ?? ''));
 
     // Validasi & normalisasi tanggal murajaah
-    $tgl_raw = trim($_POST['tanggal_murajaah'] ?? '');
+    $tgl_raw          = trim($_POST['tanggal_murajaah'] ?? '');
     $tanggal_murajaah = preg_match('/^\d{4}-\d{2}-\d{2}$/', $tgl_raw) ? $tgl_raw : date('Y-m-d');
 
     if (empty($santri_nama) || empty($surah)) {
-        $notif_error = "Data santri atau surah tidak lengkap.";
+        $notif_error = "Data siswa atau surah tidak lengkap.";
     } else {
         try {
             // Cari siswa_id

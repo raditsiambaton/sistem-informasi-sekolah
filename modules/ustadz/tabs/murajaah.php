@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * tabs/murajaah.php
  * Tab Murajaah – 2 kolom, struktur & styling identik dengan tab Hafalan.
@@ -87,7 +87,7 @@ $total_santri  = count($santri_list);
         <!-- Footer info panel kiri -->
         <p id="infoMurajaahSiswa" class="mt-3 mb-0"
            style="font-size:12px; color:#94A3B8; text-align:center;">
-            Menampilkan <?= $total_santri ?> dari <?= $total_santri ?> santri
+            Menampilkan <?= $total_santri ?> dari <?= $total_santri ?> siswa
         </p>
     </section>
 
@@ -97,7 +97,7 @@ $total_santri  = count($santri_list);
 
         <!-- State kosong -->
         <div id="murajaahEmpty" class="hafalan-empty">
-            <p>Pilih santri di panel kiri untuk melihat riwayat setoran dan menambahkan evaluasi murajaah.</p>
+            <p>Pilih siswa di panel kiri untuk melihat riwayat setoran dan menambahkan evaluasi murajaah.</p>
         </div>
 
         <!-- State aktif -->
@@ -107,7 +107,7 @@ $total_santri  = count($santri_list);
                     <h2>Riwayat Setoran &amp; Evaluasi Murajaah</h2>
                     <p>Pilih baris setoran untuk memperbaiki kualitas hafalan melalui murajaah</p>
                 </div>
-                <span class="hafalan-santri-pill" id="badgeSantriMurajaah">Santri: –</span>
+                <span class="hafalan-siswa-pill" id="badgeSantriMurajaah">Siswa: –</span>
             </div>
 
             <div class="table-responsive">
@@ -281,7 +281,7 @@ $total_santri  = count($santri_list);
 
         // Subjudul
         document.getElementById('subjudulEvaluasiMurajaah').textContent =
-            'Santri: ' + siswaMurajaahAktif.nama + ' \u2022 Surah ' + item.surah;
+            'Siswa: ' + siswaMurajaahAktif.nama + ' \u2022 Surah ' + item.surah;
 
         // Dropdown Ayat Awal (dikunci)
         const selAwal = document.getElementById('murajaahAyatAwal');
@@ -328,7 +328,7 @@ $total_santri  = count($santri_list);
 
         siswaMurajaahAktif = { nama: kartu.dataset.nama, nis: kartu.dataset.nis };
         document.getElementById('badgeSantriMurajaah').textContent =
-            'Santri: ' + siswaMurajaahAktif.nama;
+            'Siswa: ' + siswaMurajaahAktif.nama;
 
         renderBaris(SETORAN_PER_SISWA[siswaMurajaahAktif.nama] || null);
 
@@ -360,10 +360,10 @@ $total_santri  = count($santri_list);
             if (cocok) tampil++;
         });
         document.getElementById('infoMurajaahSiswa').textContent =
-            'Menampilkan ' + tampil + ' dari ' + total + ' santri';
+            'Menampilkan ' + tampil + ' dari ' + total + ' siswa';
     });
 
-    // ── Auto-pilih dari URL ?santri=... ──────────────────────
+    // ── Auto-pilih dari URL ?siswa=... ──────────────────────
     (function () {
         const preset = new URLSearchParams(window.location.search).get('santri');
         if (!preset) return;

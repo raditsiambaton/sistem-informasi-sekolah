@@ -1,7 +1,7 @@
 ﻿<?php
 /**
  * modules/siswa/index.php
- * Dashboard Santri / Siswa – SMA IT Al-Fadhilah Pekanbaru
+ * Dashboard Siswa / Siswa – SMA IT Al-Fadhilah Pekanbaru
  */
 
 require_once '../../config/session.php';
@@ -32,7 +32,7 @@ $page_tab     = $_GET['tab'] ?? 'progres';
 $notif_sukses = '';
 $notif_error  = '';
 
-// Ambil data profil santri terkini dari MySQL jika tersedia
+// Ambil data profil siswa terkini dari MySQL jika tersedia
 try {
     $pdo = koneksi_database();
     if ($pdo) {
@@ -65,7 +65,7 @@ $data_siswa = [
     'no_hp'        => $siswa_no_hp,
 ];
 
-// Tangani Update Kontak Santri
+// Tangani Update Kontak Siswa
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_biodata') {
     $no_hp_baru  = trim($_POST['no_hp'] ?? '');
     $no_hp_clean = preg_replace('/[^0-9\+\-\s]/', '', $no_hp_baru);
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $page_tab = 'profil';
 }
 
-// Tangani Ganti Sandi Santri
+// Tangani Ganti Sandi Siswa
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'ganti_password') {
     $pass_lama = trim($_POST['password_lama'] ?? '');
     $pass_baru = trim($_POST['password_baru'] ?? '');
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $page_tab = 'profil';
 }
 
-// Ambil riwayat setoran & murajaah santri ini dari MySQL
+// Ambil riwayat setoran & murajaah siswa ini dari MySQL
 $siswa_setoran = [];
 $siswa_murajaah = [];
 try {
@@ -154,7 +154,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruang Santri – SIM Tahfiz SMA IT Al-Fadhilah</title>
+    <title>Ruang Siswa – SIM Tahfiz SMA IT Al-Fadhilah</title>
     
     <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz-baru.png">
     
@@ -317,7 +317,7 @@ try {
             </div>
             <div class="overflow-hidden">
                 <div class="sidebar-brand-title text-truncate" style="font-size: 15px; font-weight: 700; color: #FACC15; line-height: 1.2;">Tahfiz Yuk</div>
-                <div class="sidebar-brand-subtitle text-truncate" style="font-size: 12px; color: rgba(255, 255, 255, 0.85); font-weight: 500; line-height: 1.2; margin-top: 2px;">Portal Santri</div>
+                <div class="sidebar-brand-subtitle text-truncate" style="font-size: 12px; color: rgba(255, 255, 255, 0.85); font-weight: 500; line-height: 1.2; margin-top: 2px;">Portal Siswa</div>
             </div>
         </div>
 
@@ -328,7 +328,7 @@ try {
             </div>
             <div class="siswa-user-text overflow-hidden" style="min-width: 0;">
                 <div class="siswa-user-name text-white fw-semibold text-truncate" style="font-size: 13px; line-height: 1.3;"><?= htmlspecialchars($siswa_name) ?></div>
-                <small class="siswa-user-status fw-semibold text-truncate" style="font-size: 11px; color: #A7F3D0; line-height: 1.2;">● Santri Aktif</small>
+                <small class="siswa-user-status fw-semibold text-truncate" style="font-size: 11px; color: #A7F3D0; line-height: 1.2;">● Siswa Aktif</small>
             </div>
         </div>
 
@@ -360,7 +360,7 @@ try {
             <div class="d-flex align-items-center gap-3">
                 <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz" class="topbar-logo" style="height: 24px; width: auto; object-fit: contain;">
                 <div class="d-flex align-items-center gap-2 small text-muted">
-                    <span>Ruang Santri</span>
+                    <span>Ruang Siswa</span>
                     <span>/</span>
                     <span class="fw-bold text-dark text-capitalize"><?= htmlspecialchars($page_tab) ?></span>
                 </div>
@@ -370,7 +370,7 @@ try {
                     <i class="bi bi-calendar3 me-1 text-success"></i><?= date('d M Y') ?>
                 </span>
                 <span class="badge bg-success-subtle text-success fw-bold px-3 py-2">
-                    <i class="bi bi-person-check-fill me-1"></i>Santri Halaqah <?= htmlspecialchars($halaqah_name) ?>
+                    <i class="bi bi-person-check-fill me-1"></i>Siswa Halaqah <?= htmlspecialchars($halaqah_name) ?>
                 </span>
             </div>
         </header>
@@ -405,7 +405,7 @@ try {
                     <span class="badge bg-success text-white fw-bold px-3 py-2">Halaqah <?= htmlspecialchars($halaqah_name) ?></span>
                 </div>
 
-                <!-- 3 KPI Santri Sesuai Image 20 & 21 -->
+                <!-- 3 KPI Siswa Sesuai Image 20 & 21 -->
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-md-4">
                         <div class="kpi-card">
@@ -534,7 +534,7 @@ try {
             <?php elseif ($page_tab === 'riwayat'): ?>
                 <div class="mb-4">
                     <span class="badge bg-success-subtle text-success fw-bold px-3 py-1 mb-2">PERJALANAN HAFALAN</span>
-                    <h2 class="fw-bold mb-1" style="color: #11756D;">Riwayat Hafalan Santri</h2>
+                    <h2 class="fw-bold mb-1" style="color: #11756D;">Riwayat Hafalan Siswa</h2>
                     <p class="text-muted small mb-0">Tinjau seluruh riwayat setoran, murajaah, dan evaluasi tajwid dari ustadz pembimbing.</p>
                 </div>
 
@@ -622,20 +622,20 @@ try {
                 </div>
 
             <!-- ═══════════════════════════════════════════════════════════
-                 SUBPAGE 3: PROFIL PRIBADI SANTRI & KEAMANAN AKUN
+                 SUBPAGE 3: PROFIL PRIBADI SISWA & KEAMANAN AKUN
                  (Desain Bersih, Elegan, dan Seragam Standar 2 Kolom)
             ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'profil'): ?>
                 <div class="mb-3">
                     <h1 class="profil-page-title mb-1">Profil Pribadi</h1>
-                    <p class="profil-page-subtitle mb-0">Informasi diri dan keamanan akun santri Anda.</p>
+                    <p class="profil-page-subtitle mb-0">Informasi diri dan keamanan akun siswa Anda.</p>
                 </div>
 
                 <!-- 1. HERO IDENTITY CARD (KARTU PROFIL PUTIH MODERN) -->
                 <div class="card border-0 mb-4" style="background: #FFFFFF; border: 1px solid #E2E8F0 !important; border-radius: 16px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
                     <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                         
-                        <!-- Avatar & Identitas Santri -->
+                        <!-- Avatar & Identitas Siswa -->
                         <div class="d-flex align-items-center gap-3">
                             <div class="flex-shrink-0" 
                                  style="width: 64px; height: 64px; border-radius: 14px; background: #E6F4F1; color: #11756D; font-weight: 700; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(17, 117, 109, 0.1);">
@@ -655,7 +655,7 @@ try {
                             </div>
                         </div>
 
-                        <!-- Statistik Singkat Capaian Santri -->
+                        <!-- Statistik Singkat Capaian Siswa -->
                         <div class="d-flex gap-2 text-center align-items-center mt-3 mt-md-0">
                             <div class="px-3 py-2 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0; min-width: 85px;">
                                 <div class="fw-bold" style="font-size: 18px; color: #11756D;">2 Juz</div>
@@ -677,10 +677,10 @@ try {
                 <!-- 2. DUA KOLOM FORMULIR PENGATURAN (BIODATA & KEAMANAN) -->
                 <div class="profil-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch;">
                     
-                    <!-- KOLOM KIRI: DATA BIODATA & HALAQAH SANTRI -->
+                    <!-- KOLOM KIRI: DATA BIODATA & HALAQAH SISWA -->
                     <div class="profil-card d-flex flex-column">
                         <h2 class="profil-card-title">
-                            <i class="bi bi-person-circle text-success"></i>Data Biodata &amp; Halaqah Santri
+                            <i class="bi bi-person-circle text-success"></i>Data Biodata &amp; Halaqah Siswa
                         </h2>
                         
                         <form action="?tab=profil" method="POST" class="d-flex flex-column flex-grow-1">
@@ -718,13 +718,13 @@ try {
 
                             <div class="profil-actions mt-auto pt-2">
                                 <button type="submit" class="profil-btn profil-btn-primary">
-                                    <i class="bi bi-floppy"></i>Simpan Biodata Santri
+                                    <i class="bi bi-floppy"></i>Simpan Biodata Siswa
                                 </button>
                             </div>
                         </form>
                     </div>
 
-                    <!-- KOLOM KANAN: PENGATURAN KATA SANDI SANTRI -->
+                    <!-- KOLOM KANAN: PENGATURAN KATA SANDI SISWA -->
                     <div class="profil-card d-flex flex-column">
                         <h2 class="profil-card-title">
                             <i class="bi bi-key-fill text-warning"></i>Ganti Kata Sandi
@@ -754,7 +754,7 @@ try {
 
                             <div class="profil-actions mt-auto">
                                 <button type="submit" class="profil-btn profil-btn-primary w-100">
-                                    <i class="bi bi-shield-lock me-1"></i>Perbarui Sandi Santri
+                                    <i class="bi bi-shield-lock me-1"></i>Perbarui Sandi Siswa
                                 </button>
                             </div>
                         </form>

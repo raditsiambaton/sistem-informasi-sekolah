@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * tabs/rekap.php
  * Tampilan tab Rekap Tahfiz Halaqah.
@@ -34,7 +34,7 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
     <?php foreach ([
         ['Siswa Binaan',       $rekap_total_siswa,    'Siswa dalam halaqah',       '#1E293B'],
         ['Setoran Tercatat',   $rekap_total_setoran,  'Setoran bulan '.date('F Y'), '#1E293B'],
-        ['Total Murajaah',     $rekap_total_murajaah, 'Pengulangan santri mutqin', '#1E293B'],
+        ['Total Murajaah',     $rekap_total_murajaah, 'Pengulangan siswa mutqin', '#1E293B'],
         ['Target Kelancaran',  '85%',                 'Target capaian halaqah',    '#11756D'],
     ] as [$label, $nilai, $sub, $warna]): ?>
     <div class="col-lg-3 col-md-6">

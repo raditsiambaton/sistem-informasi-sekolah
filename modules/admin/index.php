@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * modules/admin/index.php
  * Dashboard Administrator – SMA IT Al-Fadhilah Pekanbaru
@@ -944,7 +944,7 @@ $tanggal_sekarang = $hari_id[date('w')] . ', ' . date('j') . ' ' . $bulan_id[(in
                         <div class="kpi-card">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <div class="kpi-label">Total Santri</div>
+                                    <div class="kpi-label">Total Siswa</div>
                                     <div class="kpi-num"><?= max($total_santri, 3) ?></div>
                                     <div class="kpi-sub">Aktif dalam Halaqah</div>
                                 </div>
@@ -1025,9 +1025,9 @@ $tanggal_sekarang = $hari_id[date('w')] . ', ' . date('j') . ' ' . $bulan_id[(in
                     <div class="col-12 col-lg-4">
                         <div class="eval-panel">
                             <span class="badge-pill mb-3 align-self-start" style="background:var(--gold);color:#fff;font-size:11px;text-transform:uppercase;letter-spacing:.06em;">Informasi Mutabaah</span>
-                            <h5 class="fw-bold mb-2" style="color:var(--slate-9);">Evaluasi Berkala Santri</h5>
+                            <h5 class="fw-bold mb-2" style="color:var(--slate-9);">Evaluasi Berkala Siswa</h5>
                             <p class="small mb-4" style="color:var(--slate-5);line-height:1.7;">
-                                Seluruh data capaian santri disinkronkan langsung dari catatan harian para asatidz pembina halaqah. Buka menu laporan untuk mencetak rekap semesteran.
+                                Seluruh data capaian siswa disinkronkan langsung dari catatan harian para asatidz pembina halaqah. Buka menu laporan untuk mencetak rekap semesteran.
                             </p>
                             <a href="?tab=laporan" class="btn-em btn-em-sm mt-auto align-self-start" style="background:var(--gold);border-radius:8px;">
                                 <i class="bi bi-file-earmark-text"></i> Buka Laporan Evaluasi
@@ -1085,7 +1085,7 @@ $tanggal_sekarang = $hari_id[date('w')] . ', ' . date('j') . ' ' . $bulan_id[(in
                 <div class="page-heading d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <div>
                         <h1>Data Pengguna Sistem</h1>
-                        <p>Manajemen akun santri, ustadz pembimbing, dan administrator tersimpan di MySQL.</p>
+                        <p>Manajemen akun siswa, ustadz pembimbing, dan administrator tersimpan di MySQL.</p>
                     </div>
                     <button class="btn-em" data-bs-toggle="modal" data-bs-target="#modalTambahPengguna">
                         <i class="bi bi-person-plus-fill"></i> Tambah Pengguna
@@ -1165,7 +1165,7 @@ $tanggal_sekarang = $hari_id[date('w')] . ', ' . date('j') . ' ' . $bulan_id[(in
                 <div class="page-heading d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <div>
                         <h1>Kelompok Halaqah Belajar</h1>
-                        <p>Pembagian santri dan asatidz pembimbing penanggung jawab mutabaah.</p>
+                        <p>Pembagian siswa dan asatidz pembimbing penanggung jawab mutabaah.</p>
                     </div>
                     <button class="btn-em" data-bs-toggle="modal" data-bs-target="#modalTambahHalaqah">
                         <i class="bi bi-plus-circle-fill"></i> Tambah Halaqah
@@ -1216,7 +1216,7 @@ $tanggal_sekarang = $hari_id[date('w')] . ', ' . date('j') . ' ' . $bulan_id[(in
                 <div class="page-heading d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <div>
                         <h1>Laporan Rekapitulasi Tahfiz</h1>
-                        <p>Cetak rekapitulasi capaian hafalan dan lembar mutabaah santri.</p>
+                        <p>Cetak rekapitulasi capaian hafalan dan lembar mutabaah siswa.</p>
                     </div>
                     <button class="btn-em" onclick="window.print()">
                         <i class="bi bi-printer-fill"></i> Cetak / Simpan PDF
@@ -1225,9 +1225,9 @@ $tanggal_sekarang = $hari_id[date('w')] . ', ' . date('j') . ' ' . $bulan_id[(in
 
                 <div class="panel">
                     <div class="panel-header">
-                        <h2 class="panel-title">Rekap Capaian Santri — <?= $bulan_id[(int)date('n')] . ' ' . date('Y') ?></h2>
+                        <h2 class="panel-title">Rekap Capaian Siswa — <?= $bulan_id[(int)date('n')] . ' ' . date('Y') ?></h2>
                         <span class="badge-pill" style="background:var(--em-50);color:var(--em-700);font-size:11.5px;">
-                            <?= $total_santri ?> Santri Terdaftar
+                            <?= $total_santri ?> Siswa Terdaftar
                         </span>
                     </div>
                     <div class="table-responsive">
@@ -1235,7 +1235,7 @@ $tanggal_sekarang = $hari_id[date('w')] . ', ' . date('j') . ' ' . $bulan_id[(in
                             <thead>
                                 <tr>
                                     <th class="ps-4">No</th>
-                                    <th>Nama Santri</th>
+                                    <th>Nama Siswa</th>
                                     <th>NIS</th>
                                     <th>Halaqah</th>
                                     <th>Capaian Target</th>
@@ -1264,7 +1264,7 @@ $tanggal_sekarang = $hari_id[date('w')] . ', ' . date('j') . ' ' . $bulan_id[(in
                                 <tr>
                                     <td class="ps-4" colspan="6" style="text-align:center;color:var(--slate-5);padding:32px;">
                                         <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                                        Belum ada data santri. Tambahkan pengguna dengan peran <strong>Siswa</strong> terlebih dahulu.
+                                        Belum ada data siswa. Tambahkan pengguna dengan peran <strong>Siswa</strong> terlebih dahulu.
                                     </td>
                                 </tr>
                                 <?php endif; ?>
@@ -1437,7 +1437,7 @@ $tanggal_sekarang = $hari_id[date('w')] . ', ' . date('j') . ' ' . $bulan_id[(in
                         <div class="col-6">
                             <label class="form-label-em">Peran / Role</label>
                             <select name="role" class="form-select">
-                                <option value="siswa">Siswa / Santri</option>
+                                <option value="siswa">Siswa / Siswa</option>
                                 <option value="ustadz">Ustadz / Guru</option>
                                 <option value="admin">Administrator</option>
                             </select>
@@ -1503,7 +1503,7 @@ $tanggal_sekarang = $hari_id[date('w')] . ', ' . date('j') . ' ' . $bulan_id[(in
                         <div class="col-6">
                             <label class="form-label-em">Peran / Role</label>
                             <select name="role" id="edit_role" class="form-select">
-                                <option value="siswa">Siswa / Santri</option>
+                                <option value="siswa">Siswa / Siswa</option>
                                 <option value="ustadz">Ustadz / Guru</option>
                                 <option value="admin">Administrator</option>
                             </select>
