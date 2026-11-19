@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * modules/siswa/index.php
  * Dashboard Siswa / Siswa – SMA IT Al-Fadhilah Pekanbaru
@@ -148,6 +148,13 @@ try {
         $siswa_murajaah = $sm->fetchAll();
     }
 } catch (Throwable $e) {}
+
+// Inisial avatar siswa (2 huruf pertama nama)
+$siswa_initials = strtoupper(mb_substr(preg_replace('/[^A-Za-z ]/', '', $siswa_name), 0, 1));
+$name_parts = explode(' ', trim($siswa_name));
+if (count($name_parts) >= 2) {
+    $siswa_initials = strtoupper(mb_substr($name_parts[0], 0, 1) . mb_substr($name_parts[1], 0, 1));
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -170,194 +177,297 @@ try {
 
     <style>
         :root {
-            --color-primary: #11756D;
-            --color-primary-dark: #0D5C56;
-            --color-primary-deep: #0A2E2B;
-            --color-accent: #11756D;
-            --color-soft: #E6F4F1;
-            --color-soft-light: #F4F7F6;
-            --color-tahfiz: #11756D;
-            --color-navy: #11756D;
+            --em-900:  #064E3B;
+            --em-800:  #065F46;
+            --em-700:  #047857;
+            --em-600:  #059669;
+            --em-500:  #10B981;
+            --em-100:  #D1FAE5;
+            --em-50:   #ECFDF5;
+            --gold:    #D97706;
+            --gold-lt: #FEF3C7;
+            --gold-hi: #FACC15;
+            --slate-9: #0F172A;
+            --slate-7: #334155;
+            --slate-5: #64748B;
+            --slate-2: #E2E8F0;
+            --slate-1: #F1F5F9;
+            --white:   #FFFFFF;
+            --bg-page: #F0FDF4;
+
+            /* Kompatibilitas komponen halaman siswa */
+            --color-primary: #065F46;
+            --color-primary-dark: #064E3B;
+            --color-primary-deep: #064E3B;
+            --color-accent: #059669;
+            --color-soft: #ECFDF5;
+            --color-soft-light: #F0FDF4;
+            --color-tahfiz: #065F46;
+            --color-navy: #065F46;
             --color-gold: #D97706;
             --color-border: #E2E8F0;
         }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
             background-color: #F6F7F5;
-            color: #1E293B;
+            color: var(--slate-9);
             min-height: 100vh;
+            margin: 0;
         }
+
+        /* ══════════════════════════════════════════════════════
+           SIDEBAR SISWA (Modern Islamic School Dashboard)
+        ══════════════════════════════════════════════════════ */
         .siswa-sidebar {
-            width: 250px;
-            background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            color: #ffffff;
-            flex-shrink: 0;
+            width: 256px !important;
+            min-width: 256px !important;
+            height: 100vh !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            background: linear-gradient(170deg, var(--em-800) 0%, var(--em-900) 100%) !important;
+            color: #fff !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow-y: auto !important;
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+            z-index: 1040 !important;
+            transition: transform 0.3s ease !important;
             padding: 0 !important;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
         }
-        .siswa-sidebar::-webkit-scrollbar {
-            display: none;
-        }
-        .siswa-content-wrapper {
-            margin-left: 250px;
-            width: calc(100% - 250px);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: #F6F7F5;
-        }
-        .siswa-nav-link {
+        .siswa-sidebar::-webkit-scrollbar { display: none !important; }
+
+        /* Brand */
+        .sb-brand {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 11px 14px;
-            margin: 4px 12px;
-            color: rgba(255, 255, 255, 0.88);
-            font-weight: 500;
-            font-size: 13.5px;
+            padding: 20px 18px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            flex-shrink: 0;
+        }
+        .sb-brand-logo {
+            width: 42px; height: 42px;
+            background: #fff;
             border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+        }
+        .sb-brand-logo img { width: 30px; height: 30px; object-fit: contain; }
+        .sb-brand-name { font-size: 15px; font-weight: 700; color: var(--gold-hi); line-height: 1.2; }
+        .sb-brand-sub  { font-size: 11.5px; color: rgba(255,255,255,0.78); font-weight: 500; margin-top: 2px; }
+
+        /* User card */
+        .sb-user {
+            margin: 14px 12px 8px;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.09);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 12px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .sb-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--em-700);
+            border: 2px solid rgba(255,255,255,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 13px; color: #fff;
+            flex-shrink: 0;
+        }
+        .sb-user-name  { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+        .sb-user-badge { font-size: 11px; color: #6EE7B7; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+
+        /* Nav label */
+        .sb-label {
+            padding: 12px 20px 4px;
+            font-size: 10.5px; letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase; font-weight: 700;
+        }
+
+        /* Nav links */
+        .sb-link {
+            display: flex; align-items: center; gap: 11px;
+            padding: 10px 14px;
+            margin: 2px 10px;
+            border-radius: 10px;
+            font-size: 13.5px; font-weight: 500;
+            color: rgba(255,255,255,0.82);
+            text-decoration: none;
+            transition: all 0.18s ease;
+            border: 1px solid transparent;
+            position: relative;
+        }
+        .sb-link i { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+        .sb-link:hover {
+            background: rgba(255,255,255,0.10);
+            color: #fff;
+        }
+        .sb-link.active {
+            background: rgba(255,255,255,0.16);
+            color: #fff;
+            font-weight: 600;
+            border-color: rgba(255,255,255,0.22);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+        }
+        .sb-link.active::before {
+            content: '';
+            position: absolute; left: -10px; top: 50%;
+            transform: translateY(-50%);
+            width: 3px; height: 24px;
+            background: var(--gold-hi);
+            border-radius: 0 3px 3px 0;
+        }
+
+        /* Sidebar footer */
+        .sb-footer {
+            margin-top: auto;
+            padding: 14px 10px 20px;
+            border-top: 1px solid rgba(255,255,255,0.12);
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .sb-logout {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            height: 42px;
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 10px;
+            color: #FCA5A5;
+            font-size: 13.5px; font-weight: 600;
             text-decoration: none;
             transition: all 0.2s;
-            border: 1px solid transparent;
         }
-        .siswa-nav-link i {
-            width: 20px;
-            height: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 16px;
+        .sb-logout:hover { background: #DC2626; border-color: #DC2626; color: #fff; }
+
+        /* Hamburger overlay (mobile) */
+        .sb-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1039;
         }
-        .siswa-nav-link:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.10);
+
+        /* ══════════════════════════════════════════════════════
+           CONTENT WRAPPER
+        ══════════════════════════════════════════════════════ */
+        .siswa-content-wrapper {
+            margin-left: 256px !important;
+            width: calc(100% - 256px) !important;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #F6F7F5;
         }
-        .siswa-nav-link.active {
-            background: rgba(255, 255, 255, 0.20);
-            color: #ffffff;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.28);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+
+        /* Hamburger button */
+        .btn-ham {
+            display: none;
+            background: none; border: none;
+            padding: 6px; cursor: pointer;
+            color: var(--slate-7);
+            font-size: 22px;
+            border-radius: 8px;
         }
+        .btn-ham:hover { background: var(--slate-1); }
+
         .kpi-card {
             background: #ffffff;
             border: 1px solid var(--color-border);
             border-radius: 14px;
             padding: 20px;
-            box-shadow: 0 2px 8px rgba(17, 117, 109, 0.04);
+            box-shadow: 0 2px 8px rgba(6, 78, 59, 0.04);
             height: 100%;
         }
 
-        /* ── Sidebar Brand Logo (seragam dengan Admin) ── */
-        .siswa-sidebar .sidebar-brand {
-            padding: 20px 18px 16px !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 12px !important;
-        }
-        .siswa-sidebar .sidebar-brand-logo {
-            width: 42px !important;
-            height: 42px !important;
-            min-width: 42px !important;
-            background: #FFFFFF !important;
-            border-radius: 10px !important;
-            padding: 5px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            overflow: hidden !important;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
-            flex-shrink: 0 !important;
-        }
-        .siswa-sidebar .sidebar-brand-logo img {
-            width: 32px !important;
-            height: 32px !important;
-            max-width: 32px !important;
-            max-height: 32px !important;
-            object-fit: contain !important;
-            object-position: center !important;
-            display: block !important;
-        }
-        .siswa-sidebar .sidebar-brand-title {
-            font-size: 15px !important;
-            font-weight: 700 !important;
-            color: #FACC15 !important;
-            line-height: 1.2 !important;
-        }
-        .siswa-sidebar .sidebar-brand-subtitle {
-            font-size: 12px !important;
-            color: rgba(255, 255, 255, 0.85) !important;
-            font-weight: 500 !important;
-            line-height: 1.2 !important;
-            margin-top: 2px !important;
+        /* ══════════════════════════════════════════════════════
+           RESPONSIVITAS MOBILE & TABLET
+        ══════════════════════════════════════════════════════ */
+        @media (max-width: 991.98px) {
+            .siswa-sidebar {
+                transform: translateX(-100%) !important;
+                z-index: 1050 !important;
+            }
+            .siswa-sidebar.open {
+                transform: translateX(0) !important;
+            }
+            .sb-overlay.open {
+                display: block;
+            }
+            .siswa-content-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            .btn-ham { display: flex !important; }
         }
     </style>
 </head>
 <body>
 
+<!-- Overlay untuk mobile sidebar -->
+<div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
+
 <div class="d-flex">
-    <!-- SIDEBAR SISWA (Fixed Left Sidebar, lebar 250px, background #11756D) -->
-    <aside class="siswa-sidebar d-flex flex-column" style="width: 250px; height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important; padding: 0; z-index: 1000; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
-        <!-- Brand Header -->
-        <div class="sidebar-brand" style="padding: 20px 18px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); display: flex; align-items: center; gap: 12px;">
-            <div class="sidebar-brand-logo">
-                <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz">
+    <!-- SIDEBAR SISWA -->
+    <aside class="siswa-sidebar" id="siswaSidebar">
+
+        <!-- Brand -->
+        <div class="sb-brand">
+            <div class="sb-brand-logo">
+                <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz Yuk">
             </div>
             <div class="overflow-hidden">
-                <div class="sidebar-brand-title text-truncate" style="font-size: 15px; font-weight: 700; color: #FACC15; line-height: 1.2;">Tahfiz Yuk</div>
-                <div class="sidebar-brand-subtitle text-truncate" style="font-size: 12px; color: rgba(255, 255, 255, 0.85); font-weight: 500; line-height: 1.2; margin-top: 2px;">Portal Siswa</div>
+                <div class="sb-brand-name">Tahfiz Yuk</div>
+                <div class="sb-brand-sub">Portal Siswa</div>
             </div>
         </div>
 
-        <!-- User Info -->
-        <div class="siswa-user-card" style="margin: 14px 12px; padding: 10px 12px; background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
-            <div class="siswa-user-avatar" style="width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 700; font-size: 13px; color: #FFFFFF; background: #0B4F49; flex-shrink: 0;">
-                <?= strtoupper(substr($siswa_name, 0, 1) . substr(explode(' ', $siswa_name)[1] ?? '', 0, 1)) ?>
-            </div>
-            <div class="siswa-user-text overflow-hidden" style="min-width: 0;">
-                <div class="siswa-user-name text-white fw-semibold text-truncate" style="font-size: 13px; line-height: 1.3;"><?= htmlspecialchars($siswa_name) ?></div>
-                <small class="siswa-user-status fw-semibold text-truncate" style="font-size: 11px; color: #A7F3D0; line-height: 1.2;">● Siswa Aktif</small>
+        <!-- Kartu Profil Siswa -->
+        <div class="sb-user">
+            <div class="sb-avatar"><?= htmlspecialchars($siswa_initials) ?></div>
+            <div class="overflow-hidden" style="min-width:0;">
+                <div class="sb-user-name"><?= htmlspecialchars($siswa_name) ?></div>
+                <div class="sb-user-badge"><span>●</span> Siswa Aktif</div>
             </div>
         </div>
 
-        <!-- Navigation Menu -->
-        <nav class="flex-grow-1">
-            <small class="siswa-menu-label text-uppercase fw-bold d-block" style="padding: 10px 20px 6px; font-size: 11px; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.70);">Menu Utama</small>
-            <a href="?tab=profil" class="siswa-nav-link <?= $page_tab === 'profil' ? 'active' : '' ?>">
-                <i class="bi bi-person-circle"></i><span>Profil Saya</span>
-            </a>
-            <a href="?tab=progres" class="siswa-nav-link <?= $page_tab === 'progres' ? 'active' : '' ?>">
+        <!-- Navigasi Menu Siswa -->
+        <nav class="flex-grow-1 mt-1">
+            <div class="sb-label">Menu Utama</div>
+
+            <a href="?tab=progres" class="sb-link <?= $page_tab === 'progres' ? 'active' : '' ?>">
                 <i class="bi bi-graph-up"></i><span>Progres Hafalan</span>
             </a>
-            <a href="?tab=riwayat" class="siswa-nav-link <?= $page_tab === 'riwayat' ? 'active' : '' ?>">
+            <a href="?tab=riwayat" class="sb-link <?= $page_tab === 'riwayat' ? 'active' : '' ?>">
                 <i class="bi bi-clock-history"></i><span>Riwayat Hafalan</span>
+            </a>
+
+            <div class="sb-label" style="margin-top:8px;">Akun Saya</div>
+
+            <a href="?tab=profil" class="sb-link <?= $page_tab === 'profil' ? 'active' : '' ?>">
+                <i class="bi bi-person-circle"></i><span>Profil Saya</span>
             </a>
         </nav>
 
-        <!-- Footer Sidebar (Tombol Bawah Seragam) -->
-        <div class="siswa-sidebar-footer" style="margin-top: auto; padding: 16px 14px 20px; border-top: 1px solid rgba(255, 255, 255, 0.14); display: flex; flex-direction: column;">
-            <a href="../auth/logout.php" class="btn-sidebar-logout">
-                <i class="bi bi-box-arrow-right me-1"></i>Keluar Sesi
+        <!-- Footer Sidebar -->
+        <div class="sb-footer">
+            <a href="../auth/logout.php" class="sb-logout">
+                <i class="bi bi-box-arrow-right"></i> Keluar Sesi
             </a>
         </div>
     </aside>
 
     <!-- MAIN WRAPPER -->
-    <div class="flex-grow-1 d-flex flex-column siswa-content-wrapper" style="min-width: 0; margin-left: 250px; width: calc(100% - 250px); background-color: #F6F7F5; min-height: 100vh;">
+    <div class="flex-grow-1 d-flex flex-column siswa-content-wrapper">
         <header class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center shadow-sm">
             <div class="d-flex align-items-center gap-3">
+                <button class="btn-ham" onclick="openSidebar()" aria-label="Buka menu">
+                    <i class="bi bi-list"></i>
+                </button>
                 <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz" class="topbar-logo" style="height: 24px; width: auto; object-fit: contain;">
                 <div class="d-flex align-items-center gap-2 small text-muted">
                     <span>Ruang Siswa</span>
@@ -768,6 +878,24 @@ try {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ── Sidebar mobile ───────────────────────────────────────────
+function openSidebar() {
+    document.getElementById('siswaSidebar').classList.add('open');
+    document.getElementById('sbOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+    document.getElementById('siswaSidebar').classList.remove('open');
+    document.getElementById('sbOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// Tutup sidebar ketika layar diperbesar ke desktop
+window.addEventListener('resize', () => {
+    if (window.innerWidth >= 992) closeSidebar();
+});
+</script>
 </body>
 </html>
 
