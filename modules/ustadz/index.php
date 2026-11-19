@@ -154,11 +154,13 @@ if (!in_array($page_tab, $tab_whitelist, true)) {
 
         <nav class="ustadz-nav flex-grow-1">
             <span class="ustadz-nav-label">Menu Utama</span>
-            <a href="?tab=profil"   class="ustadz-nav-link <?= $page_tab === 'profil'   ? 'active' : '' ?>"><i class="bi bi-person-circle"></i><span>Profil Saya</span></a>
+            <a href="?tab=rekap"    class="ustadz-nav-link <?= $page_tab === 'rekap'    ? 'active' : '' ?>"><i class="bi bi-file-earmark-text"></i><span>Rekap Tahfiz</span></a>
             <a href="?tab=hafalan"  class="ustadz-nav-link <?= $page_tab === 'hafalan'  ? 'active' : '' ?>"><i class="bi bi-book"></i><span>Hafalan</span></a>
             <a href="?tab=murajaah" class="ustadz-nav-link <?= $page_tab === 'murajaah' ? 'active' : '' ?>"><i class="bi bi-arrow-counterclockwise"></i><span>Murajaah</span></a>
-            <a href="?tab=rekap"    class="ustadz-nav-link <?= $page_tab === 'rekap'    ? 'active' : '' ?>"><i class="bi bi-file-earmark-text"></i><span>Rekap Tahfiz</span></a>
             <a href="?tab=target"   class="ustadz-nav-link <?= $page_tab === 'target'   ? 'active' : '' ?>"><i class="bi bi-bullseye"></i><span>Target</span></a>
+
+            <span class="ustadz-nav-label" style="margin-top:8px;">Akun Saya</span>
+            <a href="?tab=profil"   class="ustadz-nav-link <?= $page_tab === 'profil'   ? 'active' : '' ?>"><i class="bi bi-person-circle"></i><span>Profil Saya</span></a>
         </nav>
 
         <div class="ustadz-sidebar-footer">
