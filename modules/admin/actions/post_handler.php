@@ -398,7 +398,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 $error_msg = "Gagal memperbarui kata sandi: " . $e->getMessage();
             }
         }
-        $page_tab = 'sandi';
+        $page_tab = 'profil';
     }
 }
 
