@@ -96,7 +96,9 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                     </td>
                     <td class="text-muted" style="font-size:13px;"><?= $rd['tgl_setor'] ?></td>
                     <td class="pe-4 text-center">
-                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 btn-lihat-detail"
+                        <button type="button" class="btn-lihat-detail"
+                            title="Lihat Detail"
+                            aria-label="Lihat Detail"
                             data-nis="<?= $nis ?>"
                             data-nama="<?= $nama ?>"
                             data-posisi="<?= htmlspecialchars($rd['posisi']) ?>"
@@ -105,9 +107,8 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                             data-ayattotal="<?= $rd['ayat_total'] ?>"
                             data-capaian="<?= $rd['capaian'] ?>"
                             data-catatan="<?= htmlspecialchars($rd['catatan']) ?>"
-                            data-riwayat='<?= json_encode($rd['riwayat'], JSON_UNESCAPED_UNICODE) ?>'
-                            style="font-size:12.5px; border-color:#CBD5E1; color:#475569;">
-                            <i class="bi bi-eye me-1"></i>Lihat Detail
+                            data-riwayat='<?= json_encode($rd['riwayat'], JSON_UNESCAPED_UNICODE) ?>'>
+                            <i class="bi bi-eye"></i>
                         </button>
                     </td>
                 </tr>
