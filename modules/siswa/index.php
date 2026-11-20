@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * modules/siswa/index.php
  * Dashboard Siswa / Siswa – SMA IT Al-Fadhilah Pekanbaru
@@ -8,39 +8,42 @@
 require_once __DIR__ . '/../../config/session.php';
 require_once __DIR__ . '/../../config/database.php';
 
-// ── Validasi otorisasi sesi Siswa ───────────────────────────
+// Validasi otorisasi sesi Siswa
 wajib_login('../auth/login.php');
 $role = peran_pengguna();
 if ($role !== 'siswa') {
     if ($role === 'admin') {
         header('Location: ../admin/index.php');
+        exit;
     } elseif ($role === 'ustadz' || $role === 'guru') {
         header('Location: ../ustadz/index.php');
+        exit;
     } else {
         header('Location: ../auth/login.php');
+        exit;
     }
-    exit;
 }
 
-// ── Variabel dasar dari sesi ────────────────────────────────
-$siswa_id     = $_SESSION['user_id']     ?? 3;
-$siswa_name   = $_SESSION['user_name']   ?? 'Muhammad Fadhlan';
+$siswa_id     = $_SESSION['user_id'] ?? 3;
+$siswa_name   = $_SESSION['user_name'] ?? 'Muhammad Fadhlan';
 $siswa_nis    = $_SESSION['user_nip_nis'] ?? '102601';
 $halaqah_name = $_SESSION['user_halaqah'] ?? 'Al-Furqan';
-$siswa_no_hp  = $_SESSION['user_no_hp']  ?? '081234567890';
-
-// ── Routing tab dengan whitelist ────────────────────────────
-$valid_tabs = ['progres', 'riwayat', 'profil'];
-$page_tab   = in_array($_GET['tab'] ?? '', $valid_tabs, true)
-    ? $_GET['tab']
-    : 'progres';
-
-// ── Inisialisasi variabel notifikasi ───────────────────────
+$siswa_no_hp  = $_SESSION['user_no_hp'] ?? '081234567890';
+$page_tab     = $_GET['tab'] ?? 'progres';
 $notif_sukses = '';
 $notif_error  = '';
 
-// ── Pemroses POST ────────────────────────────────────────────
-require_once __DIR__ . '/actions/post_handler.php';
+// Ambil data profil siswa terkini dari MySQL jika tersedia
+try {
+    $pdo = koneksi_database();
+    if ($pdo) {
+        // Cek dan pastikan kolom no_hp tersedia
+        try {
+            $colCheck = $pdo->query("SHOW COLUMNS FROM users LIKE 'no_hp'")->fetchAll();
+            if (empty($colCheck)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN no_hp VARCHAR(20) NULL AFTER nama_lengkap");
+            }
+        } catch (Throwable $e) {}
 
         $u_stmt = $pdo->prepare("SELECT id, nama_lengkap, nip_nis, halaqah, no_hp FROM users WHERE id = :id LIMIT 1");
         $u_stmt->execute(['id' => $siswa_id]);
@@ -324,17 +327,18 @@ $nama_panggilan = count($name_parts) >= 2 ? $name_parts[1] : $siswa_name;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ruang Siswa – SIM Tahfiz SMA IT Al-Fadhilah</title>
-
+    
     <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz-baru.png">
-
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+    
     <!-- Bootstrap 5.3 & Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/tahfiz.css">
 
     <style>
         :root {
@@ -803,7 +807,7 @@ $nama_panggilan = count($name_parts) >= 2 ? $name_parts[1] : $siswa_name;
                 <span class="small text-muted d-none d-sm-inline">
                     <i class="bi bi-calendar-event me-1"></i><?= date('d M Y') ?>
                 </span>
-                <span class="badge px-3 py-2 fw-semibold text-white" style="background-color: #11756D;">
+                <span class="badge bg-success-subtle text-success fw-bold px-3 py-2">
                     <i class="bi bi-person-check-fill me-1"></i>Siswa Halaqah <?= htmlspecialchars($halaqah_name) ?>
                 </span>
             </div>

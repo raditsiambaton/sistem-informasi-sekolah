@@ -30,10 +30,6 @@ if ($action === 'simpan_setoran' && $pdo) {
 
     if (empty($santri_nama) || empty($surah)) {
         $notif_error = "Silakan pilih siswa dan surah terlebih dahulu.";
-    } elseif ($ayat_awal < 1 || $ayat_akhir < 1) {
-        $notif_error = "Nomor ayat harus berupa angka positif minimal 1.";
-    } elseif ($ayat_akhir < $ayat_awal) {
-        $notif_error = "Ayat akhir tidak boleh lebih kecil dari ayat awal.";
     } else {
         try {
             $s_stmt = $pdo->prepare("SELECT id FROM users WHERE nama_lengkap = :nama LIMIT 1");

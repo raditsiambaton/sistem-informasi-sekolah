@@ -1,10 +1,15 @@
 <?php
 /**
  * modules/admin/tabs/profil.php
- * TAB 5: Profil Saya — tata letak 2 kolom (Informasi Akun + Keamanan & Kata Sandi)
+ * TAB 5: Profil Saya
  *
- * Form ubah kata sandi digabung ke kartu kanan.
- * Variabel yang digunakan: $admin_name, $admin_initials, $csrf_token
+ * Variabel yang digunakan (disiapkan oleh index.php via data/queries.php):
+ *   $admin_name, $admin_initials
+ *
+ * CATATAN PERUBAHAN:
+ *   - Kartu "Informasi Sistem" (Versi, Teknologi, Total Pengguna, Total Halaqah,
+ *     Level Akses) telah dihapus sesuai instruksi.
+ *   - Kartu/tautan "Ubah Kata Sandi" dipertahankan.
  */
 
 if (!defined('ADMIN_INDEX')) {
@@ -18,10 +23,8 @@ if (!defined('ADMIN_INDEX')) {
 </div>
 
 <div class="profil-wrap">
-
-    <!-- ── Kolom Kiri: Informasi Akun ─────────────────────── -->
     <div class="profil-card">
-        <!-- Avatar -->
+        <!-- Avatar besar -->
         <div class="d-flex align-items-center gap-3 mb-4 pb-4" style="border-bottom:1px solid var(--slate-2);">
             <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--em-600),var(--em-800));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0;">
                 <?= htmlspecialchars($admin_initials) ?>
@@ -59,34 +62,16 @@ if (!defined('ADMIN_INDEX')) {
         </form>
     </div>
 
-    <!-- ── Kolom Kanan: Keamanan & Kata Sandi ─────────────── -->
-    <div class="profil-card">
-        <h3 class="profil-card-title"><i class="bi bi-key-fill ic"></i> Keamanan &amp; Kata Sandi</h3>
-
-        <div class="info-box">
-            <i class="bi bi-shield-exclamation" style="font-size:16px;flex-shrink:0;"></i>
-            <span>Kata sandi Super Administrator memiliki hak penuh atas konfigurasi sistem. Jangan bagikan kepada siapapun.</span>
+    <!-- Panel kanan: hanya tautan Ubah Kata Sandi -->
+    <div>
+        <div class="mt-0 p-3 rounded-3" style="background:var(--em-50);border:1px solid var(--em-100);">
+            <div class="d-flex align-items-center gap-2 mb-1" style="font-size:13px;font-weight:700;color:var(--em-800);">
+                <i class="bi bi-key-fill"></i> Ubah Kata Sandi
+            </div>
+            <p style="font-size:12.5px;color:var(--slate-5);margin:0 0 10px;">Untuk keamanan, ubah kata sandi secara berkala.</p>
+            <a href="?tab=sandi" class="btn-outline-em btn-em-sm">
+                <i class="bi bi-arrow-right-circle"></i> Pergi ke Halaman Sandi
+            </a>
         </div>
-
-        <form action="?tab=profil" method="POST">
-            <input type="hidden" name="action" value="update_password">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
-            <div class="profil-field">
-                <label class="profil-label">Kata Sandi Saat Ini</label>
-                <input type="password" name="password_lama" class="profil-input" placeholder="Masukkan kata sandi lama" required autocomplete="current-password">
-            </div>
-            <div class="profil-field">
-                <label class="profil-label">Kata Sandi Baru</label>
-                <input type="password" name="password_baru" class="profil-input" placeholder="Minimal 6 karakter" required autocomplete="new-password">
-            </div>
-            <div class="profil-field">
-                <label class="profil-label">Konfirmasi Kata Sandi Baru</label>
-                <input type="password" name="password_konfirmasi" class="profil-input" placeholder="Ketik ulang sandi baru" required autocomplete="new-password">
-            </div>
-            <button type="submit" class="btn-em w-100 mt-2" style="justify-content:center;">
-                <i class="bi bi-shield-lock"></i> Perbarui Sandi Administrator
-            </button>
-        </form>
     </div>
-
 </div>

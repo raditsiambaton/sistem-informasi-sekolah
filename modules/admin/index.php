@@ -45,11 +45,8 @@ $csrf_token = $_SESSION['csrf_token'];
 // ─────────────────────────────────────────────────────────────
 // ROUTING TAB
 // ─────────────────────────────────────────────────────────────
-$valid_tabs = ['rekap', 'pengguna', 'halaqah', 'laporan', 'profil'];
+$valid_tabs = ['rekap', 'pengguna', 'halaqah', 'laporan', 'profil', 'sandi'];
 $page_tab   = $_GET['tab'] ?? 'rekap';
-if ($page_tab === 'sandi') {
-    $page_tab = 'profil';
-}
 if (!in_array($page_tab, $valid_tabs)) {
     $page_tab = 'rekap';
 }
@@ -154,6 +151,9 @@ require_once __DIR__ . '/data/queries.php';
 
             <a href="?tab=profil"   class="sb-link <?= $page_tab === 'profil'   ? 'active' : '' ?>">
                 <i class="bi bi-person-circle"></i><span>Profil Saya</span>
+            </a>
+            <a href="?tab=sandi"    class="sb-link <?= $page_tab === 'sandi'    ? 'active' : '' ?>">
+                <i class="bi bi-key-fill"></i><span>Ubah Kata Sandi</span>
             </a>
         </nav>
 

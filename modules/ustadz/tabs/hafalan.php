@@ -47,7 +47,7 @@
                     <h2>Daftar Surah Target Hafalan</h2>
                     <p>Target Aktif: Juz 30 (Adh-Dhuha – An-Nas)</p>
                 </div>
-                <span class="hafalan-santri-pill" id="badgeSantriHafalan">Siswa: -</span>
+                <span class="hafalan-siswa-pill" id="badgeSantriHafalan">Siswa: -</span>
             </div>
             <div class="table-responsive">
                 <table class="hafalan-table">
@@ -67,12 +67,8 @@
     </section>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     MODAL: Input Setoran Hafalan
-     Ayat Awal & Ayat Akhir menggunakan <input type="number">
-═══════════════════════════════════════════════════════════ -->
-<div class="modal fade" id="modalInputSetoran" tabindex="-1"
-     aria-labelledby="judulInputSetoran" aria-hidden="true">
+<!-- Modal: Input Setoran Hafalan -->
+<div class="modal fade" id="modalInputSetoran" tabindex="-1" aria-labelledby="judulInputSetoran" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered hafalan-modal-setoran">
         <div class="modal-content">
             <div class="modal-header">
@@ -84,36 +80,14 @@
             </div>
             <div class="modal-body">
                 <div class="hafalan-form-grid">
-
-                    <!-- Ayat Awal — input number -->
                     <div>
                         <label class="hafalan-label" for="inputAyatAwal">Ayat Awal</label>
-                        <input type="number"
-                               id="inputAyatAwal"
-                               name="ayat_awal"
-                               inputmode="numeric"
-                               step="1"
-                               min="1"
-                               class="form-control hafalan-field hafalan-input-ayat"
-                               required>
-                        <span class="hafalan-ayat-hint" id="hintAyatAwal"></span>
+                        <select id="inputAyatAwal" class="form-select hafalan-field"></select>
                     </div>
-
-                    <!-- Ayat Akhir — input number -->
                     <div>
                         <label class="hafalan-label" for="inputAyatAkhir">Ayat Akhir</label>
-                        <input type="number"
-                               id="inputAyatAkhir"
-                               name="ayat_akhir"
-                               inputmode="numeric"
-                               step="1"
-                               min="1"
-                               class="form-control hafalan-field hafalan-input-ayat"
-                               required>
-                        <span class="hafalan-ayat-hint" id="hintAyatAkhir"></span>
+                        <select id="inputAyatAkhir" class="form-select hafalan-field"></select>
                     </div>
-
-                    <!-- Kualitas Hafalan -->
                     <div>
                         <label class="hafalan-label" for="inputKualitas">Kualitas Hafalan</label>
                         <select id="inputKualitas" class="form-select hafalan-field">
@@ -122,15 +96,11 @@
                             <option value="Tidak Lancar">Tidak Lancar</option>
                         </select>
                     </div>
-
-                    <!-- Tanggal -->
                     <div>
                         <label class="hafalan-label" for="inputTanggalSetoran">Tanggal</label>
                         <input type="date" id="inputTanggalSetoran" class="form-control hafalan-field"
                                value="<?= date('Y-m-d') ?>" data-hari-ini="<?= date('Y-m-d') ?>">
                     </div>
-
-                    <!-- Catatan -->
                     <div class="hafalan-form-full">
                         <label class="hafalan-label" for="inputCatatanSetoran">Catatan (Opsional)</label>
                         <textarea id="inputCatatanSetoran" class="form-control hafalan-field" rows="3"
@@ -153,12 +123,8 @@
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     MODAL: Baca Surah (Mushaf)
-     Navigasi ayat menggunakan <input type="number"> + tombol lompat
-═══════════════════════════════════════════════════════════ -->
-<div class="modal fade" id="modalBacaSurah" tabindex="-1"
-     aria-labelledby="mushafJudul" aria-hidden="true">
+<!-- Modal: Baca Surah (Mushaf) -->
+<div class="modal fade" id="modalBacaSurah" tabindex="-1" aria-labelledby="mushafJudul" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered hafalan-modal-mushaf">
         <div class="modal-content">
             <div class="mushaf-header">
@@ -167,25 +133,9 @@
                     <p id="mushafSubjudul"></p>
                 </div>
                 <div class="mushaf-header-tools">
-                    <!-- Input lompat ayat — menggantikan <select> -->
                     <div class="mushaf-filter">
-                        <label for="filterAyatMushaf">Lompat ke Ayat</label>
-                        <div class="mushaf-filter-wrap">
-                            <input type="number"
-                                   id="filterAyatMushaf"
-                                   inputmode="numeric"
-                                   step="1"
-                                   min="1"
-                                   class="mushaf-filter-input"
-                                   placeholder="1">
-                            <button type="button"
-                                    id="btnLompatAyat"
-                                    class="mushaf-filter-btn"
-                                    aria-label="Lompat ke ayat">
-                                <i class="bi bi-arrow-right-short"></i>
-                            </button>
-                        </div>
-                        <span id="mushafFilterFeedback" class="mushaf-filter-feedback" hidden></span>
+                        <label for="filterAyatMushaf">Ayat</label>
+                        <select id="filterAyatMushaf" class="form-select"></select>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
@@ -210,11 +160,6 @@
 
 <script>
 (function () {
-    'use strict';
-
-    // ─────────────────────────────────────────────────────────
-    // DATA MUSHAF (5 Surah Juz 30)
-    // ─────────────────────────────────────────────────────────
     const MUSHAF_MOCK = {
         'adh-dhuha': {
             no: 93, nama: 'Adh-Dhuha', arab: 'الضحى', arti: 'Duha', jumlah: 11, golongan: 'Makkiyah',
@@ -309,18 +254,15 @@
     };
 
     const hafalanStatusSiswa = {};
-    let siswaHafalanTerpilih  = null;
-    let surahSetoranAktif     = null;
-    let totalAyatAktif        = 1;    // jumlah ayat surah yang sedang dibuka
-    let totalAyatMushafAktif  = 1;    // untuk modal mushaf
+    let siswaHafalanTerpilih = null;
+    let surahSetoranAktif    = null;
 
-    // ─────────────────────────────────────────────────────────
-    // HELPERS
-    // ─────────────────────────────────────────────────────────
-    function escHtml(v) {
-        return String(v)
-            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    function escHtml(nilai) {
+        return String(nilai)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
     }
 
     function pastikanState(id) {
@@ -330,104 +272,6 @@
         return hafalanStatusSiswa[id];
     }
 
-    function tampilkanError(pesan) {
-        const el = document.getElementById('hafalanAyatError');
-        el.textContent = pesan;
-        el.hidden = !pesan;
-    }
-
-    // ─────────────────────────────────────────────────────────
-    // INPUT NUMBER — blokir karakter non-integer
-    // ─────────────────────────────────────────────────────────
-    const KARAKTER_BLOKIR = ['e', 'E', '+', '-', '.', ','];
-
-    function pasangBlokKarakter(input) {
-        input.addEventListener('keydown', function (e) {
-            if (KARAKTER_BLOKIR.includes(e.key)) e.preventDefault();
-        });
-    }
-
-    // ─────────────────────────────────────────────────────────
-    // VALIDASI INPUT AYAT — real-time & blur
-    // ─────────────────────────────────────────────────────────
-    function validasiInputAyat(inputEl, totalAyat, labelHint) {
-        let val = parseInt(inputEl.value, 10);
-
-        // Koreksi batas atas saat input (tidak menunggu blur)
-        if (!isNaN(val) && val > totalAyat) {
-            inputEl.value = totalAyat;
-            val = totalAyat;
-            if (labelHint) labelHint.textContent = 'Maksimal ' + totalAyat + ' ayat untuk surah ini';
-            inputEl.classList.add('hafalan-input-ayat--warn');
-            setTimeout(function () {
-                if (labelHint) labelHint.textContent = 'Rentang: 1\u2013' + totalAyat;
-                inputEl.classList.remove('hafalan-input-ayat--warn');
-            }, 1800);
-        }
-
-        // Koreksi batas bawah saat blur
-        if (inputEl === document.getElementById('inputAyatAwal') || inputEl === document.getElementById('inputAyatAkhir')) {
-            // ditangani di listener blur di bawah
-        }
-    }
-
-    function aturRentangInputAyat(totalAyat) {
-        const inpAwal  = document.getElementById('inputAyatAwal');
-        const inpAkhir = document.getElementById('inputAyatAkhir');
-        const hintAwal  = document.getElementById('hintAyatAwal');
-        const hintAkhir = document.getElementById('hintAyatAkhir');
-
-        inpAwal.min  = 1;
-        inpAwal.max  = totalAyat;
-        inpAkhir.min = 1;
-        inpAkhir.max = totalAyat;
-
-        const teks = 'Rentang: 1\u2013' + totalAyat;
-        if (hintAwal)  hintAwal.textContent  = teks;
-        if (hintAkhir) hintAkhir.textContent = teks;
-    }
-
-    // ─────────────────────────────────────────────────────────
-    // VALIDASI RENTANG (awal ≤ akhir, keduanya ≥ 1)
-    // ─────────────────────────────────────────────────────────
-    function validasiRentangAyat() {
-        const inpAwal  = document.getElementById('inputAyatAwal');
-        const inpAkhir = document.getElementById('inputAyatAkhir');
-        const awal  = parseInt(inpAwal.value,  10);
-        const akhir = parseInt(inpAkhir.value, 10);
-
-        if (isNaN(awal) || awal < 1) {
-            tampilkanError('Ayat awal harus berupa angka minimal 1.');
-            inpAwal.focus();
-            return false;
-        }
-        if (isNaN(akhir) || akhir < 1) {
-            tampilkanError('Ayat akhir harus berupa angka minimal 1.');
-            inpAkhir.focus();
-            return false;
-        }
-        if (awal > totalAyatAktif) {
-            tampilkanError('Ayat awal melebihi jumlah ayat surah ini (' + totalAyatAktif + ').');
-            inpAwal.focus();
-            return false;
-        }
-        if (akhir > totalAyatAktif) {
-            tampilkanError('Ayat akhir melebihi jumlah ayat surah ini (' + totalAyatAktif + ').');
-            inpAkhir.focus();
-            return false;
-        }
-        if (akhir < awal) {
-            tampilkanError('Ayat akhir tidak boleh lebih kecil dari ayat awal.');
-            inpAkhir.focus();
-            return false;
-        }
-        tampilkanError('');
-        return true;
-    }
-
-    // ─────────────────────────────────────────────────────────
-    // RENDER TABEL SURAH
-    // ─────────────────────────────────────────────────────────
     function renderTabelSurah() {
         if (!siswaHafalanTerpilih) return;
         const daftar = pastikanState(siswaHafalanTerpilih.id);
@@ -451,73 +295,63 @@
         siswaHafalanTerpilih = { id: kartu.dataset.id, nama: kartu.dataset.nama, nis: kartu.dataset.nis };
         document.querySelectorAll('.hafalan-siswa-card').forEach(el => el.classList.remove('aktif'));
         kartu.classList.add('aktif');
-        document.getElementById('hafalanEmpty').hidden     = true;
-        document.getElementById('hafalanSurahArea').hidden = false;
+        document.getElementById('hafalanEmpty').hidden       = true;
+        document.getElementById('hafalanSurahArea').hidden   = false;
         document.getElementById('badgeSantriHafalan').textContent = 'Siswa: ' + siswaHafalanTerpilih.nama;
         renderTabelSurah();
     }
 
-    // ─────────────────────────────────────────────────────────
-    // BUKA MODAL SETORAN
-    // ─────────────────────────────────────────────────────────
+    function isiOpsiAyat(idSelect, jumlah, terpilih) {
+        const select = document.getElementById(idSelect);
+        let html = '';
+        for (let n = 1; n <= jumlah; n++) html += '<option value="' + n + '">' + n + '</option>';
+        select.innerHTML = html;
+        select.value = String(terpilih);
+    }
+
+    function validasiRentangAyat() {
+        const awal  = parseInt(document.getElementById('inputAyatAwal').value, 10);
+        const akhir = parseInt(document.getElementById('inputAyatAkhir').value, 10);
+        const pesan = document.getElementById('hafalanAyatError');
+        if (akhir < awal) {
+            pesan.textContent = 'Ayat akhir tidak boleh lebih kecil dari ayat awal.';
+            pesan.hidden = false;
+            return false;
+        }
+        pesan.hidden = true;
+        return true;
+    }
+
     function bukaSetoran(key) {
         const meta = MUSHAF_MOCK[key];
         if (!meta || !siswaHafalanTerpilih) return;
-
         surahSetoranAktif = key;
-        totalAyatAktif    = meta.jumlah;
-
-        // Subjudul modal
         document.getElementById('subjudulInputSetoran').textContent =
             'Siswa: ' + siswaHafalanTerpilih.nama + ' \u2013 Surah ' + meta.nama + ' (' + meta.jumlah + ' Ayat)';
-
-        // Atur min/max dan hint kedua input
-        aturRentangInputAyat(meta.jumlah);
-
-        // Nilai default: awal=1, akhir=total
-        const inpAwal  = document.getElementById('inputAyatAwal');
-        const inpAkhir = document.getElementById('inputAyatAkhir');
-        inpAwal.value  = 1;
-        inpAkhir.value = meta.jumlah;
-
-        // Reset field lain
-        document.getElementById('inputKualitas').value       = 'Lancar';
+        isiOpsiAyat('inputAyatAwal',  meta.jumlah, 1);
+        isiOpsiAyat('inputAyatAkhir', meta.jumlah, meta.jumlah);
+        document.getElementById('inputKualitas').value      = 'Lancar';
         document.getElementById('inputCatatanSetoran').value = '';
         const tanggal = document.getElementById('inputTanggalSetoran');
         tanggal.value = tanggal.dataset.hariIni || tanggal.value;
-        tampilkanError('');
-
+        document.getElementById('hafalanAyatError').hidden  = true;
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalInputSetoran')).show();
     }
 
-    // ─────────────────────────────────────────────────────────
-    // BUKA MODAL MUSHAF
-    // ─────────────────────────────────────────────────────────
     function bukaMushaf(key) {
         const data = MUSHAF_MOCK[key];
         if (!data) return;
-
-        totalAyatMushafAktif = data.jumlah;
-
         document.getElementById('mushafJudul').innerHTML =
             escHtml(data.nama) + ' - <span class="mushaf-judul-arab">' + data.arab + '</span> (QS. ' + data.no + ')';
         document.getElementById('mushafSubjudul').textContent =
             data.arti + ' \u2013 ' + data.jumlah + ' Ayat \u2013 ' + data.golongan;
 
-        // Atur input lompat ayat
-        const filterInput = document.getElementById('filterAyatMushaf');
-        filterInput.max         = data.jumlah;
-        filterInput.value       = '';
-        filterInput.placeholder = '1\u2013' + data.jumlah;
-
-        const feedbackEl = document.getElementById('mushafFilterFeedback');
-        feedbackEl.hidden = true;
-        feedbackEl.textContent = '';
-
-        // Render ayat
-        const tubuh = document.getElementById('mushafBody');
+        const select = document.getElementById('filterAyatMushaf');
+        const tubuh  = document.getElementById('mushafBody');
+        let opsi = '<option value="">Pilih Ayat</option>';
         tubuh.innerHTML = data.ayat.map(function (ayat, indeks) {
             const nomor = indeks + 1;
+            opsi += '<option value="' + nomor + '">Ayat ' + nomor + '</option>';
             return '<article class="mushaf-ayat" id="mushafAyat-' + nomor + '">'
                 + '<div class="mushaf-ayat-top"><span class="mushaf-no">' + nomor + '</span><p class="mushaf-arab">' + ayat.arab + '</p></div>'
                 + '<p class="mushaf-latin">' + escHtml(ayat.latin) + '</p>'
@@ -525,47 +359,26 @@
                 + '<p class="mushaf-ket"><i class="bi bi-volume-up" aria-hidden="true"></i> QS. ' + escHtml(data.nama) + ' ayat ke-' + nomor + '</p>'
                 + '</article>';
         }).join('');
-
-        tubuh.scrollTop = 0;
+        select.innerHTML = opsi;
+        select.value     = '';
+        tubuh.scrollTop  = 0;
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalBacaSurah')).show();
     }
 
-    // ─────────────────────────────────────────────────────────
-    // LOMPAT KE AYAT (mushaf)
-    // ─────────────────────────────────────────────────────────
-    function lompatKeAyat() {
-        const input      = document.getElementById('filterAyatMushaf');
-        const feedbackEl = document.getElementById('mushafFilterFeedback');
-        const nomor      = parseInt(input.value, 10);
-        const tubuh      = document.getElementById('mushafBody');
-
-        // Reset highlight sebelumnya
+    function gulirKeAyat() {
+        const nomor = document.getElementById('filterAyatMushaf').value;
+        const tubuh = document.getElementById('mushafBody');
         tubuh.querySelectorAll('.mushaf-ayat').forEach(el => el.classList.remove('aktif'));
-
-        if (isNaN(nomor) || nomor < 1 || nomor > totalAyatMushafAktif) {
-            feedbackEl.textContent = 'Masukkan nomor ayat antara 1\u2013' + totalAyatMushafAktif;
-            feedbackEl.hidden = false;
-            setTimeout(function () { feedbackEl.hidden = true; }, 3000);
-            return;
-        }
-
-        feedbackEl.hidden = true;
+        if (!nomor) return;
         const target = document.getElementById('mushafAyat-' + nomor);
         if (!target) return;
-
-        // Smooth scroll + highlight teal sementara
         target.classList.add('aktif');
         tubuh.scrollTo({ top: target.offsetTop - 8, behavior: 'smooth' });
-        setTimeout(function () { target.classList.remove('aktif'); }, 2000);
     }
 
-    // ─────────────────────────────────────────────────────────
-    // SIMPAN SETORAN (state JS, lalu toast)
-    // ─────────────────────────────────────────────────────────
     function simpanSetoran() {
         if (!validasiRentangAyat() || !siswaHafalanTerpilih || !surahSetoranAktif) return;
-
-        const awal  = parseInt(document.getElementById('inputAyatAwal').value,  10);
+        const awal  = parseInt(document.getElementById('inputAyatAwal').value, 10);
         const akhir = parseInt(document.getElementById('inputAyatAkhir').value, 10);
         const meta  = MUSHAF_MOCK[surahSetoranAktif];
         const daftar = pastikanState(siswaHafalanTerpilih.id);
@@ -574,37 +387,23 @@
             item.status = (awal === 1 && akhir === meta.jumlah) ? 'selesai' : 'berjalan';
         }
         renderTabelSurah();
-
         const modal = bootstrap.Modal.getInstance(document.getElementById('modalInputSetoran'));
         if (modal) modal.hide();
-
         document.getElementById('toastHafalanPesan').textContent =
-            'Setoran hafalan ' + siswaHafalanTerpilih.nama + ' untuk Surah ' + meta.nama +
-            ' (Ayat ' + awal + '\u2013' + akhir + ') berhasil disimpan.';
-        bootstrap.Toast.getOrCreateInstance(
-            document.getElementById('toastHafalan'), { delay: 3400 }
-        ).show();
+            'Setoran hafalan ' + siswaHafalanTerpilih.nama + ' untuk Surah ' + meta.nama + ' (Ayat ' + awal + '\u2013' + akhir + ') berhasil disimpan.';
+        bootstrap.Toast.getOrCreateInstance(document.getElementById('toastHafalan'), { delay: 3400 }).show();
     }
 
-    // ─────────────────────────────────────────────────────────
-    // EVENT LISTENERS
-    // ─────────────────────────────────────────────────────────
-
-    // Daftar siswa
-    document.getElementById('listHafalanSiswa').addEventListener('click', function (e) {
-        const kartu = e.target.closest('.hafalan-siswa-card');
+    document.getElementById('listHafalanSiswa').addEventListener('click', function (event) {
+        const kartu = event.target.closest('.hafalan-siswa-card');
         if (kartu) pilihSiswaHafalan(kartu);
     });
-
-    // Tombol aksi tabel surah
-    document.getElementById('tbodySurahTarget').addEventListener('click', function (e) {
-        const tombol = e.target.closest('[data-aksi]');
+    document.getElementById('tbodySurahTarget').addEventListener('click', function (event) {
+        const tombol = event.target.closest('[data-aksi]');
         if (!tombol) return;
         if (tombol.dataset.aksi === 'baca')  bukaMushaf(tombol.dataset.key);
         if (tombol.dataset.aksi === 'setor') bukaSetoran(tombol.dataset.key);
     });
-
-    // Pencarian siswa
     document.getElementById('searchHafalanSiswa').addEventListener('input', function () {
         const kata = this.value.trim().toLowerCase();
         document.querySelectorAll('.hafalan-siswa-card').forEach(function (kartu) {
@@ -613,64 +412,18 @@
             kartu.style.display = (nama.includes(kata) || nis.includes(kata)) ? '' : 'none';
         });
     });
-
-    // Input Ayat Awal
-    const inpAwal = document.getElementById('inputAyatAwal');
-    pasangBlokKarakter(inpAwal);
-    inpAwal.addEventListener('input', function () {
-        validasiInputAyat(this, totalAyatAktif, document.getElementById('hintAyatAwal'));
-        // Jika awal > akhir, geser akhir
-        const akhirEl = document.getElementById('inputAyatAkhir');
-        const a = parseInt(this.value, 10);
-        const b = parseInt(akhirEl.value, 10);
-        if (!isNaN(a) && !isNaN(b) && a > b) {
-            akhirEl.value = Math.min(a, totalAyatAktif);
-        }
-        // Perbarui min Ayat Akhir
-        if (!isNaN(a) && a >= 1) akhirEl.min = a;
-        tampilkanError('');
-    });
-    inpAwal.addEventListener('blur', function () {
-        const v = parseInt(this.value, 10);
-        if (isNaN(v) || v < 1) this.value = 1;
-        else if (v > totalAyatAktif) this.value = totalAyatAktif;
-    });
-
-    // Input Ayat Akhir
-    const inpAkhir = document.getElementById('inputAyatAkhir');
-    pasangBlokKarakter(inpAkhir);
-    inpAkhir.addEventListener('input', function () {
-        validasiInputAyat(this, totalAyatAktif, document.getElementById('hintAyatAkhir'));
-        tampilkanError('');
-    });
-    inpAkhir.addEventListener('blur', function () {
-        const v = parseInt(this.value, 10);
-        const a = parseInt(inpAwal.value, 10);
-        if (isNaN(v) || v < 1) this.value = isNaN(a) ? 1 : a;
-        else if (v > totalAyatAktif) this.value = totalAyatAktif;
-    });
-
-    // Tombol Simpan Hafalan
+    document.getElementById('inputAyatAwal').addEventListener('change',  validasiRentangAyat);
+    document.getElementById('inputAyatAkhir').addEventListener('change', validasiRentangAyat);
     document.getElementById('btnSimpanHafalan').addEventListener('click', simpanSetoran);
+    document.getElementById('filterAyatMushaf').addEventListener('change', gulirKeAyat);
 
-    // Input lompat ayat mushaf — Enter dan tombol
-    const filterMushaf = document.getElementById('filterAyatMushaf');
-    pasangBlokKarakter(filterMushaf);
-    filterMushaf.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') { e.preventDefault(); lompatKeAyat(); }
-    });
-    document.getElementById('btnLompatAyat').addEventListener('click', lompatKeAyat);
-
-    // Auto-pilih siswa dari URL ?santri=...
-    (function () {
-        const preset = new URLSearchParams(window.location.search).get('santri');
-        if (!preset) return;
+    const preset = new URLSearchParams(window.location.search).get('santri');
+    if (preset) {
         const kunci = preset.toLowerCase();
         const kartu = Array.from(document.querySelectorAll('.hafalan-siswa-card'));
         const cocok = kartu.find(el => (el.dataset.nama || '').toLowerCase() === kunci)
                    || kartu.find(el => (el.dataset.nama || '').toLowerCase().includes(kunci));
         if (cocok) cocok.click();
-    })();
-
+    }
 })();
 </script>
