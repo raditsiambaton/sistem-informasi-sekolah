@@ -2,10 +2,11 @@
 /**
  * modules/siswa/index.php
  * Dashboard Siswa / Siswa – SMA IT Al-Fadhilah Pekanbaru
+ * 100% Terintegrasi Database MySQL & Desain Elegan Modern
  */
 
-require_once '../../config/session.php';
-require_once '../../config/database.php';
+require_once __DIR__ . '/../../config/session.php';
+require_once __DIR__ . '/../../config/database.php';
 
 // Validasi otorisasi sesi Siswa
 wajib_login('../auth/login.php');
@@ -66,7 +67,7 @@ $data_siswa = [
 ];
 
 // Tangani Update Kontak Siswa
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_biodata') {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_biodata') {
     $no_hp_baru  = trim($_POST['no_hp'] ?? '');
     $no_hp_clean = preg_replace('/[^0-9\+\-\s]/', '', $no_hp_baru);
 
@@ -77,13 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     try {
         $pdo = koneksi_database();
         if ($pdo) {
-            try {
-                $colCheck = $pdo->query("SHOW COLUMNS FROM users LIKE 'no_hp'")->fetchAll();
-                if (empty($colCheck)) {
-                    $pdo->exec("ALTER TABLE users ADD COLUMN no_hp VARCHAR(20) NULL AFTER nama_lengkap");
-                }
-            } catch (Throwable $e) {}
-
             $up = $pdo->prepare("UPDATE users SET no_hp = :no_hp WHERE id = :id");
             $up->execute([
                 'no_hp' => $no_hp_clean,
@@ -98,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 // Tangani Ganti Sandi Siswa
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'ganti_password') {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action']) && $_POST['action'] === 'ganti_password') {
     $pass_lama = trim($_POST['password_lama'] ?? '');
     $pass_baru = trim($_POST['password_baru'] ?? '');
     $pass_konf = trim($_POST['password_konfirmasi'] ?? '');
@@ -133,21 +127,191 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $page_tab = 'profil';
 }
 
-// Ambil riwayat setoran & murajaah siswa ini dari MySQL
+// ── Tarik Data Nyata dari MySQL untuk Siswa Ini ──────────────────────
 $siswa_setoran = [];
 $siswa_murajaah = [];
+$target_aktif = null;
+$nama_ustadz_pembimbing = 'Ust. Rival Alvian Melfandy';
+
 try {
     $pdo = koneksi_database();
     if ($pdo) {
-        $st = $pdo->prepare("SELECT * FROM setoran_hafalan WHERE nama_siswa LIKE :n OR siswa_id = :id ORDER BY id DESC");
-        $st->execute(['n' => "%{$siswa_name}%", 'id' => $_SESSION['user_id'] ?? 3]);
+        // Ambil nama ustadz pembimbing dari halaqah jika ada
+        try {
+            $ust_stmt = $pdo->prepare("SELECT nama_lengkap FROM users WHERE role = 'ustadz' AND halaqah = :h LIMIT 1");
+            $ust_stmt->execute(['h' => $halaqah_name]);
+            $ust_row = $ust_stmt->fetch();
+            if ($ust_row && !empty($ust_row['nama_lengkap'])) {
+                $nama_ustadz_pembimbing = $ust_row['nama_lengkap'];
+            }
+        } catch (Throwable $e) {}
+
+        // Ambil target hafalan aktif dari tabel target_hafalan
+        try {
+            $stg = $pdo->prepare("SELECT * FROM target_hafalan WHERE (siswa_id = :id OR siswa_id IS NULL) AND status = 'Aktif' ORDER BY id DESC LIMIT 1");
+            $stg->execute(['id' => $siswa_id]);
+            $target_aktif = $stg->fetch();
+            if ($target_aktif && !empty($target_aktif['ustadz_id'])) {
+                $ust_stmt2 = $pdo->prepare("SELECT nama_lengkap FROM users WHERE id = :uid LIMIT 1");
+                $ust_stmt2->execute(['uid' => $target_aktif['ustadz_id']]);
+                $u2 = $ust_stmt2->fetch();
+                if ($u2 && !empty($u2['nama_lengkap'])) {
+                    $nama_ustadz_pembimbing = $u2['nama_lengkap'];
+                }
+            }
+        } catch (Throwable $e) {}
+
+        // Ambil semua setoran hafalan siswa ini
+        $st = $pdo->prepare("SELECT * FROM setoran_hafalan WHERE siswa_id = :id OR nama_siswa LIKE :n ORDER BY id DESC");
+        $st->execute(['id' => $siswa_id, 'n' => "%{$siswa_name}%"]);
         $siswa_setoran = $st->fetchAll();
 
-        $sm = $pdo->prepare("SELECT * FROM murajaah WHERE nama_siswa LIKE :n OR siswa_id = :id ORDER BY id DESC");
-        $sm->execute(['n' => "%{$siswa_name}%", 'id' => $_SESSION['user_id'] ?? 3]);
+        // Ambil semua murajaah siswa ini
+        $sm = $pdo->prepare("SELECT * FROM murajaah WHERE siswa_id = :id OR nama_siswa LIKE :n ORDER BY id DESC");
+        $sm->execute(['id' => $siswa_id, 'n' => "%{$siswa_name}%"]);
         $siswa_murajaah = $sm->fetchAll();
     }
 } catch (Throwable $e) {}
+
+// Helper fungsi format tanggal Indonesia
+if (!function_exists('format_tgl_indo')) {
+function format_tgl_indo($dateStr) {
+    if (empty($dateStr) || $dateStr === '0000-00-00' || strtotime($dateStr) === false || strtotime($dateStr) < 0) {
+        return date('d M Y');
+    }
+    $t = strtotime($dateStr);
+    $bulanIndo = [
+        1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun',
+        7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des'
+    ];
+    $d = date('j', $t);
+    $m = $bulanIndo[(int)date('n', $t)] ?? date('M', $t);
+    $y = date('Y', $t);
+    return "$d $m $y";
+}
+}
+
+// ── Perhitungan Metrik Dinamis untuk Tab Progres ─────────────────────
+$total_ayat_disetor = 0;
+$distinct_surahs = [];
+foreach ($siswa_setoran as $set) {
+    $aw = intval($set['ayat_awal'] ?? 1);
+    $ak = intval($set['ayat_akhir'] ?? 1);
+    $total_ayat_disetor += max(1, ($ak - $aw + 1));
+    if (!empty($set['surah'])) {
+        $distinct_surahs[trim($set['surah'])] = true;
+    }
+}
+$total_surah_disetor = count($distinct_surahs);
+
+// Target Aktif & Capaian Dinamis
+$target_judul = 'Belum Ada Target Aktif';
+$target_sub = 'Ustadz pembimbing belum menetapkan target hafalan periode ini.';
+$target_persen = 0;
+$target_ayat_selesai = 0;
+$target_total_ayat = 0;
+$target_sisa_ayat = 0;
+$target_sisa_teks = '-';
+$target_langkah = 'Mulai setor hafalan pertama Anda';
+$target_langkah_sub = 'Siapkan surah awal untuk disimak oleh ustadz pembimbing pada halaqah berikutnya.';
+
+if ($target_aktif) {
+    $s_awal = $target_aktif['surah_awal'] ?? '';
+    $s_akhir = $target_aktif['surah_akhir'] ?? '';
+    $t_mulai = format_tgl_indo($target_aktif['tanggal_mulai'] ?? '');
+    $t_akhir = format_tgl_indo($target_aktif['tanggal_akhir'] ?? '');
+
+    // Parse nama surah dari target (e.g. "Juz 1 • Al-Fatihah (Ayat 1–7)")
+    preg_match('/(?:Juz\s*\d+\s*[•·\-]\s*)?([A-Za-z\-\'\s]+)(?:\(Ayat\s*(\d+)[\–\-](\d+)\))?/u', $s_awal, $mAwal);
+    $surahTargetNama = trim($mAwal[1] ?? $s_awal);
+    $targetAyatStart = isset($mAwal[2]) ? intval($mAwal[2]) : 1;
+    $targetAyatEnd   = isset($mAwal[3]) ? intval($mAwal[3]) : 7;
+
+    $target_total_ayat = max(1, $targetAyatEnd - $targetAyatStart + 1);
+
+    // Cek progres setoran siswa pada surah target
+    $maxAyatDisetor = 0;
+    foreach ($siswa_setoran as $stRow) {
+        if (strcasecmp(trim($stRow['surah']), $surahTargetNama) === 0 || stripos($stRow['surah'], $surahTargetNama) !== false) {
+            $maxAyatDisetor = max($maxAyatDisetor, intval($stRow['ayat_akhir']));
+        }
+    }
+
+    $target_ayat_selesai = min($target_total_ayat, $maxAyatDisetor);
+    $target_persen = min(100, round(($target_ayat_selesai / $target_total_ayat) * 100));
+    $target_sisa_ayat = max(0, $target_total_ayat - $target_ayat_selesai);
+
+    $target_judul = "Surah " . $surahTargetNama;
+    $target_sub = "Ayat {$targetAyatStart}–{$targetAyatEnd} | Periode: {$t_mulai} – {$t_akhir}";
+
+    if ($target_sisa_ayat > 0) {
+        $nextStart = $target_ayat_selesai + 1;
+        $nextEnd = min($targetAyatEnd, $nextStart + 5);
+        $target_sisa_teks = "{$surahTargetNama} ayat {$nextStart}–{$targetAyatEnd}";
+        $target_langkah = "Lanjutkan ayat {$nextStart}–{$nextEnd}";
+        $target_langkah_sub = "Ulangi hafalan sebelumnya, lalu siapkan {$target_sisa_ayat} ayat berikutnya untuk disimak oleh ustadz pembimbing.";
+    } else {
+        $target_sisa_teks = "Target tercapai sempurna (100%)";
+        $target_langkah = "Alhamdulillah Target Selesai!";
+        $target_langkah_sub = "Pertahankan hafalan dengan murajaah rutin dan konsultasikan target surat/juz berikutnya bersama ustadz pembimbing.";
+    }
+} elseif (!empty($siswa_setoran)) {
+    // Fallback jika belum ada target khusus di tabel target_hafalan
+    $latest = $siswa_setoran[0];
+    $target_judul = "Surah " . htmlspecialchars($latest['surah']);
+    $target_sub = "Terakhir disetor: Ayat {$latest['ayat_awal']}–{$latest['ayat_akhir']} (" . format_tgl_indo($latest['tanggal_setor']) . ")";
+    $target_persen = 100;
+    $target_sisa_ayat = 0;
+    $target_sisa_teks = "Menunggu target baru";
+    $target_langkah = "Lanjutkan surah berikutnya";
+    $target_langkah_sub = "Konsultasikan dengan ustadz pembimbing untuk penetapan target surat selanjutnya.";
+}
+
+// ── Gabungkan Riwayat Setoran & Murajaah untuk Tab Riwayat ───────────
+$riwayat_gabungan = [];
+foreach ($siswa_setoran as $s) {
+    $tgl = !empty($s['tanggal_setor']) && $s['tanggal_setor'] !== '0000-00-00' ? $s['tanggal_setor'] : (!empty($s['created_at']) ? substr($s['created_at'], 0, 10) : date('Y-m-d'));
+    $kualitas = !empty($s['kualitas']) ? $s['kualitas'] : 'Lancar';
+    $riwayat_gabungan[] = [
+        'id'        => 'set_' . $s['id'],
+        'raw_id'    => $s['id'],
+        'jenis'     => 'Setoran',
+        'surah'     => $s['surah'],
+        'ayat'      => 'Ayat ' . $s['ayat_awal'] . '–' . $s['ayat_akhir'],
+        'kualitas'  => $kualitas,
+        'tanggal'   => format_tgl_indo($tgl),
+        'ustadz'    => !empty($s['nama_ustadz']) ? $s['nama_ustadz'] : $nama_ustadz_pembimbing,
+        'catatan'   => !empty($s['catatan']) ? trim($s['catatan']) : '',
+        'timestamp' => strtotime($tgl) ?: 0,
+    ];
+}
+
+foreach ($siswa_murajaah as $m) {
+    $tgl = !empty($m['tanggal_murajaah']) && $m['tanggal_murajaah'] !== '0000-00-00' ? $m['tanggal_murajaah'] : (!empty($m['created_at']) ? substr($m['created_at'], 0, 10) : date('Y-m-d'));
+    $kualitas = !empty($m['status_mutqin']) ? $m['status_mutqin'] : 'Lancar';
+    $riwayat_gabungan[] = [
+        'id'        => 'mur_' . $m['id'],
+        'raw_id'    => $m['id'],
+        'jenis'     => 'Murajaah',
+        'surah'     => $m['surah'],
+        'ayat'      => !empty($m['ayat_range']) ? $m['ayat_range'] : '1 Surah Penuh',
+        'kualitas'  => $kualitas,
+        'tanggal'   => format_tgl_indo($tgl),
+        'ustadz'    => !empty($m['nama_ustadz']) ? $m['nama_ustadz'] : $nama_ustadz_pembimbing,
+        'catatan'   => !empty($m['catatan']) ? trim($m['catatan']) : '',
+        'timestamp' => strtotime($tgl) ?: 0,
+    ];
+}
+
+// Urutkan dari yang terbaru (descending)
+usort($riwayat_gabungan, function($a, $b) {
+    return $b['timestamp'] - $a['timestamp'];
+});
+
+// Masukan / Catatan dari Ustadz yang ada isinya
+$daftar_masukan = array_values(array_filter($riwayat_gabungan, function($r) {
+    return !empty($r['catatan']);
+}));
 
 // Inisial avatar siswa (2 huruf pertama nama)
 $siswa_initials = strtoupper(mb_substr(preg_replace('/[^A-Za-z ]/', '', $siswa_name), 0, 1));
@@ -155,6 +319,7 @@ $name_parts = explode(' ', trim($siswa_name));
 if (count($name_parts) >= 2) {
     $siswa_initials = strtoupper(mb_substr($name_parts[0], 0, 1) . mb_substr($name_parts[1], 0, 1));
 }
+$nama_panggilan = count($name_parts) >= 2 ? $name_parts[1] : $siswa_name;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -221,188 +386,353 @@ if (count($name_parts) >= 2) {
         .siswa-sidebar {
             width: 256px !important;
             min-width: 256px !important;
-            height: 100vh !important;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            bottom: 0 !important;
-            background: linear-gradient(170deg, var(--em-800) 0%, var(--em-900) 100%) !important;
-            color: #fff !important;
-            display: flex !important;
-            flex-direction: column !important;
-            overflow-y: auto !important;
-            scrollbar-width: none !important;
-            -ms-overflow-style: none !important;
-            z-index: 1040 !important;
-            transition: transform 0.3s ease !important;
-            padding: 0 !important;
+            max-width: 256px !important;
+            min-height: 100vh;
+            background-color: var(--em-800);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            position: sticky;
+            top: 0;
+            box-shadow: 4px 0 24px rgba(6, 78, 59, 0.15);
+            z-index: 1040;
+            transition: transform 0.3s ease;
         }
-        .siswa-sidebar::-webkit-scrollbar { display: none !important; }
 
-        /* Brand */
         .sb-brand {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 20px 18px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.12);
-            flex-shrink: 0;
+            padding: 0 8px 20px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            margin-bottom: 20px;
         }
         .sb-brand-logo {
-            width: 42px; height: 42px;
-            background: #fff;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            flex-shrink: 0;
-        }
-        .sb-brand-logo img { width: 30px; height: 30px; object-fit: contain; }
-        .sb-brand-name { font-size: 15px; font-weight: 700; color: var(--gold-hi); line-height: 1.2; }
-        .sb-brand-sub  { font-size: 11.5px; color: rgba(255,255,255,0.78); font-weight: 500; margin-top: 2px; }
-
-        /* User card */
-        .sb-user {
-            margin: 14px 12px 8px;
-            padding: 10px 12px;
-            background: rgba(255,255,255,0.09);
-            border: 1px solid rgba(255,255,255,0.14);
+            width: 44px;
+            height: 44px;
+            background: var(--white);
             border-radius: 12px;
-            display: flex; align-items: center; gap: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            flex-shrink: 0;
+            padding: 4px;
+        }
+        .sb-brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .sb-brand-name {
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: var(--white);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        .sb-brand-sub {
+            font-size: 0.72rem;
+            color: #A7F3D0;
+            font-weight: 500;
+        }
+
+        .sb-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .sb-avatar {
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            background: var(--em-700);
-            border: 2px solid rgba(255,255,255,0.25);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 13px; color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--white);
             flex-shrink: 0;
         }
-        .sb-user-name  { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
-        .sb-user-badge { font-size: 11px; color: #6EE7B7; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+        .sb-user-name {
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: var(--white);
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .sb-user-badge {
+            font-size: 0.72rem;
+            color: #A7F3D0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .sb-user-badge span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold-hi);
+            display: inline-block;
+        }
 
-        /* Nav label */
         .sb-label {
-            padding: 12px 20px 4px;
-            font-size: 10.5px; letter-spacing: 0.08em;
-            color: rgba(255,255,255,0.5);
-            text-transform: uppercase; font-weight: 700;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6EE7B7;
+            padding: 0 12px;
+            margin-bottom: 8px;
         }
 
-        /* Nav links */
         .sb-link {
-            display: flex; align-items: center; gap: 11px;
-            padding: 10px 14px;
-            margin: 2px 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
             border-radius: 10px;
-            font-size: 13.5px; font-weight: 500;
-            color: rgba(255,255,255,0.82);
+            color: #D1FAE5;
             text-decoration: none;
-            transition: all 0.18s ease;
-            border: 1px solid transparent;
-            position: relative;
+            font-weight: 500;
+            font-size: 0.88rem;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
         }
-        .sb-link i { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+        .sb-link i {
+            font-size: 1.15rem;
+            opacity: 0.85;
+            transition: opacity 0.2s;
+        }
         .sb-link:hover {
-            background: rgba(255,255,255,0.10);
-            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+        .sb-link:hover i {
+            opacity: 1;
         }
         .sb-link.active {
-            background: rgba(255,255,255,0.16);
-            color: #fff;
-            font-weight: 600;
-            border-color: rgba(255,255,255,0.22);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+            background: rgba(255, 255, 255, 0.18);
+            color: var(--white);
+            font-weight: 700;
+            box-shadow: inset 3px 0 0 var(--gold-hi);
         }
-        .sb-link.active::before {
-            content: '';
-            position: absolute; left: -10px; top: 50%;
-            transform: translateY(-50%);
-            width: 3px; height: 24px;
-            background: var(--gold-hi);
-            border-radius: 0 3px 3px 0;
+        .sb-link.active i {
+            opacity: 1;
+            color: var(--gold-hi);
         }
 
-        /* Sidebar footer */
-        .sb-footer {
+        .sb-btn-logout {
             margin-top: auto;
-            padding: 14px 10px 20px;
-            border-top: 1px solid rgba(255,255,255,0.12);
-            display: flex; flex-direction: column; gap: 6px;
-        }
-        .sb-logout {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            height: 42px;
-            background: rgba(239,68,68,0.15);
-            border: 1px solid rgba(239,68,68,0.3);
-            border-radius: 10px;
-            color: #FCA5A5;
-            font-size: 13.5px; font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .sb-logout:hover { background: #DC2626; border-color: #DC2626; color: #fff; }
-
-        /* Hamburger overlay (mobile) */
-        .sb-overlay {
-            display: none;
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1039;
-        }
-
-        /* ══════════════════════════════════════════════════════
-           CONTENT WRAPPER
-        ══════════════════════════════════════════════════════ */
-        .siswa-content-wrapper {
-            margin-left: 256px !important;
-            width: calc(100% - 256px) !important;
-            min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            background-color: #F6F7F5;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            background: #EF4444;
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.88rem;
+            transition: all 0.2s ease;
+            border: none;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        }
+        .sb-btn-logout:hover {
+            background: #DC2626;
+            color: var(--white);
+            transform: translateY(-1px);
         }
 
-        /* Hamburger button */
-        .btn-ham {
-            display: none;
-            background: none; border: none;
-            padding: 6px; cursor: pointer;
-            color: var(--slate-7);
-            font-size: 22px;
-            border-radius: 8px;
+        .siswa-content-wrapper {
+            margin-left: 250px !important;
+            width: calc(100% - 250px) !important;
+            min-height: 100vh !important;
+            display: flex !important;
+            flex-direction: column !important;
+            background-color: #F6F7F5;
+            transition: margin-left 0.3s ease, width 0.3s ease;
         }
-        .btn-ham:hover { background: var(--slate-1); }
+
+        .top-navbar {
+            height: 64px;
+            background: var(--white);
+            border-bottom: 1px solid var(--slate-2);
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+        .breadcrumb-item {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
 
         .kpi-card {
-            background: #ffffff;
-            border: 1px solid var(--color-border);
-            border-radius: 14px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(6, 78, 59, 0.04);
-            height: 100%;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--slate-2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
         }
 
-        /* ══════════════════════════════════════════════════════
-           RESPONSIVITAS MOBILE & TABLET
-        ══════════════════════════════════════════════════════ */
+        /* ── Komponen Filter Pill & Tombol Aksi Riwayat ───────── */
+        .btn-filter-pill {
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 6px 16px;
+            border-radius: 20px;
+            transition: all 0.2s ease;
+        }
+        .btn-filter-pill:hover {
+            background: #F8FAFC;
+            border-color: #94A3B8;
+            color: #1E293B;
+        }
+        .btn-filter-pill.active {
+            background: #065F46;
+            border-color: #065F46;
+            color: #FFFFFF;
+            box-shadow: 0 2px 6px rgba(6, 95, 70, 0.25);
+        }
+        .btn-filter-pill.active .badge {
+            background-color: rgba(255, 255, 255, 0.25) !important;
+            color: #FFFFFF !important;
+        }
+
+        .btn-icon-eye {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid #CBD5E1;
+            background: #FFFFFF;
+            color: #64748B;
+            transition: all 0.2s ease;
+        }
+        .btn-icon-eye:hover {
+            background: #E6F4F1;
+            border-color: #11756D;
+            color: #11756D;
+            transform: scale(1.08);
+        }
+
+        /* ── Desain Form Profil Bersih ─────────────────────────── */
+        .profil-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            height: 100%;
+        }
+        .profil-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0F172A;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .profil-field {
+            margin-bottom: 16px;
+        }
+        .profil-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .profil-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #F8FAFC;
+            color: #0F172A;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .profil-input:focus {
+            background: #FFFFFF;
+            border-color: #11756D;
+            box-shadow: 0 0 0 3px rgba(17, 117, 109, 0.1);
+        }
+        .profil-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        .profil-btn-primary {
+            background: #11756D;
+            color: #FFFFFF;
+        }
+        .profil-btn-primary:hover {
+            background: #0E625B;
+        }
+
+        /* Mobile Sidebar */
+        .sb-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1030;
+        }
         @media (max-width: 991.98px) {
             .siswa-sidebar {
+                position: fixed !important;
                 transform: translateX(-100%) !important;
-                z-index: 1050 !important;
             }
             .siswa-sidebar.open {
                 transform: translateX(0) !important;
-            }
-            .sb-overlay.open {
-                display: block;
             }
             .siswa-content-wrapper {
                 margin-left: 0 !important;
                 width: 100% !important;
             }
-            .btn-ham { display: flex !important; }
+            .sb-overlay.open {
+                display: block;
+            }
+            .profil-grid {
+                grid-template-columns: 1fr !important;
+            }
         }
     </style>
 </head>
@@ -446,38 +776,36 @@ if (count($name_parts) >= 2) {
                 <i class="bi bi-clock-history"></i><span>Riwayat Hafalan</span>
             </a>
 
-            <div class="sb-label" style="margin-top:8px;">Akun Saya</div>
-
+            <div class="sb-label mt-4">Akun Saya</div>
             <a href="?tab=profil" class="sb-link <?= $page_tab === 'profil' ? 'active' : '' ?>">
                 <i class="bi bi-person-circle"></i><span>Profil Saya</span>
             </a>
         </nav>
 
-        <!-- Footer Sidebar -->
-        <div class="sb-footer">
-            <a href="../auth/logout.php" class="sb-logout">
-                <i class="bi bi-box-arrow-right"></i> Keluar Sesi
-            </a>
-        </div>
+        <!-- Tombol Keluar Sesi -->
+        <a href="../auth/logout.php" class="sb-btn-logout">
+            <i class="bi bi-box-arrow-left"></i><span>Keluar Sesi</span>
+        </a>
     </aside>
 
-    <!-- MAIN WRAPPER -->
-    <div class="flex-grow-1 d-flex flex-column siswa-content-wrapper">
-        <header class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center shadow-sm">
-            <div class="d-flex align-items-center gap-3">
-                <button class="btn-ham" onclick="openSidebar()" aria-label="Buka menu">
-                    <i class="bi bi-list"></i>
+    <!-- KONTEN UTAMA -->
+    <div class="siswa-content-wrapper">
+        <header class="top-navbar">
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-sm btn-light d-lg-none me-2" onclick="openSidebar()">
+                    <i class="bi bi-list fs-5"></i>
                 </button>
-                <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz" class="topbar-logo" style="height: 24px; width: auto; object-fit: contain;">
-                <div class="d-flex align-items-center gap-2 small text-muted">
-                    <span>Ruang Siswa</span>
-                    <span>/</span>
-                    <span class="fw-bold text-dark text-capitalize"><?= htmlspecialchars($page_tab) ?></span>
-                </div>
+                <i class="bi bi-book-half" style="color: #11756D;"></i>
+                <span class="text-muted small">Ruang Siswa</span>
+                <span class="text-muted small">/</span>
+                <span class="fw-bold small text-dark">
+                    <?= $page_tab === 'progres' ? 'Progres' : ($page_tab === 'riwayat' ? 'Riwayat' : 'Profil') ?>
+                </span>
             </div>
+
             <div class="d-flex align-items-center gap-3">
-                <span class="badge bg-light text-muted border px-3 py-2">
-                    <i class="bi bi-calendar3 me-1 text-success"></i><?= date('d M Y') ?>
+                <span class="small text-muted d-none d-sm-inline">
+                    <i class="bi bi-calendar-event me-1"></i><?= date('d M Y') ?>
                 </span>
                 <span class="badge bg-success-subtle text-success fw-bold px-3 py-2">
                     <i class="bi bi-person-check-fill me-1"></i>Siswa Halaqah <?= htmlspecialchars($halaqah_name) ?>
@@ -504,18 +832,20 @@ if (count($name_parts) >= 2) {
                 </div>
             <?php endif; ?>
 
-            <!-- SUBPAGE 1: PROGRES HAFALAN (SESUAI IMAGE 20 & 21) -->
+            <!-- ══════════════════════════════════════════════════════════
+                 SUBPAGE 1: PROGRES HAFALAN (100% DINAMIS DATABASE)
+            ══════════════════════════════════════════════════════════ -->
             <?php if ($page_tab === 'progres'): ?>
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <span class="badge bg-success-subtle text-success fw-bold px-3 py-1 mb-2">PROGRES HAFALAN</span>
-                        <h2 class="fw-bold mb-1" style="color: #11756D;">Assalamu’alaikum, <?= htmlspecialchars(explode(' ', $siswa_name)[1] ?? $siswa_name) ?></h2>
-                        <p class="text-muted small mb-0">Sedikit demi sedikit, setiap ayat membawa kebaikan.</p>
+                        <h2 class="fw-bold mb-1" style="color: #11756D;">Assalamu’alaikum, <?= htmlspecialchars($nama_panggilan) ?></h2>
+                        <p class="text-muted small mb-0">Sedikit demi sedikit, setiap ayat membawa kebaikan dan keberkahan.</p>
                     </div>
                     <span class="badge bg-success text-white fw-bold px-3 py-2">Halaqah <?= htmlspecialchars($halaqah_name) ?></span>
                 </div>
 
-                <!-- 3 KPI Siswa Sesuai Image 20 & 21 -->
+                <!-- 3 KPI Siswa Terkoneksi Nyata ke MySQL -->
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-md-4">
                         <div class="kpi-card">
@@ -523,116 +853,117 @@ if (count($name_parts) >= 2) {
                                 <span class="small fw-bold text-muted">Total Hafalan</span>
                                 <i class="bi bi-book-half text-success fs-5"></i>
                             </div>
-                            <div class="fs-2 fw-bold text-dark">2 <span class="fs-6 text-muted fw-normal">juz</span></div>
-                            <small class="text-muted">Hafalan yang telah disetorkan</small>
+                            <div class="fs-2 fw-bold text-dark">
+                                <?= $total_surah_disetor ?> <span class="fs-6 text-muted fw-normal">surah</span>
+                            </div>
+                            <small class="text-muted"><?= $total_ayat_disetor ?> ayat telah disetorkan</small>
                         </div>
                     </div>
+
                     <div class="col-12 col-md-4">
                         <div class="kpi-card">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="small fw-bold text-muted">Capaian Target</span>
                                 <i class="bi bi-bullseye text-success fs-5"></i>
                             </div>
-                            <div class="fs-2 fw-bold text-success">60%</div>
-                            <small class="text-muted">18 dari 30 ayat sudah selesai</small>
+                            <div class="fs-2 fw-bold text-success"><?= $target_persen ?>%</div>
+                            <small class="text-muted">
+                                <?= $target_aktif ? "{$target_ayat_selesai} dari {$target_total_ayat} ayat target selesai" : "Target hafalan aktif belum diset" ?>
+                            </small>
                         </div>
                     </div>
+
                     <div class="col-12 col-md-4">
                         <div class="kpi-card">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="small fw-bold text-muted">Sisa Target</span>
                                 <i class="bi bi-clock-history text-warning fs-5"></i>
                             </div>
-                            <div class="fs-2 fw-bold text-warning">12 <span class="fs-6 text-muted fw-normal">ayat</span></div>
-                            <small class="text-muted">Al-Mulk ayat 19–30</small>
+                            <div class="fs-2 fw-bold text-warning">
+                                <?= $target_sisa_ayat ?> <span class="fs-6 text-muted fw-normal">ayat</span>
+                            </div>
+                            <small class="text-muted"><?= htmlspecialchars($target_sisa_teks) ?></small>
                         </div>
                     </div>
                 </div>
 
-                <!-- Active Target Card & Next Step Persis Image 21 -->
+                <!-- Kartu Target Hafalan Aktif & Langkah Selanjutnya -->
                 <div class="row g-4 mb-4">
                     <div class="col-12 col-lg-8">
-                        <div class="card p-4 border-0 shadow-sm h-100" style="border-left: 4px solid #059669 !important;">
+                        <div class="card p-4 border-0 shadow-sm h-100 bg-white rounded-4" style="border-left: 4px solid #059669 !important;">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="small fw-bold text-muted text-uppercase">Target Hafalan Minggu Ini</span>
-                                <span class="badge bg-success-subtle text-success fw-bold">Aktif</span>
+                                <span class="small fw-bold text-muted text-uppercase">Target Hafalan Periode Ini</span>
+                                <?php if ($target_aktif): ?>
+                                    <span class="badge bg-success-subtle text-success fw-bold">Aktif</span>
+                                <?php else: ?>
+                                    <span class="badge bg-light text-secondary border">Belum Ditetapkan</span>
+                                <?php endif; ?>
                             </div>
-                            <h4 class="fw-bold mb-1" style="color: #11756D;">Surah Al-Mulk</h4>
-                            <p class="small text-muted mb-3">Ayat 1–30 · Juz 29 | Periode: 1–15 November 2026</p>
+                            <h4 class="fw-bold mb-1" style="color: #11756D;"><?= htmlspecialchars($target_judul) ?></h4>
+                            <p class="small text-muted mb-3"><?= htmlspecialchars($target_sub) ?></p>
                             
                             <div class="progress mb-2" style="height: 10px;">
-                                <div class="progress-bar bg-success" style="width: 60%;"></div>
+                                <div class="progress-bar bg-success" style="width: <?= $target_persen ?>%;"></div>
                             </div>
                             <div class="d-flex justify-content-between small fw-bold">
-                                <span class="text-muted">18 dari 30 ayat selesai</span>
-                                <span class="text-success">60%</span>
+                                <span class="text-muted"><?= $target_ayat_selesai ?> dari <?= $target_total_ayat ?> ayat selesai</span>
+                                <span class="text-success"><?= $target_persen ?>%</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-12 col-lg-4">
-                        <div class="card p-4 border-0 shadow-sm h-100" style="background-color: #F4F7F6;">
+                        <div class="card p-4 border-0 shadow-sm h-100 rounded-4" style="background-color: #F4F7F6; border: 1px solid #E2E8F0;">
                             <span class="badge bg-success text-white fw-bold mb-2 align-self-start">LANGKAH SELANJUTNYA</span>
-                            <h5 class="fw-bold text-dark mb-2">Lanjutkan ayat 19–24</h5>
+                            <h5 class="fw-bold text-dark mb-2"><?= htmlspecialchars($target_langkah) ?></h5>
                             <p class="small text-muted mb-3">
-                                Ulangi hafalan sebelumnya, lalu siapkan 6 ayat berikutnya untuk disimak oleh ustadz pembimbing.
+                                <?= htmlspecialchars($target_langkah_sub) ?>
                             </p>
                             <div class="small text-muted pt-2 border-top border-success border-opacity-25 mt-auto">
-                                Pembimbing: <strong>Ust. Rival Alvian Melfandy</strong>
+                                Pembimbing: <strong><?= htmlspecialchars($nama_ustadz_pembimbing) ?></strong>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Setoran Terakhir Table Persis Image 20 & 21 -->
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <!-- Setoran Terakhir Siswa (Data Riil MySQL) -->
+                <div class="card border-0 shadow-sm bg-white rounded-4 overflow-hidden">
+                    <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
                         <h5 class="fw-bold mb-0" style="color: #11756D;">Setoran Terakhir</h5>
-                        <a href="?tab=riwayat" class="small fw-semibold text-decoration-none">Lihat Semua Riwayat →</a>
+                        <a href="?tab=riwayat" class="small fw-semibold text-decoration-none" style="color: #059669;">Lihat Semua Riwayat →</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light small">
                                 <tr>
-                                    <th>Tanggal</th>
+                                    <th class="ps-4">Tanggal</th>
                                     <th>Surah / Ayat</th>
                                     <th>Kategori</th>
-                                    <th>Nilai</th>
-                                    <th>Guru Penerima</th>
+                                    <th>Kualitas</th>
+                                    <th class="pe-4">Guru Penerima</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if (!empty($siswa_setoran)): ?>
                                     <?php foreach (array_slice($siswa_setoran, 0, 5) as $set): ?>
                                     <tr>
-                                        <td><?= !empty($set['tanggal_setor']) ? date('d M Y', strtotime($set['tanggal_setor'])) : date('d M Y') ?></td>
+                                        <td class="ps-4 small fw-medium text-muted"><?= format_tgl_indo($set['tanggal_setor'] ?? '') ?></td>
                                         <td><strong>Surah <?= htmlspecialchars($set['surah']) ?> · Ayat <?= htmlspecialchars($set['ayat_awal']) ?>–<?= htmlspecialchars($set['ayat_akhir']) ?></strong></td>
                                         <td><span class="badge bg-success-subtle text-success">Hafalan Baru</span></td>
-                                        <td><strong class="text-success"><?= htmlspecialchars($set['nilai']) ?> / 100</strong> <small class="text-muted">(<?= htmlspecialchars($set['kualitas']) ?>)</small></td>
-                                        <td><?= htmlspecialchars($set['nama_ustadz']) ?></td>
+                                        <td>
+                                            <span class="badge <?= (stripos($set['kualitas'], 'kurang') !== false || stripos($set['kualitas'], 'penguatan') !== false) ? 'bg-warning-subtle text-warning-emphasis' : 'bg-success-subtle text-success' ?> rounded-pill px-2.5 py-1 fw-semibold">
+                                                <?= htmlspecialchars($set['kualitas'] ?: 'Lancar') ?>
+                                            </span>
+                                        </td>
+                                        <td class="pe-4 text-muted small"><?= htmlspecialchars($set['nama_ustadz'] ?: $nama_ustadz_pembimbing) ?></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td>5 Nov 2026</td>
-                                        <td><strong>Al-Mulk · Ayat 13–18</strong></td>
-                                        <td><span class="badge bg-success-subtle text-success">Hafalan Baru</span></td>
-                                        <td><strong class="text-success">90 / 100</strong></td>
-                                        <td>Ust. Rival Alvian Melfandy</td>
-                                    </tr>
-                                    <tr>
-                                        <td>4 Nov 2026</td>
-                                        <td><strong>Al-Mulk · Ayat 7–12</strong></td>
-                                        <td><span class="badge bg-success-subtle text-success">Hafalan Baru</span></td>
-                                        <td><strong class="text-success">88 / 100</strong></td>
-                                        <td>Ust. Rival Alvian Melfandy</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3 Nov 2026</td>
-                                        <td><strong>Al-Mulk · Ayat 1–6</strong></td>
-                                        <td><span class="badge bg-success-subtle text-success">Hafalan Baru</span></td>
-                                        <td><strong class="text-success">92 / 100</strong></td>
-                                        <td>Ust. Rival Alvian Melfandy</td>
+                                        <td colspan="5" class="text-center py-4 text-muted small">
+                                            <i class="bi bi-inbox fs-4 d-block mb-1"></i>
+                                            Belum ada setoran hafalan yang dicatat.
+                                        </td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
@@ -640,7 +971,10 @@ if (count($name_parts) >= 2) {
                     </div>
                 </div>
 
-            <!-- SUBPAGE 2: RIWAYAT HAFALAN & CATATAN USTADZ (SESUAI IMAGE 22 & 23) -->
+            <!-- ══════════════════════════════════════════════════════════
+                 SUBPAGE 2: RIWAYAT HAFALAN & FEED MASUKAN USTADZ
+                 (Layout 2 Kolom + Filter Kategori + Modal Detail Pop-up)
+            ══════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'riwayat'): ?>
                 <div class="mb-4">
                     <span class="badge bg-success-subtle text-success fw-bold px-3 py-1 mb-2">PERJALANAN HAFALAN</span>
@@ -649,96 +983,194 @@ if (count($name_parts) >= 2) {
                 </div>
 
                 <div class="row g-4">
-                    <!-- Tabel Setoran Sesuai Image 22 -->
+                    <!-- KOLOM KIRI: TABEL SETORAN & MURAJAAH (SESUAI KONSEP TEMAN + ELEGAN) -->
                     <div class="col-12 col-lg-7">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-header bg-white py-3">
-                                <h6 class="fw-bold mb-0" style="color: #11756D;">Daftar Setoran &amp; Murajaah</h6>
+                        <div class="card border-0 shadow-sm bg-white rounded-4 overflow-hidden h-100">
+                            
+                            <!-- Header & Filter Kategori -->
+                            <div class="card-header bg-white py-3 px-4 border-bottom">
+                                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                                    <h6 class="fw-bold mb-0" style="color: #11756D;">Daftar Setoran &amp; Murajaah</h6>
+                                    <span class="small text-muted"><?= count($riwayat_gabungan) ?> Riwayat Ditemukan</span>
+                                </div>
+                                
+                                <!-- Filter Pills -->
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-sm btn-filter-pill active" onclick="filterRiwayat('semua', this)">
+                                        Semua <span class="badge rounded-pill bg-light text-dark ms-1"><?= count($riwayat_gabungan) ?></span>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-filter-pill" onclick="filterRiwayat('Setoran', this)">
+                                        <i class="bi bi-journal-check me-1"></i>Setoran <span class="badge rounded-pill bg-success-subtle text-success ms-1"><?= count($siswa_setoran) ?></span>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-filter-pill" onclick="filterRiwayat('Murajaah', this)">
+                                        <i class="bi bi-arrow-repeat me-1"></i>Murajaah <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis ms-1"><?= count($siswa_murajaah) ?></span>
+                                    </button>
+                                </div>
                             </div>
+
+                            <!-- Tabel Riwayat -->
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0 small">
-                                    <thead class="table-light">
+                                <table class="table table-hover align-middle mb-0" id="tabelRiwayat">
+                                    <thead class="table-light small">
                                         <tr>
-                                            <th>No</th>
-                                            <th>Tanggal</th>
-                                            <th>Jenis</th>
+                                            <th class="ps-4">Tanggal</th>
                                             <th>Surah / Ayat</th>
-                                            <th>Nilai</th>
+                                            <th>Kualitas Hafalan</th>
+                                            <th>Kategori</th>
+                                            <th class="text-center pe-4">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>01</td>
-                                            <td>5 Nov 2026</td>
-                                            <td><span class="badge bg-success-subtle text-success">Setoran</span></td>
-                                            <td><strong>Al-Mulk · 13–18</strong></td>
-                                            <td><strong class="text-success">90 / 100</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td>02</td>
-                                            <td>4 Nov 2026</td>
-                                            <td><span class="badge bg-success-subtle text-success">Setoran</span></td>
-                                            <td><strong>Al-Mulk · 7–12</strong></td>
-                                            <td><strong class="text-success">88 / 100</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td>03</td>
-                                            <td>2 Nov 2026</td>
-                                            <td><span class="badge bg-warning-subtle text-warning">Murajaah</span></td>
-                                            <td><strong>An-Naba' · 1–20</strong></td>
-                                            <td><strong class="text-success">90 / 100</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td>04</td>
-                                            <td>1 Nov 2026</td>
-                                            <td><span class="badge bg-warning-subtle text-warning">Murajaah</span></td>
-                                            <td><strong>'Abasa · 1–16</strong></td>
-                                            <td><strong class="text-success">90 / 100</strong></td>
-                                        </tr>
+                                        <?php if (!empty($riwayat_gabungan)): ?>
+                                            <?php foreach ($riwayat_gabungan as $row): ?>
+                                            <tr class="row-riwayat" data-kategori="<?= htmlspecialchars($row['jenis']) ?>">
+                                                <td class="ps-4 text-muted small fw-medium"><?= htmlspecialchars($row['tanggal']) ?></td>
+                                                <td>
+                                                    <div class="fw-bold text-dark"><?= htmlspecialchars($row['surah']) ?></div>
+                                                    <div class="text-muted small"><?= htmlspecialchars($row['ayat']) ?></div>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                        $kBadge = 'bg-success-subtle text-success border border-success-subtle';
+                                                        if (stripos($row['kualitas'], 'kurang') !== false || stripos($row['kualitas'], 'penguatan') !== false) {
+                                                            $kBadge = 'bg-warning-subtle text-warning-emphasis border border-warning-subtle';
+                                                        }
+                                                    ?>
+                                                    <span class="badge <?= $kBadge ?> rounded-pill px-2.5 py-1 fw-semibold small">
+                                                        <?= htmlspecialchars($row['kualitas']) ?>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge <?= $row['jenis'] === 'Setoran' ? 'bg-success-subtle text-success' : 'bg-primary-subtle text-primary' ?> rounded-pill px-2.5 py-1 fw-semibold small">
+                                                        <?= htmlspecialchars($row['jenis']) ?>
+                                                    </span>
+                                                </td>
+                                                <td class="text-center pe-4">
+                                                    <button type="button" class="btn-icon-eye" 
+                                                            onclick="bukaModalDetailRiwayat('<?= htmlspecialchars(addslashes($row['tanggal'])) ?>', '<?= htmlspecialchars(addslashes($row['surah'] . ' · ' . $row['ayat'])) ?>', '<?= htmlspecialchars(addslashes($row['jenis'])) ?>', '<?= htmlspecialchars(addslashes($row['kualitas'])) ?>', '<?= htmlspecialchars(addslashes($row['ustadz'])) ?>', '<?= htmlspecialchars(addslashes($row['catatan'])) ?>')"
+                                                            title="Buka Detail Riwayat">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr id="rowEmptyRiwayat">
+                                                <td colspan="5" class="text-center py-5 text-muted small">
+                                                    <i class="bi bi-journal-x fs-2 d-block mb-2 text-secondary"></i>
+                                                    <h6 class="fw-bold text-dark mb-1">Belum Ada Riwayat</h6>
+                                                    <p class="small text-muted mb-0">Riwayat setoran dan murajaah antum akan tampil di sini setelah disimak oleh Ustadz.</p>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Feed Catatan Guru Sesuai Image 23 -->
+                    <!-- KOLOM KANAN: MASUKAN DARI USTADZ PEMBIMBING (DATA RIIL DARI MYSQL) -->
                     <div class="col-12 col-lg-5">
-                        <div class="card border-0 shadow-sm p-4">
-                            <h6 class="fw-bold mb-3" style="color: #11756D;">Masukan dari Ustadz Pembimbing</h6>
-                            
-                            <div class="p-3 rounded-3 mb-3" style="background:#F4F7F6; border-left: 3px solid #059669;">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <strong class="small text-dark">Ust. Rival Alvian Melfandy</strong>
-                                    <small class="text-muted">5 Nov 2026</small>
-                                </div>
-                                <p class="small text-muted mb-2">
-                                    "Hafalan sudah lancar. Perhatikan panjang mad pada ayat 15 dan 16. Ulangi perlahan sebelum melanjutkan ke ayat berikutnya."
-                                </p>
-                                <span class="badge bg-success-subtle text-success small">Fokus: Panjang mad</span>
+                        <div class="card border-0 shadow-sm p-4 h-100 bg-white rounded-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                                <h6 class="fw-bold mb-0" style="color: #11756D;">Masukan dari Ustadz Pembimbing</h6>
+                                <span class="badge bg-light text-muted border"><?= count($daftar_masukan) ?> Catatan</span>
                             </div>
 
-                            <div class="p-3 rounded-3" style="background:#F4F7F6; border-left: 3px solid #059669;">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <strong class="small text-dark">Ust. Rival Alvian Melfandy</strong>
-                                    <small class="text-muted">4 Nov 2026</small>
+                            <?php if (!empty($daftar_masukan)): ?>
+                                <div class="d-flex flex-column gap-3 overflow-auto" style="max-height: 520px; padding-right: 4px;">
+                                    <?php foreach ($daftar_masukan as $m): ?>
+                                    <div class="p-3 rounded-3" style="background:#F8FAFC; border: 1px solid #E2E8F0; border-left: 4px solid #10B981;">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <div class="d-flex align-items-center gap-1.5">
+                                                <i class="bi bi-person-fill text-success"></i>
+                                                <strong class="small text-dark"><?= htmlspecialchars($m['ustadz']) ?></strong>
+                                            </div>
+                                            <small class="text-muted" style="font-size: 0.75rem;"><?= htmlspecialchars($m['tanggal']) ?></small>
+                                        </div>
+                                        <div class="mb-2">
+                                            <span class="badge bg-success-subtle text-success small" style="font-size: 0.72rem;">
+                                                <?= htmlspecialchars($m['surah']) ?> (<?= htmlspecialchars($m['ayat']) ?>)
+                                            </span>
+                                        </div>
+                                        <p class="small text-secondary mb-0 fst-italic" style="line-height: 1.5;">
+                                            "<?= htmlspecialchars($m['catatan']) ?>"
+                                        </p>
+                                    </div>
+                                    <?php endforeach; ?>
                                 </div>
-                                <p class="small text-muted mb-2">
-                                    "Alhamdulillah ada peningkatan. Latih kembali makhraj huruf 'ain agar pelafalannya semakin jelas."
-                                </p>
-                                <span class="badge bg-success-subtle text-success small">Fokus: Makhraj huruf</span>
+                            <?php else: ?>
+                                <div class="text-center py-5 my-auto text-muted">
+                                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3" style="width: 56px; height: 56px; background: #E6F4F1; color: #11756D;">
+                                        <i class="bi bi-chat-quote-fill fs-3"></i>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-1">Belum Ada Catatan Khusus</h6>
+                                    <p class="small text-muted mb-0">Ustadz pembimbing belum memberikan catatan tajwid atau evaluasi khusus pada sesi setoran.</p>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- POP-UP MODAL: DETAIL RIWAYAT HAFALAN (SESUAI FOTO REFERENSI TEMAN) -->
+                <div class="modal fade" id="modalDetailRiwayat" tabindex="-1" aria-labelledby="modalDetailRiwayatLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                            <div class="modal-header border-bottom py-3 px-4" style="background: #EBF8F5;">
+                                <div>
+                                    <h6 class="modal-title fw-bold text-dark d-flex align-items-center gap-2 mb-0" id="modalDetailRiwayatLabel">
+                                        <i class="bi bi-card-checklist" style="color: #11756D; font-size: 1.25rem;"></i>Detail Riwayat Hafalan
+                                    </h6>
+                                    <small class="text-muted" style="font-size: 0.8rem;">Informasi lengkap sesi setoran atau murajaah.</small>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <label class="small text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">Tanggal</label>
+                                        <span id="mdlTanggal" class="fw-semibold text-dark">-</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="small text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">Jenis / Kategori</label>
+                                        <span id="mdlJenis" class="badge bg-success-subtle text-success rounded-pill px-3 py-1">Setoran</span>
+                                    </div>
+                                    <div class="col-12 border-top pt-2">
+                                        <label class="small text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">Surah / Ayat</label>
+                                        <h6 id="mdlSurahAyat" class="fw-bold mb-0" style="color: #11756D;">-</h6>
+                                    </div>
+                                    <div class="col-6 border-top pt-2">
+                                        <label class="small text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">Kualitas Hafalan</label>
+                                        <span id="mdlKualitas" class="badge bg-light text-dark rounded-pill px-3 py-1">-</span>
+                                    </div>
+                                    <div class="col-6 border-top pt-2">
+                                        <label class="small text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">Ustadz Pembimbing</label>
+                                        <span id="mdlUstadz" class="fw-semibold text-dark">-</span>
+                                    </div>
+                                    <div class="col-12 border-top pt-2">
+                                        <label class="small text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">Catatan Ustadz / Guru</label>
+                                        <div id="mdlCatatanBox" class="p-3 rounded-3 mt-1" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-left: 3px solid #10B981;">
+                                            <p id="mdlCatatanText" class="small mb-0 text-secondary" style="line-height: 1.6;">-</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0 bg-light py-2.5 px-4 justify-content-end">
+                                <button type="button" class="btn btn-secondary rounded-3 px-4 py-1.5 fw-semibold small" data-bs-dismiss="modal">
+                                    <i class="bi bi-x-circle me-1"></i>Tutup
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-            <!-- ═══════════════════════════════════════════════════════════
+            <!-- ══════════════════════════════════════════════════════════
                  SUBPAGE 3: PROFIL PRIBADI SISWA & KEAMANAN AKUN
-                 (Desain Bersih, Elegan, dan Seragam Standar 2 Kolom)
-            ════════════════════════════════════════════════════════════ -->
+            ══════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'profil'): ?>
                 <div class="mb-3">
-                    <h1 class="profil-page-title mb-1">Profil Pribadi</h1>
-                    <p class="profil-page-subtitle mb-0">Informasi diri dan keamanan akun siswa Anda.</p>
+                    <h1 class="profil-page-title mb-1" style="font-size: 24px; font-weight: 800; color: #0F172A;">Profil Pribadi</h1>
+                    <p class="profil-page-subtitle mb-0" style="color: #64748B;">Informasi diri dan keamanan akun siswa Anda.</p>
                 </div>
 
                 <!-- 1. HERO IDENTITY CARD (KARTU PROFIL PUTIH MODERN) -->
@@ -749,7 +1181,7 @@ if (count($name_parts) >= 2) {
                         <div class="d-flex align-items-center gap-3">
                             <div class="flex-shrink-0" 
                                  style="width: 64px; height: 64px; border-radius: 14px; background: #E6F4F1; color: #11756D; font-weight: 700; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(17, 117, 109, 0.1);">
-                                <?= strtoupper(substr($siswa_name, 0, 1) . substr(explode(' ', $siswa_name)[1] ?? '', 0, 1)) ?>
+                                <?= htmlspecialchars($siswa_initials) ?>
                             </div>
                             <div>
                                 <h3 class="fw-bold mb-0" style="font-size: 20px; color: #0F172A; line-height: 1.3;"><?= htmlspecialchars($siswa_name) ?></h3>
@@ -759,7 +1191,7 @@ if (count($name_parts) >= 2) {
                                         <i class="bi bi-diagram-3-fill me-1"></i>Halaqah <?= htmlspecialchars($halaqah_name) ?>
                                     </span>
                                     <span class="badge rounded-pill fw-semibold" style="background: #F1F5F9; color: #475569; font-size: 12px; padding: 5px 12px;">
-                                        <i class="bi bi-person-badge-fill me-1"></i>Ust. Rival Alvian Melfandy
+                                        <i class="bi bi-person-badge-fill me-1"></i><?= htmlspecialchars($nama_ustadz_pembimbing) ?>
                                     </span>
                                 </div>
                             </div>
@@ -768,16 +1200,16 @@ if (count($name_parts) >= 2) {
                         <!-- Statistik Singkat Capaian Siswa -->
                         <div class="d-flex gap-2 text-center align-items-center mt-3 mt-md-0">
                             <div class="px-3 py-2 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0; min-width: 85px;">
-                                <div class="fw-bold" style="font-size: 18px; color: #11756D;">2 Juz</div>
-                                <small class="text-muted fw-semibold" style="font-size: 11px;">Mutqin</small>
+                                <div class="fw-bold" style="font-size: 18px; color: #11756D;"><?= $total_surah_disetor ?> Surah</div>
+                                <small class="text-muted fw-semibold" style="font-size: 11px;">Hafalan</small>
                             </div>
                             <div class="px-3 py-2 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0; min-width: 85px;">
-                                <div class="fw-bold" style="font-size: 18px; color: #D97706;">60%</div>
-                                <small class="text-muted fw-semibold" style="font-size: 11px;">Target</small>
+                                <div class="fw-bold" style="font-size: 18px; color: #D97706;"><?= $target_persen ?>%</div>
+                                <small class="text-muted fw-semibold" style="font-size: 11px;">Capaian Target</small>
                             </div>
                             <div class="px-3 py-2 rounded-3" style="background: #F8FAFC; border: 1px solid #E2E8F0; min-width: 85px;">
-                                <div class="fw-bold" style="font-size: 18px; color: #0F172A;">90</div>
-                                <small class="text-muted fw-semibold" style="font-size: 11px;">Rata-rata</small>
+                                <div class="fw-bold" style="font-size: 18px; color: #0F172A;"><?= count($siswa_murajaah) ?></div>
+                                <small class="text-muted fw-semibold" style="font-size: 11px;">Murajaah</small>
                             </div>
                         </div>
 
@@ -821,12 +1253,12 @@ if (count($name_parts) >= 2) {
                                 <div class="col-12 col-md-6">
                                     <div class="profil-field mb-0">
                                         <label class="profil-label">Ustadz Pembimbing</label>
-                                        <input type="text" class="profil-input" value="Ust. Rival Alvian Melfandy" readonly>
+                                        <input type="text" class="profil-input" value="<?= htmlspecialchars($nama_ustadz_pembimbing) ?>" readonly>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="profil-actions mt-auto pt-2">
+                            <div class="profil-actions mt-auto pt-3">
                                 <button type="submit" class="profil-btn profil-btn-primary">
                                     <i class="bi bi-floppy"></i>Simpan Biodata Siswa
                                 </button>
@@ -879,7 +1311,7 @@ if (count($name_parts) >= 2) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// ── Sidebar mobile ───────────────────────────────────────────
+// ── Sidebar Mobile ──────────────────────────────────────────────────
 function openSidebar() {
     document.getElementById('siswaSidebar').classList.add('open');
     document.getElementById('sbOverlay').classList.add('open');
@@ -890,12 +1322,84 @@ function closeSidebar() {
     document.getElementById('sbOverlay').classList.remove('open');
     document.body.style.overflow = '';
 }
-
-// Tutup sidebar ketika layar diperbesar ke desktop
 window.addEventListener('resize', () => {
     if (window.innerWidth >= 992) closeSidebar();
 });
+
+// ── Filter Riwayat Hafalan (Semua / Setoran / Murajaah) ──────────────
+function filterRiwayat(kategori, btnEl) {
+    // Update tombol aktif
+    document.querySelectorAll('.btn-filter-pill').forEach(b => b.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+
+    const rows = document.querySelectorAll('.row-riwayat');
+    let visibleCount = 0;
+
+    rows.forEach(r => {
+        const rowKat = r.getAttribute('data-kategori');
+        if (kategori === 'semua' || rowKat === kategori) {
+            r.style.display = '';
+            visibleCount++;
+        } else {
+            r.style.display = 'none';
+        }
+    });
+
+    const emptyRow = document.getElementById('rowEmptyRiwayat');
+    if (emptyRow) {
+        emptyRow.style.display = visibleCount === 0 ? '' : 'none';
+    }
+}
+
+// ── Pop-up Modal Detail Riwayat Hafalan ──────────────────────────────
+let modalDetailInst = null;
+function bukaModalDetailRiwayat(tanggal, surahAyat, jenis, kualitas, ustadz, catatan) {
+    document.getElementById('mdlTanggal').innerText = tanggal || '-';
+    document.getElementById('mdlSurahAyat').innerText = surahAyat || '-';
+    
+    // Badge Jenis
+    const elJenis = document.getElementById('mdlJenis');
+    if (elJenis) {
+        elJenis.innerText = jenis || 'Setoran';
+        elJenis.className = jenis === 'Setoran' ? 'badge bg-success-subtle text-success rounded-pill px-3 py-1' : 'badge bg-primary-subtle text-primary rounded-pill px-3 py-1';
+    }
+
+    // Badge Kualitas
+    const elKual = document.getElementById('mdlKualitas');
+    if (elKual) {
+        elKual.innerText = kualitas || '-';
+        if ((kualitas || '').toLowerCase().includes('kurang') || (kualitas || '').toLowerCase().includes('penguatan')) {
+            elKual.className = 'badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill px-3 py-1';
+        } else {
+            elKual.className = 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1';
+        }
+    }
+
+    document.getElementById('mdlUstadz').innerText = ustadz || 'Ust. Rival Alvian Melfandy';
+    
+    // Catatan
+    const elCatText = document.getElementById('mdlCatatanText');
+    const elCatBox  = document.getElementById('mdlCatatanBox');
+    if (catatan && catatan.trim() !== '') {
+        elCatText.innerText = `"${catatan.trim()}"`;
+        elCatText.classList.remove('text-muted');
+        elCatText.classList.add('text-dark', 'fst-italic');
+        elCatBox.style.borderLeftColor = '#10B981';
+    } else {
+        elCatText.innerText = 'Tidak ada catatan tambahan dari ustadz pembimbing.';
+        elCatText.classList.remove('text-dark', 'fst-italic');
+        elCatText.classList.add('text-muted');
+        elCatBox.style.borderLeftColor = '#CBD5E1';
+    }
+
+    const modalEl = document.getElementById('modalDetailRiwayat');
+    if (modalEl) {
+        if (!modalDetailInst) {
+            modalDetailInst = new bootstrap.Modal(modalEl);
+        }
+        modalDetailInst.show();
+    }
+}
 </script>
 </body>
 </html>
-

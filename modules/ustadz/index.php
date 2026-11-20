@@ -1383,7 +1383,7 @@ border-left: 5px solid #11756D !important;
                 (function () {
                     const MUSHAF_MOCK = {
                         'adh-dhuha': {
-                            no: 93, nama: 'Adh-Dhuha', arab: '?????', arti: 'Duha', jumlah: 11, golongan: 'Makkiyah',
+                            no: 93, nama: 'Adh-Dhuha', arab: 'الضحى', arti: 'Duha', jumlah: 11, golongan: 'Makkiyah',
                             ayat: [
                                 { arab: '???????????', latin: 'Wa?-?u?a.', arti: 'Demi waktu duha' },
                                 { arab: '??????????? ????? ??????', latin: 'Wal-laili iza saja.', arti: 'dan demi waktu malam apabila telah sunyi' },
@@ -1399,7 +1399,7 @@ border-left: 5px solid #11756D !important;
                             ]
                         },
                         'al-insyirah': {
-                            no: 94, nama: 'Al-Insyirah', arab: '?????', arti: 'Kelapangan', jumlah: 8, golongan: 'Makkiyah',
+                            no: 94, nama: 'Al-Insyirah', arab: 'الشرح', arti: 'Kelapangan', jumlah: 8, golongan: 'Makkiyah',
                             ayat: [
                                 { arab: '?????? ???????? ???? ????????', latin: 'Alam nasyra? laka ?adrak.', arti: 'Bukankah Kami telah melapangkan dadamu (Muhammad)?' },
                                 { arab: '??????????? ????? ????????', latin: 'Wa wa?ana anka wizrak.', arti: 'dan Kami pun telah menurunkan bebanmu darimu' },
@@ -1412,7 +1412,7 @@ border-left: 5px solid #11756D !important;
                             ]
                         },
                         'at-tin': {
-                            no: 95, nama: 'At-Tin', arab: '?????', arti: 'Buah Tin', jumlah: 8, golongan: 'Makkiyah',
+                            no: 95, nama: 'At-Tin', arab: 'التين', arti: 'Buah Tin', jumlah: 8, golongan: 'Makkiyah',
                             ayat: [
                                 { arab: '?????????? ??????????????', latin: 'Wat-tini waz-zaitun.', arti: 'Demi (buah) Tin dan (buah) Zaitun' },
                                 { arab: '??????? ????????', latin: 'Wa ?uri sinin.', arti: 'demi gunung Sinai' },
@@ -1425,7 +1425,7 @@ border-left: 5px solid #11756D !important;
                             ]
                         },
                         'al-alaq': {
-                            no: 96, nama: "Al-'Alaq", arab: '?????', arti: 'Segumpal Darah', jumlah: 19, golongan: 'Makkiyah',
+                            no: 96, nama: "Al-'Alaq", arab: 'العلق', arti: 'Segumpal Darah', jumlah: 19, golongan: 'Makkiyah',
                             ayat: [
                                 { arab: '??????? ??????? ??????? ??????? ??????', latin: 'Iqra bismi rabbikal-lazi khalaq.', arti: 'Bacalah dengan (menyebut) nama Tuhanmu yang menciptakan' },
                                 { arab: '?????? ??????????? ???? ??????', latin: 'Khalaqal-insana min alaq.', arti: 'Dia telah menciptakan manusia dari segumpal darah' },
@@ -1449,7 +1449,7 @@ border-left: 5px solid #11756D !important;
                             ]
                         },
                         'al-qadr': {
-                            no: 97, nama: 'Al-Qadr', arab: '?????', arti: 'Kemuliaan', jumlah: 5, golongan: 'Makkiyah',
+                            no: 97, nama: 'Al-Qadr', arab: 'القدر', arti: 'Kemuliaan', jumlah: 5, golongan: 'Makkiyah',
                             ayat: [
                                 { arab: '?????? ???????????? ??? ???????? ?????????', latin: 'Inna anzalnahu fi lailatil-qadr.', arti: 'Sesungguhnya Kami telah menurunkannya (Al-Quran) pada malam qadar' },
                                 { arab: '????? ????????? ??? ???????? ?????????', latin: 'Wa ma adraka ma lailatul-qadr.', arti: 'Dan tahukah kamu apakah malam kemuliaan itu?' },
@@ -1505,7 +1505,7 @@ border-left: 5px solid #11756D !important;
                             return '<tr>'
                                 + '<td style="color:#94A3B8;font-size:13px;">' + (indeks + 1) + '.</td>'
                                 + '<td><div class="hafalan-surah-cell">'
-                                + '<span class="hafalan-surah-nama">' + escHtml(meta.nama) + ' &ndash; <span class="hafalan-arab">' + meta.arab + '</span></span>'
+                                + '<span class="hafalan-surah-nama">' + escHtml(meta.nama) + (meta.arab && !meta.arab.includes('?') ? ' &ndash; <span class="hafalan-arab">' + meta.arab + '</span>' : '') + '</span>'
                                 + '<button type="button" class="btn-baca-ayat" data-aksi="baca" data-key="' + item.key + '" aria-label="Baca Surah ' + escHtml(meta.nama) + '"><i class="bi bi-book"></i></button>'
                                 + '</div></td>'
                                 + '<td style="color:#64748B;font-size:13.5px;">Ayat 1\u2013' + meta.jumlah + '</td>'
@@ -2249,30 +2249,170 @@ border-left: 5px solid #11756D !important;
             ════════════════════════════════════════════════════════════ -->
             <?php elseif ($page_tab === 'rekap'): ?>
 <?php
-// ── Data Rekap per Siswa (Fallback lengkap untuk tampilan) ──
-$rekap_data = [
-    '102601' => ['capaian' => 60, 'tgl_setor' => '15 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Mulk (Ayat 13–18)', 'target' => 'Surah Al-Mulk (Ayat 1–30)', 'ayat_hafal' => 18, 'ayat_total' => 30, 'catatan' => 'Bacaan makhraj dan mad sudah baik, perlu mengulang kelancaran sambungan ayat 15–18 sebelum lanjut ke ayat berikutnya.', 'riwayat' => [['tgl'=>'15 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 13–18','status'=>'Lancar'],['tgl'=>'14 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Mulk: 7–12','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 1–6','status'=>'Lancar']]],
-    '102602' => ['capaian' => 75, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Mulk (Ayat 19–24)', 'target' => 'Surah Al-Mulk (Ayat 1–30)', 'ayat_hafal' => 24, 'ayat_total' => 30, 'catatan' => 'Irama tartil sangat stabil, perhatikan hukum ghunnah pada ayat 21.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 19–24','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Mulk: 13–18','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Mulk: 13–18','status'=>'Lancar']]],
-    '102603' => ['capaian' => 90, 'tgl_setor' => '12 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Qalam (Ayat 1–42)', 'target' => 'Surah Al-Qalam (Ayat 1–52)', 'ayat_hafal' => 42, 'ayat_total' => 52, 'catatan' => 'Hafalan sangat kuat dan mutqin, siap menyelesaikan 10 ayat terakhir pekan ini.', 'riwayat' => [['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Qalam: 36–42','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Qalam: 29–35','status'=>'Lancar'],['tgl'=>'8 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Qalam: 1–28','status'=>'Lancar']]],
-    '102604' => ['capaian' => 80, 'tgl_setor' => '15 Nov 2026', 'posisi' => 'Juz 30 • Surah An-Naba\' (Ayat 1–32)', 'target' => 'Surah An-Naba\' (Ayat 1–40)', 'ayat_hafal' => 32, 'ayat_total' => 40, 'catatan' => 'Kelancaran meningkat pesat, pertahankan murojaah sebelum tidur.', 'riwayat' => [['tgl'=>'15 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Naba: 27–32','status'=>'Lancar'],['tgl'=>'13 Nov 2026','jenis'=>'Murajaah','surah'=>'An-Naba: 1–26','status'=>'Lancar'],['tgl'=>'11 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Naba: 21–26','status'=>'Lancar']]],
-    '102605' => ['capaian' => 85, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 30 • Surah An-Nazi\'at (Ayat 1–39)', 'target' => 'Surah An-Nazi\'at (Ayat 1–46)', 'ayat_hafal' => 39, 'ayat_total' => 46, 'catatan' => 'Pelafalan huruf qalqalah sudah tepat, lanjutkan 7 ayat terakhir.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Nazi\'at: 34–39','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'An-Nazi\'at: 1–33','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'An-Nazi\'at: 28–33','status'=>'Lancar']]],
-    '102606' => ['capaian' => 50, 'tgl_setor' => '11 Nov 2026', 'posisi' => 'Juz 30 • Surah \'Abasa (Ayat 1–21)', 'target' => 'Surah \'Abasa (Ayat 1–42)', 'ayat_hafal' => 21, 'ayat_total' => 42, 'catatan' => 'Perlu menambah porsi murajaah ayat 10–21 agar tidak tertukar akhir ayatnya.', 'riwayat' => [['tgl'=>'11 Nov 2026','jenis'=>'Ziyadah','surah'=>'\'Abasa: 16–21','status'=>'Lancar'],['tgl'=>'9 Nov 2026','jenis'=>'Murajaah','surah'=>'\'Abasa: 1–15','status'=>'Lancar'],['tgl'=>'7 Nov 2026','jenis'=>'Ziyadah','surah'=>'\'Abasa: 10–15','status'=>'Lancar']]],
-    '102607' => ['capaian' => 95, 'tgl_setor' => '16 Nov 2026', 'posisi' => 'Juz 30 • Surah At-Takwir (Ayat 1–27)', 'target' => 'Surah At-Takwir (Ayat 1–29)', 'ayat_hafal' => 27, 'ayat_total' => 29, 'catatan' => 'Sangat lancar dan tajwid terjaga, tinggal 2 ayat penutup.', 'riwayat' => [['tgl'=>'16 Nov 2026','jenis'=>'Ziyadah','surah'=>'At-Takwir: 22–27','status'=>'Lancar'],['tgl'=>'14 Nov 2026','jenis'=>'Murajaah','surah'=>'At-Takwir: 1–21','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Ziyadah','surah'=>'At-Takwir: 15–21','status'=>'Lancar']]],
-    '102608' => ['capaian' => 65, 'tgl_setor' => '13 Nov 2026', 'posisi' => 'Juz 29 • Surah Al-Haqqah (Ayat 1–34)', 'target' => 'Surah Al-Haqqah (Ayat 1–52)', 'ayat_hafal' => 34, 'ayat_total' => 52, 'catatan' => 'Panjang pendek mad thabi\'i sudah bagus, tingkatkan kecepatan transisi antarayat.', 'riwayat' => [['tgl'=>'13 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Haqqah: 28–34','status'=>'Lancar'],['tgl'=>'11 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Haqqah: 1–27','status'=>'Lancar'],['tgl'=>'9 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Haqqah: 21–27','status'=>'Lancar']]],
-    '102609' => ['capaian' => 70, 'tgl_setor' => '14 Nov 2026', 'posisi' => 'Juz 30 • Surah Al-Infithar (Ayat 1–14)', 'target' => 'Surah Al-Infithar (Ayat 1–19)', 'ayat_hafal' => 14, 'ayat_total' => 19, 'catatan' => 'Hafalan baru lancar, terus ulangi surah-surah pendek sebelumnya.', 'riwayat' => [['tgl'=>'14 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Infithar: 10–14','status'=>'Lancar'],['tgl'=>'12 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Infithar: 1–9','status'=>'Lancar'],['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Infithar: 5–9','status'=>'Lancar']]],
-    '102610' => ['capaian' => 55, 'tgl_setor' => '10 Nov 2026', 'posisi' => 'Juz 30 • Surah Al-Muthaffifin (Ayat 1–20)', 'target' => 'Surah Al-Muthaffifin (Ayat 1–36)', 'ayat_hafal' => 20, 'ayat_total' => 36, 'catatan' => 'Fokus perbaiki waqaf dan ibtida pada ayat-ayat panjang.', 'riwayat' => [['tgl'=>'10 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Muthaffifin: 15–20','status'=>'Lancar'],['tgl'=>'8 Nov 2026','jenis'=>'Murajaah','surah'=>'Al-Muthaffifin: 1–14','status'=>'Lancar'],['tgl'=>'6 Nov 2026','jenis'=>'Ziyadah','surah'=>'Al-Muthaffifin: 8–14','status'=>'Lancar']]],
-];
+// ── DATA REKAP DINAMIS DARI DATABASE MYSQL ──
+// Tarik semua target aktif dari tabel target_hafalan
+$all_targets_rekap = [];
+if ($pdo) {
+    try {
+        $st_t = $pdo->query("SELECT * FROM target_hafalan WHERE status = 'Aktif' ORDER BY id DESC");
+        $all_targets_rekap = $st_t->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Throwable $e) {}
+}
+
+$rekap_data = [];
+$total_capaian_sum = 0;
+
+foreach ($santri_list as $s) {
+    $s_id = (int)$s['id'];
+    $s_nama = trim($s['nama_lengkap']);
+    $s_nis = trim($s['nip_nis']);
+    $lookup_key = !empty($s_nis) ? $s_nis : (string)$s_id;
+
+    // Filter seluruh setoran santri ini dari riwayat MySQL
+    $setoran_siswa = array_values(array_filter($riwayat_setoran, function($r) use ($s_id, $s_nama) {
+        return ((int)($r['siswa_id'] ?? 0) === $s_id) || (strcasecmp(trim($r['nama_siswa'] ?? ''), $s_nama) === 0);
+    }));
+
+    // Filter seluruh murajaah santri ini dari riwayat MySQL
+    $murajaah_siswa = array_values(array_filter($riwayat_murajaah, function($r) use ($s_id, $s_nama) {
+        return ((int)($r['siswa_id'] ?? 0) === $s_id) || (strcasecmp(trim($r['nama_siswa'] ?? ''), $s_nama) === 0);
+    }));
+
+    // Filter target aktif santri ini
+    $target_siswa = null;
+    foreach ($all_targets_rekap as $t) {
+        if ((int)($t['siswa_id'] ?? 0) === $s_id) {
+            $target_siswa = $t;
+            break;
+        }
+    }
+    if (!$target_siswa && !empty($all_targets_rekap)) {
+        foreach ($all_targets_rekap as $t) {
+            if (empty($t['siswa_id'])) {
+                $target_siswa = $t;
+                break;
+            }
+        }
+    }
+
+    // Posisi hafalan terakhir & tanggal setor
+    $posisi_teks = 'Belum Ada Setoran';
+    $tgl_setor_teks = '-';
+    $status_kualitas = 'Belum Setor';
+    $catatan_terakhir = '';
+
+    if (!empty($setoran_siswa)) {
+        $last_set = $setoran_siswa[0];
+        $posisi_teks = "Surah " . $last_set['surah'] . " (Ayat " . $last_set['ayat_awal'] . "–" . $last_set['ayat_akhir'] . ")";
+        $tgl_setor_teks = !empty($last_set['tanggal_setor']) ? date('d M Y', strtotime($last_set['tanggal_setor'])) : (!empty($last_set['created_at']) ? date('d M Y', strtotime($last_set['created_at'])) : date('d M Y'));
+        $status_kualitas = $last_set['kualitas'] ?: 'Lancar';
+
+        // Ambil catatan evaluasi tajwid terbaru yang ada isinya
+        foreach ($setoran_siswa as $st) {
+            if (!empty(trim($st['catatan'] ?? ''))) {
+                $catatan_terakhir = trim($st['catatan']);
+                break;
+            }
+        }
+    }
+
+    if (empty($catatan_terakhir)) {
+        foreach ($murajaah_siswa as $mr) {
+            if (!empty(trim($mr['catatan'] ?? ''))) {
+                $catatan_terakhir = trim($mr['catatan']);
+                break;
+            }
+        }
+    }
+    if (empty($catatan_terakhir)) {
+        $catatan_terakhir = 'Belum ada catatan evaluasi khusus dari ustadz pembimbing.';
+    }
+
+    // Target aktif & kalkulasi persentase capaian
+    $target_teks = 'Belum Ada Target Aktif';
+    $ayat_hafal = 0;
+    $ayat_total = 0;
+    $capaian_pct = 0;
+
+    if ($target_siswa) {
+        $s_awal = $target_siswa['surah_awal'] ?? '';
+        $s_akhir = $target_siswa['surah_akhir'] ?? '';
+        preg_match('/(?:Juz\s*\d+\s*[•·\-]\s*)?([A-Za-z\-\'\s]+)(?:\(Ayat\s*(\d+)[\–\-](\d+)\))?/u', $s_awal, $mAwal);
+        $namaSurahTarget = trim($mAwal[1] ?? $s_awal);
+        $startAyat = isset($mAwal[2]) ? (int)$mAwal[2] : 1;
+        $endAyat = isset($mAwal[3]) ? (int)$mAwal[3] : 7;
+        $ayat_total = max(1, $endAyat - $startAyat + 1);
+
+        // Cek progres setoran siswa pada target surah
+        $maxAyatDisetor = 0;
+        foreach ($setoran_siswa as $st) {
+            if (strcasecmp(trim($st['surah']), $namaSurahTarget) === 0 || stripos($st['surah'], $namaSurahTarget) !== false) {
+                $maxAyatDisetor = max($maxAyatDisetor, (int)$st['ayat_akhir']);
+            }
+        }
+        $ayat_hafal = min($ayat_total, $maxAyatDisetor);
+        $capaian_pct = min(100, round(($ayat_hafal / $ayat_total) * 100));
+        $target_teks = "Surah {$namaSurahTarget} (Ayat {$startAyat}–{$endAyat})";
+    } elseif (!empty($setoran_siswa)) {
+        $capaian_pct = 100;
+        $ayat_hafal = 1;
+        $ayat_total = 1;
+        $target_teks = "Selesai Surah " . $setoran_siswa[0]['surah'];
+    }
+
+    $total_capaian_sum += $capaian_pct;
+
+    // Riwayat gabungan untuk modal pop-up (Ziyadah & Murajaah)
+    $riwayat_modal = [];
+    foreach ($setoran_siswa as $st) {
+        $tgl = !empty($st['tanggal_setor']) ? date('d M Y', strtotime($st['tanggal_setor'])) : (!empty($st['created_at']) ? date('d M Y', strtotime($st['created_at'])) : date('d M Y'));
+        $riwayat_modal[] = [
+            'tgl'    => $tgl,
+            'jenis'  => 'Ziyadah',
+            'surah'  => $st['surah'] . ': ' . $st['ayat_awal'] . '–' . $st['ayat_akhir'],
+            'status' => $st['kualitas'] ?: 'Lancar'
+        ];
+    }
+    foreach ($murajaah_siswa as $mr) {
+        $tgl = !empty($mr['tanggal_murajaah']) ? date('d M Y', strtotime($mr['tanggal_murajaah'])) : (!empty($mr['created_at']) ? date('d M Y', strtotime($mr['created_at'])) : date('d M Y'));
+        $riwayat_modal[] = [
+            'tgl'    => $tgl,
+            'jenis'  => 'Murajaah',
+            'surah'  => $mr['surah'] . (!empty($mr['ayat_range']) ? ': ' . $mr['ayat_range'] : ''),
+            'status' => $mr['status_mutqin'] ?: 'Lancar'
+        ];
+    }
+
+    $rekap_item = [
+        'nis'          => $s_nis,
+        'nama'         => $s_nama,
+        'capaian'      => $capaian_pct,
+        'tgl_setor'    => $tgl_setor_teks,
+        'posisi'       => $posisi_teks,
+        'kualitas'     => $status_kualitas,
+        'target'       => $target_teks,
+        'ayat_hafal'   => $ayat_hafal,
+        'ayat_total'   => $ayat_total,
+        'catatan'      => $catatan_terakhir,
+        'riwayat'      => array_slice($riwayat_modal, 0, 15)
+    ];
+
+    $rekap_data[$lookup_key] = $rekap_item;
+    $rekap_data[$s_id] = $rekap_item;
+}
+
 $rekap_total_siswa = count($santri_list);
-$rekap_total_setoran = $total_setoran_count > 0 ? $total_setoran_count : 28;
-$rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
+$rekap_total_setoran = count($riwayat_setoran);
+$rekap_total_murajaah = count($riwayat_murajaah);
+$rekap_avg_capaian = $rekap_total_siswa > 0 ? round($total_capaian_sum / $rekap_total_siswa) : 0;
 ?>
                 <!-- Badge & Header -->
                 <div class="mb-4">
-                    <span class="badge px-3 py-2 fw-bold rounded-pill" style="background-color: #11756D; font-size: 11px; letter-spacing: 0.05em;">REKAPITULASI HALAQAH AL-FURQAN</span>
+                    <span class="badge px-3 py-2 fw-bold rounded-pill" style="background-color: #11756D; font-size: 11px; letter-spacing: 0.05em;">REKAPITULASI HALAQAH <?= strtoupper(htmlspecialchars($halaqah_name)) ?></span>
                     <h2 class="fw-bold mt-3 mb-1" style="color: #1E293B; font-size: 1.65rem;">Rekap Tahfiz Siswa Binaan</h2>
                     <p class="text-muted mb-0" style="font-size: 14px;">Ringkasan capaian target dan riwayat setoran hafalan siswa halaqah.</p>
                 </div>
-                <!-- 4 KPI Cards -->
+                <!-- 4 KPI Cards Dinamis dari MySQL -->
                 <div class="row g-3 mb-4">
                     <div class="col-lg-3 col-md-6">
                         <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:20px 22px; box-shadow:0 2px 10px rgba(0,0,0,0.04); border-left:4px solid #11756D;">
@@ -2285,7 +2425,7 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                         <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:20px 22px; box-shadow:0 2px 10px rgba(0,0,0,0.04); border-left:4px solid #11756D;">
                             <div class="text-uppercase fw-bold text-muted" style="font-size:11px; letter-spacing:0.05em;">Setoran Tercatat</div>
                             <div class="fw-bold mt-1" style="font-size:2rem; color:#1E293B;"><?= $rekap_total_setoran ?></div>
-                            <div class="text-muted" style="font-size:12.5px;">Setoran bulan <?= date('F Y') ?></div>
+                            <div class="text-muted" style="font-size:12.5px;">Total setoran tersimpan</div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
@@ -2309,7 +2449,7 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                     <!-- Header -->
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 px-4 py-3" style="border-bottom:1px solid #F1F5F9;">
                         <div>
-                            <h5 class="fw-bold mb-0" style="color:#1E293B; font-size:16px;">Daftar Siswa & Rekap Capaian</h5>
+                            <h5 class="fw-bold mb-0" style="color:#1E293B; font-size:16px;">Daftar Siswa &amp; Rekap Capaian</h5>
                         </div>
                         <div class="d-flex align-items-center gap-3">
                             <span class="badge rounded-pill fw-semibold" id="badgeJumlahSiswa" style="background:#E6F4F1; color:#11756D; font-size:12px; padding:6px 14px;"><?= $rekap_total_siswa ?> Siswa Terdaftar</span>
@@ -2319,28 +2459,29 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                             </div>
                         </div>
                     </div>
-                    <!-- Tabel -->
+                    <!-- Tabel Siswa -->
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" id="tabelRekapSiswa">
+                        <table class="table table-hover align-middle mb-0" id="tabelSiswaRekap">
                             <thead style="background:#F8FAFC;">
                                 <tr style="font-size:12px; color:#64748B; text-transform:uppercase; letter-spacing:0.04em;">
                                     <th class="ps-4 py-3 fw-semibold" style="width:50px;">No</th>
                                     <th class="py-3 fw-semibold" style="width:100px;">NIS</th>
                                     <th class="py-3 fw-semibold">Nama Siswa</th>
-                                    <th class="py-3 fw-semibold" style="width:220px;">Persentase Capaian</th>
-                                    <th class="py-3 fw-semibold" style="width:170px;">Tanggal Setoran Terakhir</th>
-                                    <th class="py-3 pe-4 fw-semibold text-center" style="width:140px;">Aksi</th>
+                                    <th class="py-3 fw-semibold" style="width:200px;">Capaian Target</th>
+                                    <th class="py-3 fw-semibold" style="width:180px;">Tanggal Setoran Terakhir</th>
+                                    <th class="pe-4 py-3 fw-semibold text-center" style="width:120px;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($santri_list as $i => $s):
-                                    $nis = htmlspecialchars($s['nip_nis']);
+                                    $nis = htmlspecialchars($s['nip_nis'] ?? '');
                                     $nama = htmlspecialchars($s['nama_lengkap']);
-                                    $rd = $rekap_data[$nis] ?? ['capaian'=>0,'tgl_setor'=>'-','posisi'=>'-','target'=>'-','ayat_hafal'=>0,'ayat_total'=>1,'catatan'=>'-','riwayat'=>[]];
+                                    $lookup_key = !empty($s['nip_nis']) ? $s['nip_nis'] : (string)$s['id'];
+                                    $rd = $rekap_data[$lookup_key] ?? $rekap_data[$s['id']] ?? ['capaian'=>0,'tgl_setor'=>'-','posisi'=>'Belum Ada Setoran','target'=>'Belum Ada Target Aktif','ayat_hafal'=>0,'ayat_total'=>0,'catatan'=>'Belum ada catatan pembimbing.','riwayat'=>[],'kualitas'=>'Belum Setor'];
                                 ?>
                                 <tr class="siswa-row" data-nis="<?= $nis ?>" data-nama="<?= strtolower($nama) ?>">
                                     <td class="ps-4 text-muted"><?= $i + 1 ?></td>
-                                    <td><code style="color:#D946EF; font-weight:600; font-size:13px; background:transparent;"><?= $nis ?></code></td>
+                                    <td><code style="color:#D946EF; font-weight:600; font-size:13px; background:transparent;"><?= $nis ?: '-' ?></code></td>
                                     <td><strong style="color:#1E293B;"><?= $nama ?></strong></td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
@@ -2360,6 +2501,7 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                                             data-ayathafal="<?= $rd['ayat_hafal'] ?>"
                                             data-ayattotal="<?= $rd['ayat_total'] ?>"
                                             data-capaian="<?= $rd['capaian'] ?>"
+                                            data-kualitas="<?= htmlspecialchars($rd['kualitas']) ?>"
                                             data-catatan="<?= htmlspecialchars($rd['catatan']) ?>"
                                             data-riwayat='<?= json_encode($rd['riwayat'], JSON_UNESCAPED_UNICODE) ?>'
                                             style="font-size:12.5px; border-color:#CBD5E1; color:#475569;">
@@ -2373,7 +2515,7 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                     </div>
                     <!-- Footer -->
                     <div class="px-4 py-3" style="border-top:1px solid #F1F5F9;">
-<small class="text-muted" id="footerInfoSiswa">Menampilkan 1–<?= $rekap_total_siswa ?> dari <?= $rekap_total_siswa ?> siswa</small>
+                        <small class="text-muted" id="footerInfoSiswa">Menampilkan 1–<?= $rekap_total_siswa ?> dari <?= $rekap_total_siswa ?> siswa</small>
                     </div>
                 </div>
 
@@ -2397,7 +2539,7 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                                         <div style="background:#F0FDF4; border-radius:12px; padding:16px;">
                                             <div class="fw-bold mb-1" style="font-size:13px; color:#15803D;">Posisi Hafalan Terakhir</div>
                                             <div class="fw-bold mb-2" style="font-size:14.5px; color:#1E293B;" id="modalPosisi"></div>
-                                            <span class="badge rounded-pill" style="background:#DCFCE7; color:#15803D; font-size:11px;">Lancar</span>
+                                            <span class="badge rounded-pill" id="modalKualitasBadge" style="background:#DCFCE7; color:#15803D; font-size:11px;">Lancar</span>
                                         </div>
                                     </div>
                                     <div class="col-6">
@@ -2418,14 +2560,14 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                                     <p class="mb-0 text-muted" style="font-size:13px; line-height:1.6;" id="modalCatatan"></p>
                                 </div>
                                 <!-- Tabel Riwayat -->
-                                <div class="fw-bold mb-2" style="font-size:14px; color:#1E293B;">Riwayat Setoran & Murajaah</div>
+                                <div class="fw-bold mb-2" style="font-size:14px; color:#1E293B;">Riwayat Setoran &amp; Murajaah</div>
                                 <div class="table-responsive" style="border:1px solid #E2E8F0; border-radius:10px; overflow:hidden;">
                                     <table class="table table-sm align-middle mb-0" style="font-size:13px;">
                                         <thead style="background:#F8FAFC;">
                                             <tr style="color:#64748B;">
                                                 <th class="py-2 ps-3 fw-semibold">Tanggal</th>
                                                 <th class="py-2 fw-semibold">Jenis</th>
-                                                <th class="py-2 fw-semibold">Surah & Ayat</th>
+                                                <th class="py-2 fw-semibold">Surah &amp; Ayat</th>
                                                 <th class="py-2 pe-3 fw-semibold">Status</th>
                                             </tr>
                                         </thead>
@@ -2444,74 +2586,117 @@ $rekap_total_murajaah = $total_murajaah_count > 0 ? $total_murajaah_count : 19;
                 <!-- JavaScript: Pencarian & Modal -->
                 <script>
                 document.addEventListener('DOMContentLoaded', function() {
-// ── Filter Pencarian ──
+                    // ── Filter Pencarian ──
                     const searchInput = document.getElementById('searchSiswaInput');
                     const rows = document.querySelectorAll('.siswa-row');
                     const footerInfo = document.getElementById('footerInfoSiswa');
                     const badge = document.getElementById('badgeJumlahSiswa');
                     const totalSiswa = rows.length;
 
-                    searchInput.addEventListener('input', function() {
-                        const q = this.value.toLowerCase().trim();
-                        let visible = 0;
-                        rows.forEach(function(row) {
-                            const nis = row.getAttribute('data-nis');
-                            const nama = row.getAttribute('data-nama');
-                            const match = nis.includes(q) || nama.includes(q);
-                            row.style.display = match ? '' : 'none';
-                            if (match) visible++;
+                    if (searchInput) {
+                        searchInput.addEventListener('input', function() {
+                            const q = this.value.toLowerCase().trim();
+                            let visible = 0;
+                            rows.forEach(function(row) {
+                                const nis = row.getAttribute('data-nis') || '';
+                                const nama = row.getAttribute('data-nama') || '';
+                                const match = nis.includes(q) || nama.includes(q);
+                                row.style.display = match ? '' : 'none';
+                                if (match) visible++;
+                            });
+                            if (footerInfo) {
+                                if (visible === 0) {
+                                    footerInfo.textContent = 'Data siswa tidak ditemukan';
+                                } else {
+                                    footerInfo.textContent = 'Menampilkan 1–' + visible + ' dari ' + totalSiswa + ' siswa';
+                                }
+                            }
+                            if (badge) {
+                                badge.textContent = visible + ' Siswa ' + (q ? 'Ditemukan' : 'Terdaftar');
+                            }
                         });
-                        if (visible === 0) {
-                            footerInfo.textContent = 'Data siswa tidak ditemukan';
-                        } else {
-                            footerInfo.textContent = 'Menampilkan 1\u2013' + visible + ' dari ' + totalSiswa + ' siswa';
-                        }
-                        badge.textContent = visible + ' Siswa ' + (q ? 'Ditemukan' : 'Terdaftar');
-                    });
+                    }
 
-// ── Modal Detail ──
+                    // ── Modal Detail Rekap ──
                     const modalEl = document.getElementById('modalDetailSiswa');
-                    const bsModal = new bootstrap.Modal(modalEl);
+                    let bsModal = null;
+                    if (modalEl && typeof bootstrap !== 'undefined') {
+                        bsModal = new bootstrap.Modal(modalEl);
+                    }
 
                     document.querySelectorAll('.btn-lihat-detail').forEach(function(btn) {
                         btn.addEventListener('click', function() {
-                            const nama = this.dataset.nama;
-                            const nis = this.dataset.nis;
-                            document.getElementById('modalSubtitle').textContent = nama + ' \u2022 NIS: ' + nis + ' \u2022 Halaqah Al-Furqan';
-                            document.getElementById('modalPosisi').textContent = this.dataset.posisi;
-                            document.getElementById('modalTarget').textContent = this.dataset.target;
-                            const hafal = parseInt(this.dataset.ayathafal);
-                            const total = parseInt(this.dataset.ayattotal);
-                            const pct = parseInt(this.dataset.capaian);
-                            document.getElementById('modalAyatRatio').textContent = hafal + ' / ' + total + ' Ayat (' + pct + '%)';
-                            document.getElementById('modalProgressBar').style.width = pct + '%';
-                            document.getElementById('modalCatatan').textContent = this.dataset.catatan;
+                            const nama = this.dataset.nama || '-';
+                            const nis = this.dataset.nis || '-';
+                            const elSub = document.getElementById('modalSubtitle');
+                            if (elSub) elSub.textContent = nama + ' • NIS: ' + (nis !== '-' && nis !== '' ? nis : '-') + ' • Halaqah Al-Furqan';
+                            
+                            const elPos = document.getElementById('modalPosisi');
+                            if (elPos) elPos.textContent = this.dataset.posisi || '-';
+
+                            // Badge Kualitas
+                            const kVal = this.dataset.kualitas || 'Belum Setor';
+                            const kBadge = document.getElementById('modalKualitasBadge');
+                            if (kBadge) {
+                                kBadge.textContent = kVal;
+                                if (kVal.toLowerCase().includes('kurang') || kVal.toLowerCase().includes('penguatan')) {
+                                    kBadge.style.background = '#FEF3C7';
+                                    kBadge.style.color = '#B45309';
+                                } else if (kVal.toLowerCase().includes('belum')) {
+                                    kBadge.style.background = '#F1F5F9';
+                                    kBadge.style.color = '#64748B';
+                                } else {
+                                    kBadge.style.background = '#DCFCE7';
+                                    kBadge.style.color = '#15803D';
+                                }
+                            }
+
+                            const elTgt = document.getElementById('modalTarget');
+                            if (elTgt) elTgt.textContent = this.dataset.target || '-';
+
+                            const hafal = parseInt(this.dataset.ayathafal || 0);
+                            const total = parseInt(this.dataset.ayattotal || 0);
+                            const pct = parseInt(this.dataset.capaian || 0);
+
+                            const elRatio = document.getElementById('modalAyatRatio');
+                            const elBar = document.getElementById('modalProgressBar');
+                            if (total > 0) {
+                                if (elRatio) elRatio.textContent = hafal + ' / ' + total + ' Ayat (' + pct + '%)';
+                                if (elBar) elBar.style.width = pct + '%';
+                            } else {
+                                if (elRatio) elRatio.textContent = 'Target belum diatur';
+                                if (elBar) elBar.style.width = '0%';
+                            }
+
+                            const elCat = document.getElementById('modalCatatan');
+                            if (elCat) elCat.textContent = this.dataset.catatan || 'Belum ada catatan evaluasi dari ustadz.';
 
                             // Riwayat
                             let riwayat = [];
-                            try { riwayat = JSON.parse(this.dataset.riwayat); } catch(e) {}
+                            try { riwayat = JSON.parse(this.dataset.riwayat || '[]'); } catch(e) {}
                             let html = '';
-                            riwayat.forEach(function(r) {
-                                const jenisColor = r.jenis === 'Ziyadah' ? 'background:#11756D;color:#fff;' : 'background:#D97706;color:#fff;';
-                                html += '<tr>' +
-                                    '<td class="ps-3 py-2">' + r.tgl + '</td>' +
-                                    '<td class="py-2"><span class="badge rounded-pill" style="font-size:11px;' + jenisColor + '">' + r.jenis + '</span></td>' +
-                                    '<td class="py-2">' + r.surah + '</td>' +
-                                    '<td class="pe-3 py-2 fw-semibold" style="color:#15803D;">' + r.status + '</td>' +
-                                    '</tr>';
-                            });
-                            document.getElementById('modalRiwayatBody').innerHTML = html;
-                            bsModal.show();
+                            if (riwayat.length === 0) {
+                                html = '<tr><td colspan="4" class="text-center text-muted py-3">Belum ada riwayat setoran & murajaah.</td></tr>';
+                            } else {
+                                riwayat.forEach(function(r) {
+                                    const jenisColor = (r.jenis === 'Ziyadah' || r.jenis === 'Setoran') ? 'background:#11756D;color:#fff;' : 'background:#D97706;color:#fff;';
+                                    html += '<tr>' +
+                                        '<td class="ps-3 py-2 text-muted">' + (r.tgl || '-') + '</td>' +
+                                        '<td class="py-2"><span class="badge rounded-pill" style="font-size:11px;' + jenisColor + '">' + (r.jenis || 'Setoran') + '</span></td>' +
+                                        '<td class="py-2 fw-semibold text-dark">' + (r.surah || '-') + '</td>' +
+                                        '<td class="pe-3 py-2 fw-semibold" style="color:#15803D;">' + (r.status || 'Lancar') + '</td>' +
+                                        '</tr>';
+                                });
+                            }
+                            const tbody = document.getElementById('modalRiwayatBody');
+                            if (tbody) tbody.innerHTML = html;
+
+                            if (bsModal) bsModal.show();
                         });
                     });
                 });
                 </script>
 
-
-<!-- ═══════════════════════════════════════════════════════════
-                 MENU 6: PROFIL USTADZ & GANTI KATA SANDI
-                 (Tampilan Eksekutif, Elegan, dan Profesional)
-            ------------------------------------------------------------ -->
             <?php elseif ($page_tab === 'profil'): ?>
                 <div class="mb-4">
                     <h1 class="profil-page-title mb-1">Profil Pribadi</h1>
