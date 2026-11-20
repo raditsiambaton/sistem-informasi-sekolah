@@ -40,66 +40,70 @@ if (!defined('ADMIN_INDEX')) {
                 </tr>
             </thead>
             <tbody>
-                <?php if (!empty($halaqah_list)): ?>
-                    <?php foreach ($halaqah_list as $h): 
-                        $nama_h     = $h['nama_halaqah'];
-                        $jml_siswa  = $jumlah_siswa_per_halaqah[$nama_h] ?? 0;
-                        $member_ids = $halaqah_members_map[$nama_h] ?? [];
-                    ?>
-                    <tr>
-                        <td class="ps-4"><strong><?= htmlspecialchars($h['kode_halaqah']) ?></strong></td>
-                        <td>
-                            <div class="fw-bold text-dark"><?= htmlspecialchars($h['nama_halaqah']) ?></div>
-                        </td>
-                        <td><?= htmlspecialchars($h['nama_ustadz']) ?></td>
-                        <td><?= htmlspecialchars($h['target_juz']) ?></td>
-                        <td>
-                            <span class="badge-pill" style="background:var(--em-50);color:var(--em-800);border:1px solid var(--em-100);">
-                                <i class="bi bi-people-fill me-1"></i><?= $jml_siswa ?> Siswa
-                            </span>
-                        </td>
-                        <td><span class="badge-pill badge-aktif">Aktif</span></td>
-                        <td class="text-end pe-4">
-                            <button type="button" class="btn-outline-em btn-edit-halaqah"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalEditHalaqah"
-                                    data-id="<?= $h['id'] ?>"
-                                    data-kode="<?= htmlspecialchars($h['kode_halaqah']) ?>"
-                                    data-nama="<?= htmlspecialchars($h['nama_halaqah']) ?>"
-                                    data-ustadz-id="<?= htmlspecialchars($h['ustadz_id'] ?? '') ?>"
-                                    data-target="<?= htmlspecialchars($h['target_juz'] ?? 'Juz 29 - 30') ?>"
-                                    data-member-ids='<?= json_encode($member_ids) ?>'>
-                                <i class="bi bi-pencil-square"></i> Edit
+                <?php foreach ($halaqah_list as $h):
+                    $nama_h          = $h['nama_halaqah'];
+                    $jml_siswa       = $jumlah_siswa_per_halaqah[$nama_h] ?? 0;
+                    $member_ids      = $halaqah_members_map[$nama_h] ?? [];
+                    $members_detail  = $halaqah_members_detail[$nama_h] ?? [];
+                    $members_json    = htmlspecialchars(json_encode($members_detail, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
+                    $member_ids_json = json_encode($member_ids);
+                ?>
+                <tr>
+                    <td class="ps-4"><strong><?= htmlspecialchars($h['kode_halaqah']) ?></strong></td>
+                    <td>
+                        <div class="fw-bold text-dark"><?= htmlspecialchars($h['nama_halaqah']) ?></div>
+                    </td>
+                    <td><?= htmlspecialchars($h['nama_ustadz']) ?></td>
+                    <td><?= htmlspecialchars($h['target_juz']) ?></td>
+                    <td>
+                        <span class="badge-pill btn-detail-halaqah" role="button" tabindex="0"
+                              style="background:var(--em-50);color:var(--em-800);border:1px solid var(--em-100);cursor:pointer;"
+                              data-id="<?= $h['id'] ?>"
+                              data-kode="<?= htmlspecialchars($h['kode_halaqah']) ?>"
+                              data-nama="<?= htmlspecialchars($h['nama_halaqah']) ?>"
+                              data-ustadz="<?= htmlspecialchars($h['nama_ustadz']) ?>"
+                              data-ustadz-id="<?= htmlspecialchars($h['ustadz_id'] ?? '') ?>"
+                              data-target="<?= htmlspecialchars($h['target_juz'] ?? 'Juz 29 - 30') ?>"
+                              data-member-ids='<?= $member_ids_json ?>'
+                              data-members='<?= $members_json ?>'>
+                            <i class="bi bi-people-fill me-1"></i><?= $jml_siswa ?> Siswa
+                        </span>
+                    </td>
+                    <td><span class="badge-pill badge-aktif">Aktif</span></td>
+                    <td class="text-end pe-4">
+                        <button type="button" class="btn-outline-em btn-detail-halaqah" title="Lihat Detail & Anggota Siswa"
+                                data-id="<?= $h['id'] ?>"
+                                data-kode="<?= htmlspecialchars($h['kode_halaqah']) ?>"
+                                data-nama="<?= htmlspecialchars($h['nama_halaqah']) ?>"
+                                data-ustadz="<?= htmlspecialchars($h['nama_ustadz']) ?>"
+                                data-ustadz-id="<?= htmlspecialchars($h['ustadz_id'] ?? '') ?>"
+                                data-target="<?= htmlspecialchars($h['target_juz'] ?? 'Juz 29 - 30') ?>"
+                                data-member-ids='<?= $member_ids_json ?>'
+                                data-members='<?= $members_json ?>'>
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button type="button" class="btn-outline-em btn-edit-halaqah ms-1"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalEditHalaqah"
+                                data-id="<?= $h['id'] ?>"
+                                data-kode="<?= htmlspecialchars($h['kode_halaqah']) ?>"
+                                data-nama="<?= htmlspecialchars($h['nama_halaqah']) ?>"
+                                data-ustadz-id="<?= htmlspecialchars($h['ustadz_id'] ?? '') ?>"
+                                data-target="<?= htmlspecialchars($h['target_juz'] ?? 'Juz 29 - 30') ?>"
+                                data-member-ids='<?= $member_ids_json ?>'>
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </button>
+                        <form action="?tab=halaqah" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kelompok halaqah <?= htmlspecialchars($h['nama_halaqah']) ?>?');">
+                            <input type="hidden" name="action" value="hapus_halaqah">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
+                            <input type="hidden" name="halaqah_id" value="<?= $h['id'] ?>">
+                            <button type="submit" class="btn-outline-danger-sm ms-1" title="Hapus Kelompok">
+                                <i class="bi bi-trash-fill"></i>
                             </button>
-                            <form action="?tab=halaqah" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kelompok halaqah <?= htmlspecialchars($h['nama_halaqah']) ?>?');">
-                                <input type="hidden" name="action" value="hapus_halaqah">
-                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
-                                <input type="hidden" name="halaqah_id" value="<?= $h['id'] ?>">
-                                <button type="submit" class="btn-outline-danger-sm ms-1" 
-                                        <?= ($jml_siswa > 0 ? 'title="Pindahkan atau keluarkan siswa terlebih dahulu sebelum menghapus"' : 'title="Hapus Kelompok"') ?>>
-                                    <i class="bi bi-trash-fill"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td class="ps-4"><strong>HLQ-01</strong></td>
-                        <td><div class="fw-bold text-dark">Al-Furqan</div></td>
-                        <td>Ust. Rival Alvian Melfandy</td>
-                        <td>Juz 29 – 30</td>
-                        <td>
-                            <span class="badge-pill" style="background:var(--em-50);color:var(--em-800);border:1px solid var(--em-100);">
-                                <i class="bi bi-people-fill me-1"></i>0 Siswa
-                            </span>
-                        </td>
-                        <td><span class="badge-pill badge-aktif">Aktif</span></td>
-                        <td class="text-end pe-4">
-                            <span class="text-muted small">Data Demo</span>
-                        </td>
-                    </tr>
-                <?php endif; ?>
+                        </form>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>
@@ -313,6 +317,88 @@ if (!defined('ADMIN_INDEX')) {
     </div>
 </div>
 
+<!-- ════════════════════════════════════════════════════════════
+     MODAL: DETAIL HALAQAH (READ)
+════════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="modalDetailHalaqah" tabindex="-1"
+     aria-labelledby="lblDetailHalaqah" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header-em">
+                <h5 class="modal-title" id="lblDetailHalaqah">
+                    <i class="bi bi-eye-fill me-2"></i>Detail Kelompok Halaqah
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Ringkasan info kelompok -->
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                        <div class="bg-light rounded-3 border p-3 h-100">
+                            <span class="form-label-em mb-0 d-block">Kode Halaqah</span>
+                            <div class="fw-bold text-dark" id="detail_kode_halaqah">—</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="bg-light rounded-3 border p-3 h-100">
+                            <span class="form-label-em mb-0 d-block">Nama Halaqah</span>
+                            <div class="fw-bold text-dark" id="detail_nama_halaqah">—</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="bg-light rounded-3 border p-3 h-100">
+                            <span class="form-label-em mb-0 d-block">Ustadz Pembimbing</span>
+                            <div class="fw-bold text-dark" id="detail_ustadz">—</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="bg-light rounded-3 border p-3 h-100">
+                            <span class="form-label-em mb-0 d-block">Target Hafalan</span>
+                            <div class="fw-bold text-dark" id="detail_target">—</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Judul & total siswa aktif -->
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h6 class="fw-bold mb-0" style="color:var(--em-800);font-size:14px;">
+                        <i class="bi bi-people-fill me-1"></i>Anggota Siswa Terdaftar
+                    </h6>
+                    <span class="badge-pill" style="background:var(--em-50);color:var(--em-800);border:1px solid var(--em-100);">
+                        <span id="detail_total_siswa">0</span> Siswa Aktif
+                    </span>
+                </div>
+                <!-- Tabel daftar anggota -->
+                <div class="table-responsive" style="border:1px solid var(--slate-2);border-radius:10px;overflow:hidden;">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th class="ps-3">No</th>
+                                <th>NIS</th>
+                                <th>Nama Lengkap</th>
+                                <th>No. HP</th>
+                                <th class="pe-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailAnggotaBody">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    Belum ada siswa aktif yang terdaftar di kelompok halaqah ini.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light btn-sm fw-semibold" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn-em btn-em-sm" id="btnEditFromDetail">
+                    <i class="bi bi-pencil-square"></i> Edit Kelompok
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 // ── Counter & Search Halaqah — Modal Tambah ───────────────────
 function updateCounterTambahHalaqah() {
@@ -361,30 +447,103 @@ if (searchSiswaEdit) {
     });
 }
 
-// Modal Edit Halaqah: populasikan data dan centang ID siswa
+// ── Populasi form Edit Halaqah (dipakai ulang oleh tombol & pintasan) ──
+function populateEditHalaqah(ds) {
+    document.getElementById('edit_halaqah_id').value    = ds.id || '';
+    document.getElementById('edit_kode_halaqah').value  = ds.kode || '';
+    document.getElementById('edit_nama_halaqah').value  = ds.nama || '';
+    document.getElementById('edit_ustadz_id').value     = ds.ustadzId || '';
+    document.getElementById('edit_target_juz').value    = ds.target || '';
+
+    var memberIds = [];
+    try { memberIds = JSON.parse(ds.memberIds || '[]'); } catch(e) {}
+
+    document.querySelectorAll('.check-siswa-edit').forEach(function(cb) {
+        cb.checked = memberIds.includes(parseInt(cb.value, 10));
+    });
+
+    if (searchSiswaEdit) {
+        searchSiswaEdit.value = '';
+        document.querySelectorAll('.item-siswa-edit').forEach(function(item) {
+            item.style.display = 'flex';
+        });
+    }
+    updateCounterEditHalaqah();
+}
+
+// Tombol Edit Halaqah → isi form & tampilkan modal edit
 document.querySelectorAll('.btn-edit-halaqah').forEach(function(btn) {
     btn.addEventListener('click', function() {
-        document.getElementById('edit_halaqah_id').value    = this.dataset.id;
-        document.getElementById('edit_kode_halaqah').value  = this.dataset.kode;
-        document.getElementById('edit_nama_halaqah').value  = this.dataset.nama;
-        document.getElementById('edit_ustadz_id').value     = this.dataset.ustadzId;
-        document.getElementById('edit_target_juz').value    = this.dataset.target;
-
-        var memberIds = [];
-        try { memberIds = JSON.parse(this.dataset.memberIds || '[]'); } catch(e) {}
-
-        document.querySelectorAll('.check-siswa-edit').forEach(function(cb) {
-            cb.checked = memberIds.includes(parseInt(cb.value, 10));
-        });
-
-        if (searchSiswaEdit) {
-            searchSiswaEdit.value = '';
-            document.querySelectorAll('.item-siswa-edit').forEach(function(item) {
-                item.style.display = 'flex';
-            });
-        }
-
-        updateCounterEditHalaqah();
+        populateEditHalaqah(this.dataset);
     });
 });
+
+// ── Modal Detail Halaqah (Read) ────────────────────────────────
+var detailModalEl = document.getElementById('modalDetailHalaqah');
+var bsDetailModal = detailModalEl ? bootstrap.Modal.getOrCreateInstance(detailModalEl) : null;
+var currentDetailDs = null;
+
+function openDetailHalaqah() {
+    currentDetailDs = this.dataset;
+
+    document.getElementById('detail_kode_halaqah').textContent = this.dataset.kode || '-';
+    document.getElementById('detail_nama_halaqah').textContent = this.dataset.nama || '-';
+    document.getElementById('detail_ustadz').textContent      = this.dataset.ustadz || '-';
+    document.getElementById('detail_target').textContent     = this.dataset.target || '-';
+
+    var members = [];
+    try { members = JSON.parse(this.dataset.members || '[]'); } catch(e) {}
+    document.getElementById('detail_total_siswa').textContent = members.length;
+
+    var tbody = document.getElementById('detailAnggotaBody');
+    if (!members.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">Belum ada siswa aktif yang terdaftar di kelompok halaqah ini.</td></tr>';
+    } else {
+        tbody.innerHTML = members.map(function(m, idx) {
+            var nis  = m.nip_nis || '-';
+            var nm   = m.nama_lengkap || '-';
+            var hp   = m.no_hp || '-';
+            var stat = m.status || '-';
+            return '<tr>'
+                + '<td class="ps-3">' + (idx + 1) + '</td>'
+                + '<td><code style="color:var(--em-700);">' + nis + '</code></td>'
+                + '<td class="fw-semibold text-dark">' + nm + '</td>'
+                + '<td>' + hp + '</td>'
+                + '<td><span class="badge-pill badge-aktif">' + stat + '</span></td>'
+                + '</tr>';
+        }).join('');
+    }
+
+    if (bsDetailModal) bsDetailModal.show();
+}
+
+document.querySelectorAll('.btn-detail-halaqah').forEach(function(btn) {
+    btn.addEventListener('click', openDetailHalaqah);
+    // Aksesibilitas papan tik untuk elemen <span> yang berperilaku sebagai tombol
+    if (btn.tagName === 'SPAN') {
+        btn.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openDetailHalaqah.call(btn, e);
+            }
+        });
+    }
+});
+
+// Pintasan "Edit Kelompok" dari dalam modal detail
+var btnEditFromDetail = document.getElementById('btnEditFromDetail');
+if (btnEditFromDetail) {
+    btnEditFromDetail.addEventListener('click', function() {
+        if (bsDetailModal) bsDetailModal.hide();
+        if (currentDetailDs) {
+            setTimeout(function() {
+                populateEditHalaqah(currentDetailDs);
+                var editModalEl = document.getElementById('modalEditHalaqah');
+                if (editModalEl) {
+                    bootstrap.Modal.getOrCreateInstance(editModalEl).show();
+                }
+            }, 200);
+        }
+    });
+}
 </script>

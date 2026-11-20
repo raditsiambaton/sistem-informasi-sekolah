@@ -35,9 +35,21 @@ if ($pdo) {
 // Fallback data demo jika database kosong atau tidak terhubung
 if (empty($users_list)) {
     $users_list = [
-        ['id' => 1, 'username' => 'admin',  'nama_lengkap' => 'Administrator Sekolah',     'role' => 'admin',  'nip_nis' => '198700',             'halaqah' => '—',         'status' => 'aktif'],
-        ['id' => 2, 'username' => 'ustadz', 'nama_lengkap' => 'Ust. Rival Alvian Melfandy','role' => 'ustadz', 'nip_nis' => '199205142023031004', 'halaqah' => 'Al-Furqan', 'status' => 'aktif'],
-        ['id' => 3, 'username' => 'siswa',  'nama_lengkap' => 'Muhammad Fadhlan',           'role' => 'siswa',  'nip_nis' => '102601',             'halaqah' => 'Al-Furqan', 'status' => 'aktif'],
+        ['id' => 1, 'username' => 'admin',    'nama_lengkap' => 'Administrator Sekolah',      'role' => 'admin',  'nip_nis' => '198700',             'halaqah' => '—',         'status' => 'aktif', 'no_hp' => '0811-0000-0001'],
+        ['id' => 2, 'username' => 'ustadz',   'nama_lengkap' => 'Ust. Rival Alvian Melfandy', 'role' => 'ustadz', 'nip_nis' => '199205142023031004', 'halaqah' => 'Al-Furqan', 'status' => 'aktif', 'no_hp' => '0812-3456-7890'],
+        ['id' => 3, 'username' => 'siswa',    'nama_lengkap' => 'Muhammad Fadhlan',           'role' => 'siswa',  'nip_nis' => '102601',             'halaqah' => 'Al-Furqan', 'status' => 'aktif', 'no_hp' => '0813-1111-2222'],
+        ['id' => 4, 'username' => 'ahmadzaid','nama_lengkap' => 'Ahmad Zaid',                 'role' => 'siswa',  'nip_nis' => '102602',             'halaqah' => 'Al-Furqan', 'status' => 'aktif', 'no_hp' => '0813-3333-4444'],
+        ['id' => 5, 'username' => 'raditgr',  'nama_lengkap' => 'Radit Gilang Ramadhan S',    'role' => 'siswa',  'nip_nis' => '102603',             'halaqah' => 'Al-Furqan', 'status' => 'aktif', 'no_hp' => '0813-5555-6666'],
+        ['id' => 6, 'username' => 'salsabil', 'nama_lengkap' => 'Salsabila Putri Aulia',      'role' => 'siswa',  'nip_nis' => '102604',             'halaqah' => 'Al-Ikhlas', 'status' => 'aktif', 'no_hp' => '0814-7777-8888'],
+        ['id' => 7, 'username' => 'iqbalp',   'nama_lengkap' => 'M. Iqbal Pratama',            'role' => 'siswa',  'nip_nis' => '102605',             'halaqah' => 'Al-Ikhlas', 'status' => 'aktif', 'no_hp' => '0814-9999-0000'],
+    ];
+}
+
+// Fallback data demo halaqah jika database kosong atau tidak terhubung
+if (empty($halaqah_list)) {
+    $halaqah_list = [
+        ['id' => 1, 'kode_halaqah' => 'HLQ-01', 'nama_halaqah' => 'Al-Furqan', 'ustadz_id' => 2, 'nama_ustadz' => 'Ust. Rival Alvian Melfandy', 'target_juz' => 'Juz 29 - 30'],
+        ['id' => 2, 'kode_halaqah' => 'HLQ-02', 'nama_halaqah' => 'Al-Ikhlas', 'ustadz_id' => 2, 'nama_ustadz' => 'Ust. Rival Alvian Melfandy', 'target_juz' => 'Juz 30'],
     ];
 }
 
@@ -50,6 +62,7 @@ $ustadz_list  = [];
 $siswa_list   = [];
 $jumlah_siswa_per_halaqah = [];
 $halaqah_members_map      = [];
+$halaqah_members_detail   = [];
 
 foreach ($users_list as $u) {
     $role   = $u['role'] ?? '';
@@ -70,6 +83,17 @@ foreach ($users_list as $u) {
                     $halaqah_members_map[$hlq] = [];
                 }
                 $halaqah_members_map[$hlq][] = (int)$u['id'];
+
+                if (!isset($halaqah_members_detail[$hlq])) {
+                    $halaqah_members_detail[$hlq] = [];
+                }
+                $halaqah_members_detail[$hlq][] = [
+                    'id'           => (int)$u['id'],
+                    'nama_lengkap' => $u['nama_lengkap'] ?? '',
+                    'nip_nis'      => $u['nip_nis'] ?? '',
+                    'no_hp'        => $u['no_hp'] ?? '',
+                    'status'       => $status,
+                ];
             }
         }
     } elseif ($role === 'ustadz') {
