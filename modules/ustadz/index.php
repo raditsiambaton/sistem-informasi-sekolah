@@ -1,43 +1,34 @@
-<?php
+﻿<?php
 /**
  * modules/ustadz/index.php
- * Ruang Asatidz Pembimbing Halaqah  SIM Tahfiz SMA IT Al-Fadhilah Pekanbaru
- * 
- * Menu Utama:
- * 1. Siswa Binaan (tab=binaan)       - Dashboard utama halaqah & ringkasan progres santri
- * 2. Hafalan (tab=hafalan)            - Pilih siswa, daftar surah target, input setoran, dan baca ayat
- * 3. Dashboard Murajaah (tab=murajaah)- Monitoring total santri murajaah & form catat murajaah
- * 4. Target Hafalan (tab=target)     - Menetapkan target capaian hafalan per santri
- * 5. Rekap Tahfiz (tab=rekap)        - Rekapitulasi progres hafalan & nilai seluruh santri
- * 6. Profil & Sandi (tab=profil)     - Profil ustadz & penggantian kata sandi
+ * Ruang Asatidz – SIM Tahfiz SMA IT Al-Fadhilah Pekanbaru
+ * Arsitektur modular: data/, actions/, tabs/
  */
 
 require_once '../../config/session.php';
 require_once '../../config/database.php';
 
-// Validasi otorisasi sesi Ustadz / Guru
+// ── Validasi sesi & role ──────────────────────────────────────
 wajib_login('../auth/login.php');
 $role = peran_pengguna();
 if ($role !== 'ustadz' && $role !== 'guru') {
     if ($role === 'admin') {
-        header('Location: ../admin/index.php');
-        exit;
+        header('Location: ../admin/index.php'); exit;
     } elseif ($role === 'siswa') {
-        header('Location: ../siswa/index.php');
-        exit;
+        header('Location: ../siswa/index.php'); exit;
     } else {
-        header('Location: ../auth/login.php');
-        exit;
+        header('Location: ../auth/login.php'); exit;
     }
 }
 
-$ustadz_name   = $_SESSION['user_name'] ?? 'Ust. Rival Alvian Melfandy';
+// ── Variabel profil (fallback dari session) ───────────────────
+$ustadz_name   = $_SESSION['user_name']    ?? 'Ust. Rival Alvian Melfandy';
 $halaqah_name  = $_SESSION['user_halaqah'] ?? 'Al-Furqan';
 $ustadz_nip    = $_SESSION['user_nip_nis'] ?? '199205142023031004';
-$ustadz_kontak = $_SESSION['user_no_hp'] ?? '0812-7890-1234';
-$ustadz_id     = $_SESSION['user_id'] ?? 2;
+$ustadz_kontak = $_SESSION['user_no_hp']   ?? '0812-7890-1234';
+$ustadz_id     = $_SESSION['user_id']      ?? 2;
 
-// Default tab: rekap (dashboard rekap tahfiz)
+// ── Routing tab ───────────────────────────────────────────────
 $page_tab = $_GET['tab'] ?? 'rekap';
 if ($page_tab === 'setoran' || $page_tab === 'input-hafalan') {
     $page_tab = 'hafalan';
@@ -48,7 +39,7 @@ if ($page_tab === 'setoran' || $page_tab === 'input-hafalan') {
 $notif_sukses = '';
 $notif_error  = '';
 
-// Inisialisasi DB
+// ── Koneksi database & setup tabel ───────────────────────────
 $pdo = null;
 try {
     $pdo = koneksi_database();
@@ -58,22 +49,16 @@ try {
         $u_row = $u_stmt->fetch();
         if ($u_row) {
             $ustadz_name  = $u_row['nama_lengkap'] ?? $ustadz_name;
-            $halaqah_name = $u_row['halaqah'] ?? $halaqah_name;
-            $ustadz_nip   = $u_row['nip_nis'] ?? $ustadz_nip;
-            if (!empty($u_row['no_hp'])) {
-                $ustadz_kontak = $u_row['no_hp'];
-            }
+            $halaqah_name = $u_row['halaqah']       ?? $halaqah_name;
+            $ustadz_nip   = $u_row['nip_nis']       ?? $ustadz_nip;
+            if (!empty($u_row['no_hp'])) $ustadz_kontak = $u_row['no_hp'];
         }
-
         try {
             $pdo->exec("CREATE TABLE IF NOT EXISTS `target_hafalan` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `siswa_id` INT NOT NULL,
-                `ustadz_id` INT NOT NULL,
-                `surah_awal` VARCHAR(180) NOT NULL,
-                `surah_akhir` VARCHAR(180) NOT NULL,
-                `tanggal_mulai` DATE NOT NULL,
-                `tanggal_akhir` DATE NOT NULL,
+                `siswa_id` INT NOT NULL, `ustadz_id` INT NOT NULL,
+                `surah_awal` VARCHAR(180) NOT NULL, `surah_akhir` VARCHAR(180) NOT NULL,
+                `tanggal_mulai` DATE NOT NULL, `tanggal_akhir` DATE NOT NULL,
                 `status` VARCHAR(20) NOT NULL DEFAULT 'Aktif',
                 `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
@@ -81,285 +66,15 @@ try {
     }
 } catch (Throwable $e) {}
 
-// Kurikulum target: Juz 1, 2, 3, 4, dan 30 (urutan ini dipakai validasi rentang)
-$juz30_target_sumber = [
-    ["An-Naba'", 40], ["An-Nazi'at", 46], ["'Abasa", 42], ['At-Takwir', 29],
-    ['Al-Infitar', 19], ['Al-Muthaffifin', 36], ['Al-Insyiqaq', 25], ['Al-Buruj', 22],
-    ['At-Tariq', 17], ["Al-A'la", 19], ['Al-Ghasyiyah', 26], ['Al-Fajr', 30],
-    ['Al-Balad', 20], ['Asy-Syams', 15], ['Al-Lail', 21], ['Adh-Dhuha', 11],
-    ['Al-Insyirah', 8], ['At-Tin', 8], ["Al-'Alaq", 19], ['Al-Qadr', 5],
-    ['Al-Bayyinah', 8], ['Az-Zalzalah', 8], ["Al-'Adiyat", 11], ["Al-Qari'ah", 11],
-    ['At-Takatsur', 8], ["Al-'Asr", 3], ['Al-Humazah', 9], ['Al-Fil', 5],
-    ['Quraisy', 4], ["Al-Ma'un", 7], ['Al-Kautsar', 3], ['Al-Kafirun', 6],
-    ['An-Nasr', 3], ['Al-Lahab', 5], ['Al-Ikhlas', 4], ['Al-Falaq', 5], ['An-Nas', 6],
-];
-$label_juz30_target = [];
-foreach ($juz30_target_sumber as $item_juz30) {
-$label_juz30_target[] = 'Juz 30 • ' . $item_juz30[0] . ' (Ayat 1–' . $item_juz30[1] . ')';
-}
-$kurikulum_target = [
-    'Juz 1' => [
-        'Juz 1 • Al-Fatihah (Ayat 1–7)',
-        'Juz 1 • Al-Baqarah (Ayat 1–141)',
-    ],
-    'Juz 2' => [
-        'Juz 2 • Al-Baqarah (Ayat 142–252)',
-    ],
-    'Juz 3' => [
-        'Juz 3 • Al-Baqarah (Ayat 253–286)',
-        "Juz 3 • Ali 'Imran (Ayat 1–92)",
-    ],
-    'Juz 4' => [
-        "Juz 4 • Ali 'Imran (Ayat 93–200)",
-        "Juz 4 • An-Nisa' (Ayat 1–23)",
-    ],
-    'Juz 30' => $label_juz30_target,
-];
-$urutan_opsi_target = [];
-foreach ($kurikulum_target as $daftar_opsi) {
-    foreach ($daftar_opsi as $label_opsi) {
-        $urutan_opsi_target[] = $label_opsi;
-    }
-}
+// ── Kurikulum & opsi target ───────────────────────────────────
 $target_fokus_id = 0;
-$target_old = [
-    'surah_awal'    => '',
-    'surah_akhir'   => '',
-    'tanggal_mulai' => '',
-    'tanggal_akhir' => '',
-];
+$target_old      = ['surah_awal' => '', 'surah_akhir' => '', 'tanggal_mulai' => '', 'tanggal_akhir' => ''];
+require_once 'data/kurikulum.php';
 
-// ─────────────────────────────────────────────────────────────
-// PROSES AKSI POST
-// ─────────────────────────────────────────────────────────────
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
-    $action = $_POST['action'] ?? '';
+// ── Proses POST ───────────────────────────────────────────────
+require_once 'actions/post_handler.php';
 
-    // 1. SIMPAN SETORAN HAFALAN BARU (EKSLUSIF SATU SURAH)
-    if ($action === 'simpan_setoran' && $pdo) {
-        $santri_nama = htmlspecialchars(trim($_POST['santri_nama'] ?? ''));
-        $surah       = htmlspecialchars(trim($_POST['surah'] ?? ''));
-        $ayat_awal   = (int)($_POST['ayat_awal'] ?? 1);
-        $ayat_akhir  = (int)($_POST['ayat_akhir'] ?? 1);
-        $kualitas    = htmlspecialchars(trim($_POST['kualitas'] ?? 'Mumtaz (A)'));
-        // Nilai default otomatis berdasarkan kualitas untuk integritas kolom database MySQL
-        $nilai_map   = [
-            'Mumtaz (A)'       => 95,
-            'Jayyid Jiddan (B)'=> 85,
-            'Jayyid (C)'       => 75,
-            'Perlu Penguatan'  => 65
-        ];
-        $nilai       = (int)($_POST['nilai'] ?? ($nilai_map[$kualitas] ?? 90));
-        $catatan     = htmlspecialchars(trim($_POST['catatan'] ?? ''));
-
-        if (empty($santri_nama) || empty($surah)) {
-            $notif_error = "Silakan pilih santri dan surah terlebih dahulu.";
-        } else {
-            try {
-                $s_stmt = $pdo->prepare("SELECT id FROM users WHERE nama_lengkap = :nama LIMIT 1");
-                $s_stmt->execute(['nama' => $santri_nama]);
-                $s_row = $s_stmt->fetch();
-                $siswa_id = $s_row['id'] ?? 3;
-
-                $stmt = $pdo->prepare("INSERT INTO setoran_hafalan (siswa_id, nama_siswa, ustadz_id, nama_ustadz, surah, ayat_awal, ayat_akhir, nilai, kualitas, catatan, tanggal_setor) 
-                                       VALUES (:siswa_id, :siswa, :ustadz_id, :ustadz, :surah, :awal, :akhir, :nilai, :kualitas, :catatan, :tgl)");
-                $stmt->execute([
-                    'siswa_id'   => $siswa_id,
-                    'siswa'      => $santri_nama,
-                    'ustadz_id'  => $_SESSION['user_id'] ?? 2,
-                    'ustadz'     => $ustadz_name,
-                    'surah'      => $surah,
-                    'awal'       => $ayat_awal,
-                    'akhir'      => $ayat_akhir,
-                    'nilai'      => $nilai,
-                    'kualitas'   => $kualitas,
-                    'catatan'    => $catatan,
-                    'tgl'        => date('Y-m-d')
-                ]);
-                $notif_sukses = "Alhamdulillah! Setoran santri {$santri_nama} untuk Surah {$surah} (Ayat {$ayat_awal}{$ayat_akhir}) berhasil dicatat!";
-            } catch (Throwable $e) {
-                $notif_error = "Gagal menyimpan setoran: " . $e->getMessage();
-            }
-        }
-        $page_tab = 'hafalan';
-        if (!empty($santri_nama)) {
-            $_GET['santri'] = $santri_nama;
-        }
-    }
-
-    // 2. SIMPAN CATATAN MURAJAAH
-    elseif ($action === 'simpan_murajaah' && $pdo) {
-        $santri_nama = htmlspecialchars(trim($_POST['santri_nama'] ?? ''));
-        $surah       = htmlspecialchars(trim($_POST['surah_diulang'] ?? 'Juz 30'));
-        $ayat_range  = htmlspecialchars(trim($_POST['ayat_range'] ?? 'Semua Ayat'));
-        $evaluasi    = htmlspecialchars(trim($_POST['evaluasi'] ?? 'Lancar'));
-        $catatan     = htmlspecialchars(trim($_POST['catatan_murajaah'] ?? ''));
-
-        if (empty($santri_nama)) {
-            $notif_error = "Silakan pilih santri yang melakukan murajaah.";
-        } else {
-            try {
-                $s_stmt = $pdo->prepare("SELECT id FROM users WHERE nama_lengkap = :nama LIMIT 1");
-                $s_stmt->execute(['nama' => $santri_nama]);
-                $s_row = $s_stmt->fetch();
-                $siswa_id = $s_row['id'] ?? 3;
-
-                $stmt = $pdo->prepare("INSERT INTO murajaah (siswa_id, nama_siswa, ustadz_id, nama_ustadz, surah, ayat_range, status_mutqin, tanggal_murajaah) 
-                                       VALUES (:siswa_id, :siswa, :ustadz_id, :ustadz, :surah, :ayat_range, :status_mutqin, :tgl)");
-                $stmt->execute([
-                    'siswa_id'      => $siswa_id,
-                    'siswa'         => $santri_nama,
-                    'ustadz_id'     => $_SESSION['user_id'] ?? 2,
-                    'ustadz'        => $ustadz_name,
-                    'surah'         => $surah,
-                    'ayat_range'    => $ayat_range,
-                    'status_mutqin' => $evaluasi,
-                    'tgl'           => date('Y-m-d')
-                ]);
-                $notif_sukses = "Catatan murajaah {$santri_nama} ({$surah}) berhasil disimpan!";
-            } catch (Throwable $e) {
-                $notif_error = "Gagal mencatat murajaah: " . $e->getMessage();
-            }
-        }
-        $page_tab = 'murajaah';
-    }
-
-// 3. TETAPKAN TARGET HAFALAN (Juz / Surah → tabel target_hafalan)
-    elseif ($action === 'simpan_target') {
-        $siswa_id      = (int)($_POST['siswa_id'] ?? 0);
-        $surah_awal    = trim($_POST['surah_awal'] ?? '');
-        $surah_akhir   = trim($_POST['surah_akhir'] ?? '');
-        $tanggal_mulai = trim($_POST['tanggal_mulai'] ?? '');
-        $tanggal_akhir = trim($_POST['tanggal_akhir'] ?? '');
-        $target_fokus_id = $siswa_id;
-        $target_old = [
-            'surah_awal'    => $surah_awal,
-            'surah_akhir'   => $surah_akhir,
-            'tanggal_mulai' => $tanggal_mulai,
-            'tanggal_akhir' => $tanggal_akhir,
-        ];
-
-        $idx_awal  = array_search($surah_awal, $urutan_opsi_target, true);
-        $idx_akhir = array_search($surah_akhir, $urutan_opsi_target, true);
-
-        if (!$pdo) {
-            $notif_error = 'Koneksi database tidak tersedia. Target belum disimpan.';
-        } elseif ($siswa_id <= 0 || $surah_awal === '' || $surah_akhir === '' || $tanggal_mulai === '' || $tanggal_akhir === '') {
-            $notif_error = 'Lengkapi siswa, rentang hafalan, dan tanggal target.';
-        } elseif ($idx_awal === false || $idx_akhir === false) {
-            $notif_error = 'Pilihan juz atau surah tidak valid.';
-        } elseif ($idx_akhir < $idx_awal) {
-            $notif_error = 'Batas akhir hafalan tidak boleh lebih kecil dari mulai hafalan.';
-        } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal_mulai) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal_akhir)) {
-            $notif_error = 'Format tanggal tidak valid.';
-        } elseif ($tanggal_akhir < $tanggal_mulai) {
-            $notif_error = 'Tanggal akhir tidak boleh lebih awal dari tanggal mulai.';
-        } else {
-            try {
-                $cek = $pdo->prepare("SELECT id, nama_lengkap FROM users WHERE id = :id AND role = 'siswa' LIMIT 1");
-                $cek->execute(['id' => $siswa_id]);
-                $siswa_row = $cek->fetch();
-                if (!$siswa_row) {
-                    $notif_error = 'Siswa yang dipilih tidak ditemukan di database.';
-                } else {
-                    $pdo->beginTransaction();
-                    $nonaktif = $pdo->prepare("UPDATE target_hafalan SET status = 'Nonaktif' WHERE siswa_id = :id AND status = 'Aktif'");
-                    $nonaktif->execute(['id' => $siswa_id]);
-                    $simpan = $pdo->prepare("INSERT INTO target_hafalan (siswa_id, ustadz_id, surah_awal, surah_akhir, tanggal_mulai, tanggal_akhir, status)
-                                             VALUES (:siswa_id, :ustadz_id, :surah_awal, :surah_akhir, :tanggal_mulai, :tanggal_akhir, 'Aktif')");
-                    $simpan->execute([
-                        'siswa_id'      => $siswa_id,
-                        'ustadz_id'     => (int)($_SESSION['user_id'] ?? $ustadz_id),
-                        'surah_awal'    => $surah_awal,
-                        'surah_akhir'   => $surah_akhir,
-                        'tanggal_mulai' => $tanggal_mulai,
-                        'tanggal_akhir' => $tanggal_akhir,
-                    ]);
-                    $pdo->commit();
-                    $notif_sukses = 'Target hafalan ' . $siswa_row['nama_lengkap'] . ' berhasil disimpan.';
-                    $target_old = [
-                        'surah_awal'    => '',
-                        'surah_akhir'   => '',
-                        'tanggal_mulai' => '',
-                        'tanggal_akhir' => '',
-                    ];
-                }
-            } catch (Throwable $e) {
-                if ($pdo->inTransaction()) {
-                    $pdo->rollBack();
-                }
-                $notif_error = 'Gagal menyimpan target: ' . $e->getMessage();
-            }
-        }
-        $page_tab = 'target';
-    }
-
-    // 4. UPDATE PASSWORD USTADZ
-    elseif ($action === 'update_password' && $pdo) {
-        $pass_lama = trim($_POST['password_lama'] ?? '');
-        $pass_baru = trim($_POST['password_baru'] ?? '');
-        $pass_konf = trim($_POST['password_konfirmasi'] ?? '');
-
-        if (empty($pass_lama) || empty($pass_baru) || empty($pass_konf)) {
-            $notif_error = "Semua kolom kata sandi wajib diisi!";
-        } elseif ($pass_baru !== $pass_konf) {
-            $notif_error = "Kata sandi baru dan konfirmasi tidak cocok!";
-        } elseif (strlen($pass_baru) < 6) {
-            $notif_error = "Kata sandi baru minimal 6 karakter!";
-        } else {
-            try {
-                $uid = $_SESSION['user_id'] ?? 2;
-                $stmt = $pdo->prepare("SELECT password FROM users WHERE id = :id LIMIT 1");
-                $stmt->execute(['id' => $uid]);
-                $cur = $stmt->fetch();
-                if ($cur && (password_verify($pass_lama, $cur['password']) || $pass_lama === $cur['password'] || $pass_lama === 'ustadz123')) {
-                    $new_hash = password_hash($pass_baru, PASSWORD_DEFAULT);
-                    $up = $pdo->prepare("UPDATE users SET password = :p WHERE id = :id");
-                    $up->execute(['p' => $new_hash, 'id' => $uid]);
-                    $notif_sukses = "Kata sandi Ustadz berhasil diperbarui!";
-                } else {
-                    $notif_error = "Kata sandi saat ini yang Anda masukkan salah!";
-                }
-            } catch (Throwable $e) {
-                $notif_error = "Gagal memperbarui sandi: " . $e->getMessage();
-            }
-        }
-        $page_tab = 'profil';
-    }
-
-    // 5. UPDATE NOMOR KONTAK USTADZ
-    elseif ($action === 'update_biodata') {
-        $kontak_baru = trim($_POST['kontak'] ?? ($_POST['no_hp'] ?? ''));
-        $kontak_clean = preg_replace('/[^0-9\+\-\s]/', '', $kontak_baru);
-
-        $ustadz_kontak = $kontak_clean;
-        $_SESSION['user_no_hp'] = $kontak_clean;
-
-        if ($pdo) {
-            try {
-                $uid = $_SESSION['user_id'] ?? 2;
-                // Pastikan kolom no_hp ada
-                try {
-                    $colCheck = $pdo->query("SHOW COLUMNS FROM users LIKE 'no_hp'")->fetchAll();
-                    if (empty($colCheck)) {
-                        $pdo->exec("ALTER TABLE users ADD COLUMN no_hp VARCHAR(20) NULL AFTER nama_lengkap");
-                    }
-                } catch (Throwable $e) {}
-
-                $stmt = $pdo->prepare("UPDATE users SET no_hp = :no_hp WHERE id = :id");
-                $stmt->execute(['no_hp' => $kontak_clean, 'id' => $uid]);
-                $notif_sukses = "Nomor kontak berhasil diperbarui.";
-            } catch (Throwable $e) {
-                $notif_error = "Gagal memperbarui nomor kontak: " . $e->getMessage();
-            }
-        } else {
-            $notif_sukses = "Nomor kontak berhasil diperbarui.";
-        }
-        $page_tab = 'profil';
-    }
-}
-
-// Ambil daftar santri binaan dari MySQL
+// ── Query data utama ──────────────────────────────────────────
 $santri_list = [];
 if ($pdo) {
     try {
@@ -368,51 +83,15 @@ if ($pdo) {
         $santri_list = $stmt->fetchAll();
     } catch (Throwable $e) {}
 }
-
 if (empty($santri_list)) {
-    $santri_list = [
-        ['id' => 3,  'username' => 'siswa',  'nama_lengkap' => 'Muhammad Fadhlan',       'nip_nis' => '102601', 'halaqah' => 'Al-Furqan'],
-        ['id' => 4,  'username' => '102602', 'nama_lengkap' => 'Ahmad Zaid',              'nip_nis' => '102602', 'halaqah' => 'Al-Furqan'],
-        ['id' => 5,  'username' => '102603', 'nama_lengkap' => 'Radit Gilang Ramadhan S', 'nip_nis' => '102603', 'halaqah' => 'Al-Furqan'],
-        ['id' => 6,  'username' => '102604', 'nama_lengkap' => 'M Hafizh Habibillah',    'nip_nis' => '102604', 'halaqah' => 'Al-Furqan'],
-        ['id' => 7,  'username' => '102605', 'nama_lengkap' => 'Khadijah Azzahra',       'nip_nis' => '102605', 'halaqah' => 'Al-Furqan'],
-        ['id' => 8,  'username' => '102606', 'nama_lengkap' => 'Zaid Al-Ghifari',        'nip_nis' => '102606', 'halaqah' => 'Al-Furqan'],
-        ['id' => 9,  'username' => '102607', 'nama_lengkap' => 'Aisyah Humaira',         'nip_nis' => '102607', 'halaqah' => 'Al-Furqan'],
-        ['id' => 10, 'username' => '102608', 'nama_lengkap' => 'Abdullah Hasan',          'nip_nis' => '102608', 'halaqah' => 'Al-Furqan'],
-        ['id' => 11, 'username' => '102609', 'nama_lengkap' => 'Fatimah Zahra',           'nip_nis' => '102609', 'halaqah' => 'Al-Furqan'],
-        ['id' => 12, 'username' => '102610', 'nama_lengkap' => 'Muhammad Farhan',         'nip_nis' => '102610', 'halaqah' => 'Al-Furqan'],
-    ];
+    $santri_list = $santri_list_fallback;
 }
 
-// Ambil data riwayat setoran & murajaah dari MySQL
-$riwayat_setoran = [];
+$riwayat_setoran  = [];
 $riwayat_murajaah = [];
 if ($pdo) {
-    try {
-        $stmt_s = $pdo->query("SELECT * FROM setoran_hafalan ORDER BY id DESC LIMIT 50");
-        $riwayat_setoran = $stmt_s->fetchAll();
-    } catch (Throwable $e) {}
-
-    try {
-        $stmt_m = $pdo->query("SELECT * FROM murajaah ORDER BY id DESC LIMIT 50");
-        $riwayat_murajaah = $stmt_m->fetchAll();
-    } catch (Throwable $e) {}
-
-    // Ambil ringkasan progres hafalan per santri & surah (status Selesai, Sedang Berjalan, Belum Setor)
-    $santri_setoran_progres = [];
-    try {
-        $stmt_sp = $pdo->query("SELECT nama_siswa, surah, MIN(ayat_awal) as min_ayat, MAX(ayat_akhir) as max_ayat, COUNT(*) as jml_setor FROM setoran_hafalan GROUP BY nama_siswa, surah");
-        while ($sp = $stmt_sp->fetch(PDO::FETCH_ASSOC)) {
-            $s_nama = trim($sp['nama_siswa']);
-            $s_surah = preg_replace('/[^a-z0-9]/', '', strtolower(trim($sp['surah'])));
-            $santri_setoran_progres[$s_nama][$s_surah] = [
-                'min_ayat'   => (int)$sp['min_ayat'],
-                'max_ayat'   => (int)$sp['max_ayat'],
-                'jml'        => (int)$sp['jml_setor'],
-                'surah_asli' => $sp['surah']
-            ];
-        }
-    } catch (Throwable $e) {}
+    try { $riwayat_setoran  = $pdo->query("SELECT * FROM setoran_hafalan ORDER BY id DESC LIMIT 50")->fetchAll(); } catch (Throwable $e) {}
+    try { $riwayat_murajaah = $pdo->query("SELECT * FROM murajaah ORDER BY id DESC LIMIT 50")->fetchAll();        } catch (Throwable $e) {}
 }
 
 $target_aktif_map = [];
@@ -420,568 +99,95 @@ if ($pdo) {
     try {
         $stmt_target = $pdo->query("SELECT siswa_id, surah_awal, surah_akhir, tanggal_mulai, tanggal_akhir, status FROM target_hafalan WHERE status = 'Aktif' ORDER BY id DESC");
         foreach ($stmt_target->fetchAll() as $baris_target) {
-            $kunci_siswa = (string)$baris_target['siswa_id'];
-            if (!isset($target_aktif_map[$kunci_siswa])) {
-                $target_aktif_map[$kunci_siswa] = $baris_target;
-            }
+            $k = (string)$baris_target['siswa_id'];
+            if (!isset($target_aktif_map[$k])) $target_aktif_map[$k] = $baris_target;
         }
     } catch (Throwable $e) {}
 }
 
-$target_aktif_map = [];
-if ($pdo) {
-    try {
-        $stmt_target = $pdo->query("SELECT siswa_id, surah_awal, surah_akhir, tanggal_mulai, tanggal_akhir, status FROM target_hafalan WHERE status = 'Aktif' ORDER BY id DESC");
-        foreach ($stmt_target->fetchAll() as $baris_target) {
-            $kunci_siswa = (string)$baris_target['siswa_id'];
-            if (!isset($target_aktif_map[$kunci_siswa])) {
-                $target_aktif_map[$kunci_siswa] = $baris_target;
-            }
-        }
-    } catch (Throwable $e) {}
-}
-
-// Hitung Statistik Halaqah
-$total_santri_binaan = count($santri_list);
-$total_setoran_count = count($riwayat_setoran);
+$total_santri_binaan  = count($santri_list);
+$total_setoran_count  = count($riwayat_setoran);
 $total_murajaah_count = count($riwayat_murajaah);
 
-// Data Kamus Al-Qur'an per Juz (Juz 30, 29, 28)
-$quran_juz = [
-    '30' => [
-        'nama' => 'Juz 30 (An-Naba  An-Nas)',
-        'surah' => [
-            ['no' => 78, 'nama' => "An-Naba'", 'ayat' => 40],
-            ['no' => 79, 'nama' => "An-Nazi'at", 'ayat' => 46],
-            ['no' => 80, 'nama' => "'Abasa", 'ayat' => 42],
-            ['no' => 81, 'nama' => 'At-Takwir', 'ayat' => 29],
-            ['no' => 82, 'nama' => 'Al-Infitar', 'ayat' => 19],
-            ['no' => 83, 'nama' => 'Al-Muthaffifin', 'ayat' => 36],
-            ['no' => 84, 'nama' => 'Al-Insyiqaq', 'ayat' => 25],
-            ['no' => 85, 'nama' => 'Al-Buruj', 'ayat' => 22],
-            ['no' => 86, 'nama' => 'At-Tariq', 'ayat' => 17],
-            ['no' => 87, 'nama' => "Al-A'la", 'ayat' => 19],
-            ['no' => 88, 'nama' => 'Al-Ghasyiyah', 'ayat' => 26],
-            ['no' => 89, 'nama' => 'Al-Fajr', 'ayat' => 30],
-            ['no' => 90, 'nama' => 'Al-Balad', 'ayat' => 20],
-            ['no' => 91, 'nama' => 'Asy-Syams', 'ayat' => 15],
-            ['no' => 92, 'nama' => 'Al-Lail', 'ayat' => 21],
-            ['no' => 93, 'nama' => 'Adh-Dhuha', 'ayat' => 11],
-            ['no' => 94, 'nama' => 'Al-Insyirah', 'ayat' => 8],
-            ['no' => 95, 'nama' => 'At-Tin', 'ayat' => 8],
-            ['no' => 96, 'nama' => "Al-'Alaq", 'ayat' => 19],
-            ['no' => 97, 'nama' => 'Al-Qadr', 'ayat' => 5],
-            ['no' => 98, 'nama' => 'Al-Bayyinah', 'ayat' => 8],
-            ['no' => 99, 'nama' => 'Az-Zalzalah', 'ayat' => 8],
-            ['no' => 100, 'nama' => "Al-'Adiyat", 'ayat' => 11],
-            ['no' => 101, 'nama' => "Al-Qari'ah", 'ayat' => 11],
-            ['no' => 102, 'nama' => 'At-Takatsur', 'ayat' => 8],
-            ['no' => 103, 'nama' => "Al-'Asr", 'ayat' => 3],
-            ['no' => 104, 'nama' => 'Al-Humazah', 'ayat' => 9],
-            ['no' => 105, 'nama' => 'Al-Fil', 'ayat' => 5],
-            ['no' => 106, 'nama' => 'Quraisy', 'ayat' => 4],
-            ['no' => 107, 'nama' => "Al-Ma'un", 'ayat' => 7],
-            ['no' => 108, 'nama' => 'Al-Kautsar', 'ayat' => 3],
-            ['no' => 109, 'nama' => 'Al-Kafirun', 'ayat' => 6],
-            ['no' => 110, 'nama' => 'An-Nasr', 'ayat' => 3],
-            ['no' => 111, 'nama' => 'Al-Lahab', 'ayat' => 5],
-            ['no' => 112, 'nama' => 'Al-Ikhlas', 'ayat' => 4],
-            ['no' => 113, 'nama' => 'Al-Falaq', 'ayat' => 5],
-            ['no' => 114, 'nama' => 'An-Nas', 'ayat' => 6],
-        ]
-    ],
-    '29' => [
-        'nama' => 'Juz 29 (Al-Mulk  Al-Mursalat)',
-        'surah' => [
-            ['no' => 67, 'nama' => 'Al-Mulk', 'ayat' => 30],
-            ['no' => 68, 'nama' => 'Al-Qalam', 'ayat' => 52],
-            ['no' => 69, 'nama' => 'Al-Haqqah', 'ayat' => 52],
-            ['no' => 70, 'nama' => "Al-Ma'arij", 'ayat' => 44],
-            ['no' => 71, 'nama' => 'Nuh', 'ayat' => 28],
-            ['no' => 72, 'nama' => 'Al-Jinn', 'ayat' => 28],
-            ['no' => 73, 'nama' => 'Al-Muzzammil', 'ayat' => 20],
-            ['no' => 74, 'nama' => 'Al-Muddaththir', 'ayat' => 56],
-            ['no' => 75, 'nama' => 'Al-Qiyamah', 'ayat' => 40],
-            ['no' => 76, 'nama' => 'Al-Insan', 'ayat' => 31],
-            ['no' => 77, 'nama' => 'Al-Mursalat', 'ayat' => 50],
-        ]
-    ],
-    '28' => [
-        'nama' => 'Juz 28 (Al-Mujadilah  At-Tahrim)',
-        'surah' => [
-            ['no' => 58, 'nama' => 'Al-Mujadilah', 'ayat' => 22],
-            ['no' => 59, 'nama' => 'Al-Hasyr', 'ayat' => 24],
-            ['no' => 60, 'nama' => 'Al-Mumtahanah', 'ayat' => 13],
-            ['no' => 61, 'nama' => 'Ash-Shaff', 'ayat' => 14],
-            ['no' => 62, 'nama' => "Al-Jumu'ah", 'ayat' => 11],
-            ['no' => 63, 'nama' => 'Al-Munafiqun', 'ayat' => 11],
-            ['no' => 64, 'nama' => 'At-Taghabun', 'ayat' => 18],
-            ['no' => 65, 'nama' => 'Ath-Thalaq', 'ayat' => 12],
-            ['no' => 66, 'nama' => 'At-Tahrim', 'ayat' => 12],
-        ]
-    ]
-];
+// ── Whitelist tab ─────────────────────────────────────────────
+$tab_whitelist = ['profil', 'hafalan', 'murajaah', 'rekap', 'target'];
+if (!in_array($page_tab, $tab_whitelist, true)) {
+    $page_tab = 'rekap';
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruang Asatidz  SIM Tahfiz SMA IT Al-Fadhilah</title>
-    
+    <title>Ruang Asatidz – SIM Tahfiz SMA IT Al-Fadhilah</title>
     <link rel="icon" type="image/png" href="../../assets/images/logo-tahfiz-baru.png">
-    
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- Bootstrap 5.3 & Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="../../assets/css/tahfiz.css">
-
-    <style>
-        :root {
-            --color-tahfiz: #11756D;
-            --color-tahfiz-dark: #0A2E2B;
-            --color-tahfiz-light: #F4F7F6;
-            --color-primary: #11756D;
-            --color-primary-dark: #0D5C56;
-            --color-soft: #E6F4F1;
-            --color-gold: #D97706;
-            --color-border: #E2E8F0;
-        }
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #F8FAFC;
-            color: #1E293B;
-            min-height: 100vh;
-        }
-        .ustadz-sidebar {
-            width: 250px;
-            background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            color: #ffffff;
-            flex-shrink: 0;
-            padding: 0 !important;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        .ustadz-sidebar::-webkit-scrollbar {
-            display: none;
-        }
-        .ustadz-content-wrapper {
-            margin-left: 250px;
-            width: calc(100% - 250px);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: #F6F7F5;
-        }
-        .ustadz-nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 11px 14px;
-            margin: 4px 12px;
-            color: rgba(255, 255, 255, 0.88);
-            font-weight: 500;
-            font-size: 13.5px;
-            border-radius: 10px;
-            text-decoration: none;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-        .ustadz-nav-link i {
-            width: 20px;
-            height: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 16px;
-        }
-        .ustadz-nav-link:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.10);
-        }
-        .ustadz-nav-link.active {
-            background: rgba(255, 255, 255, 0.20);
-            color: #ffffff;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.28);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
-        }
-        .kpi-stat-card {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 20px;
-            border: 1px solid #E2E8F0;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            transition: transform 0.2s;
-        }
-        .kpi-stat-card:hover {
-            transform: translateY(-2px);
-            border-color: #11756D;
-        }
-        .santri-select-card {
-            border: 1.5px solid #E2E8F0;
-            border-radius: 10px;
-            padding: 12px 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: #ffffff;
-        }
-        .santri-select-card:hover {
-            border-color: #11756D;
-            background: #F4F7F6;
-        }
-        .santri-select-card.active {
-            border-color: #11756D;
-background: #E6F4F1;
-            border-left: 5px solid #11756D;
-        }
-        .santri-avatar-initial {
-            width: 38px;
-            height: 38px;
-            min-width: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.82rem;
-            font-weight: 700;
-            background: #F1F5F9;
-            color: #475569;
-            border: 1px solid #E2E8F0;
-            transition: all 0.2s ease;
-        }
-        .santri-select-card.active .santri-avatar-initial {
-            background: #11756D;
-            color: #ffffff;
-            border-color: #11756D;
-        }
-        .row-surah-clickable {
-            transition: background-color 0.15s ease;
-        }
-        .row-surah-clickable:hover {
-            background-color: #F8FAFC !important;
-        }
-        .row-surah-clickable:hover .btn-tahfiz {
-            transform: scale(1.08);
-        }
-        .surah-select-btn {
-            border: 1.5px solid #E2E8F0;
-            border-radius: 10px;
-            padding: 10px 14px;
-            cursor: pointer;
-            background: #ffffff;
-            text-align: left;
-            transition: all 0.2s;
-            width: 100%;
-        }
-        .surah-select-btn:hover {
-            border-color: #11756D;
-            background: #F4F7F6;
-        }
-        .surah-select-btn.active {
-            border-color: #11756D;
-            background: #E6F4F1;
-            font-weight: 700;
-            color: #0D5C56;
-        }
-        .btn-tahfiz, .btn-simpan-hafalan {
-            background: #11756D;
-            color: #ffffff;
-            font-weight: 700;
-            border: none;
-            transition: all 0.25s ease;
-        }
-        .btn-tahfiz:hover, .btn-simpan-hafalan:hover {
-            background: #0D5C56;
-            color: #ffffff;
-            box-shadow: 0 4px 14px rgba(13, 92, 86, 0.35);
-        }
-
-/* ── Sidebar Brand Logo (seragam dengan Admin) ── */
-        .ustadz-sidebar .sidebar-brand {
-            padding: 20px 18px 16px !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 12px !important;
-        }
-        .ustadz-sidebar .sidebar-brand-logo {
-            width: 42px !important;
-            height: 42px !important;
-            min-width: 42px !important;
-            background: #FFFFFF !important;
-            border-radius: 10px !important;
-            padding: 5px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            overflow: hidden !important;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
-            flex-shrink: 0 !important;
-        }
-        .ustadz-sidebar .sidebar-brand-logo img {
-            width: 32px !important;
-            height: 32px !important;
-            max-width: 32px !important;
-            max-height: 32px !important;
-            object-fit: contain !important;
-            object-position: center !important;
-            display: block !important;
-        }
-        .ustadz-sidebar .sidebar-brand-title {
-            font-size: 15px !important;
-            font-weight: 700 !important;
-            color: #FACC15 !important;
-            line-height: 1.2 !important;
-        }
-        .ustadz-sidebar .sidebar-brand-subtitle {
-            font-size: 12px !important;
-            color: rgba(255, 255, 255, 0.85) !important;
-            font-weight: 500 !important;
-            line-height: 1.2 !important;
-            margin-top: 2px !important;
-        }
-        .target-panel {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 16px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-        }
-        .target-siswa-card {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-align: left;
-            border: 1.5px solid #E2E8F0;
-            border-radius: 12px;
-            background: #FFFFFF;
-            padding: 12px 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .target-siswa-card:hover {
-            border-color: #11756D;
-            background: #F8FFFD;
-transform: translateX(2px);
-        }
-        .target-siswa-card.aktif {
-            border-color: #11756D !important;
-            background: #F0FDF9 !important;
-border-left: 5px solid #11756D !important;
-        }
-        .target-field {
-            height: 44px;
-            border-radius: 10px;
-            border: 1px solid #E2E8F0;
-            background-color: #F8FAFC;
-            font-size: 13.5px;
-            color: #1E293B;
-            transition: border-color 0.15s ease;
-        }
-        .target-field:focus {
-            border-color: #11756D;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(17, 117, 109, 0.15);
-            background-color: #FFFFFF;
-        }
-        .target-select {
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748B' d='M1.4.6 6 5.2 10.6.6 12 2l-6 6-6-6z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            padding-right: 38px;
-        }
-        .btn-target-simpan {
-            height: 44px;
-            background-color: #11756D;
-            color: #FFFFFF;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 14px;
-            padding: 0 24px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-        }
-        .btn-target-simpan:hover {
-            background-color: #0D5C56;
-            color: #FFFFFF;
-            box-shadow: 0 4px 12px rgba(17, 117, 109, 0.25);
-        }
-        .btn-target-batal {
-            height: 44px;
-            background-color: #E2E8F0;
-            color: #EF4444;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 14px;
-            padding: 0 24px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        .btn-target-batal:hover {
-            background-color: #CBD5E1;
-            color: #DC2626;
-        }
-.preset-pill-btn {
-            border: 1.5px solid #CBD5E1;
-            background: #FFFFFF;
-            color: #334155;
-            font-size: 12.5px;
-            font-weight: 600;
-            padding: 7px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .preset-pill-btn:hover {
-            border-color: #11756D;
-            background: #F0FDF9;
-            color: #11756D;
-            transform: translateY(-1px);
-        }
-        .preset-pill-btn.active {
-            border-color: #11756D;
-            background: #11756D;
-            color: #FFFFFF;
-            box-shadow: 0 2px 8px rgba(17, 117, 109, 0.25);
-        }
-        .duration-pill-btn {
-            border: 1px solid #E2E8F0;
-            background: #F8FAFC;
-            color: #475569;
-            font-size: 11.5px;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-        .duration-pill-btn:hover, .duration-pill-btn.active {
-            border-color: #11756D;
-            background: #E6F4F1;
-            color: #11756D;
-        }
-        .visual-route-card {
-            background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
-            border: 1.5px solid #86EFAC;
-            border-radius: 14px;
-            padding: 16px 20px;
-            position: relative;
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/tahfiz.css?v=<?= time() ?>">
 </head>
 <body>
-
 <div class="d-flex">
-    <!-- -----------------------------------------------------------
-         SIDEBAR UTAMA ASATIDZ (SEMUA MENU KEMBALI LENGKAP)
-════════════════════════════════════════════════════════════ -->
-    <aside class="ustadz-sidebar d-flex flex-column" style="width: 250px; height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; background: linear-gradient(180deg, #11756D 0%, #0E625B 100%) !important; padding: 0; z-index: 1000; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
-        <!-- Brand Header -->
-        <div class="sidebar-brand" style="padding: 20px 18px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); display: flex; align-items: center; gap: 12px;">
+
+    <!-- ═══ SIDEBAR ═══════════════════════════════════════════ -->
+    <aside class="ustadz-sidebar d-flex flex-column">
+        <div class="sidebar-brand">
             <div class="sidebar-brand-logo">
                 <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz">
             </div>
             <div class="overflow-hidden">
-                <div class="sidebar-brand-title text-truncate" style="font-size: 15px; font-weight: 700; color: #FACC15; line-height: 1.2;">Tahfiz Yuk</div>
-                <div class="sidebar-brand-subtitle text-truncate" style="font-size: 12px; color: rgba(255, 255, 255, 0.85); font-weight: 500; line-height: 1.2; margin-top: 2px;">Sistem monitoring tahfiz</div>
+                <div class="sidebar-brand-title text-truncate">Tahfiz Yuk</div>
+                <div class="sidebar-brand-subtitle text-truncate">Sistem monitoring tahfiz</div>
             </div>
         </div>
 
-        <!-- Info Pengguna -->
-        <div class="ustadz-user-info" style="margin: 14px 12px; padding: 10px 12px; background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
-            <div class="ustadz-user-avatar" style="width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 700; font-size: 13px; color: #FFFFFF; background: #0B4F49; flex-shrink: 0;">
-                RA
-            </div>
-            <div class="ustadz-user-text overflow-hidden" style="min-width: 0;">
-                <div class="ustadz-user-role text-white fw-semibold text-truncate" style="font-size: 13px; line-height: 1.3;"><?= htmlspecialchars($ustadz_name) ?></div>
-<div class="ustadz-user-name fw-semibold text-truncate" style="font-size: 11px; color: #A7F3D0; line-height: 1.2;">● Halaqah <?= htmlspecialchars($halaqah_name) ?></div>
+        <div class="ustadz-user-info">
+            <div class="ustadz-user-avatar">RA</div>
+            <div class="ustadz-user-text overflow-hidden">
+                <div class="ustadz-user-role text-white fw-semibold text-truncate"><?= htmlspecialchars($ustadz_name) ?></div>
+                <div class="ustadz-user-name fw-semibold text-truncate">● Halaqah <?= htmlspecialchars($halaqah_name) ?></div>
             </div>
         </div>
 
-        <!-- Menu Navigasi -->
         <nav class="ustadz-nav flex-grow-1">
-            <div class="ustadz-nav-label text-uppercase fw-bold d-block" style="padding: 10px 20px 6px; font-size: 11px; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.70);">Menu Utama</div>
+            <span class="ustadz-nav-label">Menu Utama</span>
+            <a href="?tab=rekap"    class="ustadz-nav-link <?= $page_tab === 'rekap'    ? 'active' : '' ?>"><i class="bi bi-file-earmark-text"></i><span>Rekap Tahfiz</span></a>
+            <a href="?tab=hafalan"  class="ustadz-nav-link <?= $page_tab === 'hafalan'  ? 'active' : '' ?>"><i class="bi bi-book"></i><span>Hafalan</span></a>
+            <a href="?tab=murajaah" class="ustadz-nav-link <?= $page_tab === 'murajaah' ? 'active' : '' ?>"><i class="bi bi-arrow-counterclockwise"></i><span>Murajaah</span></a>
+            <a href="?tab=target"   class="ustadz-nav-link <?= $page_tab === 'target'   ? 'active' : '' ?>"><i class="bi bi-bullseye"></i><span>Target</span></a>
 
-            <a href="?tab=profil" class="ustadz-nav-link <?= $page_tab === 'profil' ? 'active' : '' ?>">
-                <i class="bi bi-person-circle"></i><span>Profil Saya</span>
-            </a>
-
-            <a href="?tab=hafalan" class="ustadz-nav-link <?= $page_tab === 'hafalan' ? 'active' : '' ?>">
-                <i class="bi bi-book"></i><span>Hafalan</span>
-            </a>
-
-            <a href="?tab=murajaah" class="ustadz-nav-link <?= $page_tab === 'murajaah' ? 'active' : '' ?>">
-                <i class="bi bi-arrow-counterclockwise"></i><span>Murajaah</span>
-            </a>
-
-            <a href="?tab=rekap" class="ustadz-nav-link <?= $page_tab === 'rekap' ? 'active' : '' ?>">
-                <i class="bi bi-file-earmark-text"></i><span>Rekap Tahfiz</span>
-            </a>
-
-            <a href="?tab=target" class="ustadz-nav-link <?= $page_tab === 'target' ? 'active' : '' ?>">
-                <i class="bi bi-bullseye"></i><span>Target</span>
-            </a>
+            <span class="ustadz-nav-label" style="margin-top:8px;">Akun Saya</span>
+            <a href="?tab=profil"   class="ustadz-nav-link <?= $page_tab === 'profil'   ? 'active' : '' ?>"><i class="bi bi-person-circle"></i><span>Profil Saya</span></a>
         </nav>
 
-        <!-- Footer Sidebar -->
-        <div class="ustadz-sidebar-footer" style="margin-top: auto; padding: 16px 14px 20px; border-top: 1px solid rgba(255, 255, 255, 0.14); display: flex; flex-direction: column;">
+        <div class="ustadz-sidebar-footer">
             <a href="../auth/logout.php" class="btn-sidebar-logout">
                 <i class="bi bi-box-arrow-right me-1"></i>Keluar Sesi
             </a>
         </div>
     </aside>
 
-    <!-- -----------------------------------------------------------
-         MAIN CONTENT AREA
-════════════════════════════════════════════════════════════ -->
+    <!-- ═══ KONTEN UTAMA ═══════════════════════════════════════ -->
     <div class="ustadz-content-wrapper">
-        
-        <!-- Top Bar Header -->
+
+        <!-- Top Bar -->
         <header class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center shadow-sm">
             <div class="d-flex align-items-center gap-3">
-                <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo Tahfiz" class="topbar-logo" style="height: 24px; width: auto; object-fit: contain;">
+                <img src="../../assets/images/logo-tahfiz-baru.png" alt="Logo" class="topbar-logo">
                 <div class="d-flex align-items-center gap-2 small text-muted">
                     <span>Ruang Ustadz</span>
-<span>›</span>
+                    <span>›</span>
                     <span class="fw-bold text-dark text-capitalize">
                         <?php
                         $tab_titles = [
-                            'binaan'   => 'Siswa Binaan (Dashboard Halaqah)',
-'hafalan'  => 'Catat Hafalan Baru',
+                            'hafalan'  => 'Catat Hafalan Baru',
                             'murajaah' => 'Dashboard & Catat Murajaah',
-                            'target'   => 'Target Hafalan Santri',
+                            'target'   => 'Target Hafalan Siswa',
                             'rekap'    => 'Rekap Tahfiz',
-                            'profil'   => 'Profil & Kata Sandi'
+                            'profil'   => 'Profil & Kata Sandi',
                         ];
                         echo $tab_titles[$page_tab] ?? 'Dashboard';
                         ?>
@@ -990,9 +196,9 @@ border-left: 5px solid #11756D !important;
             </div>
             <div class="d-flex align-items-center gap-2">
                 <span class="badge px-3 py-2 fw-semibold text-white" style="background-color: #11756D;">
-                    <i class="bi bi-bookmark-star-fill me-1"></i>Halaqah <?= htmlspecialchars($halaqah_name) ?> (<?= $total_santri_binaan ?> Santri)
+                    <i class="bi bi-bookmark-star-fill me-1"></i>Halaqah <?= htmlspecialchars($halaqah_name) ?> (<?= $total_santri_binaan ?> Siswa)
                 </span>
-                <a href="?tab=hafalan" class="btn btn-tahfiz btn-sm px-3 py-1.5 fw-bold rounded-3">
+                <a href="?tab=hafalan" class="btn btn-tahfiz btn-sm px-3 fw-bold rounded-3">
                     <i class="bi bi-plus-circle me-1"></i>Catat Setoran
                 </a>
             </div>
@@ -1001,20 +207,18 @@ border-left: 5px solid #11756D !important;
         <!-- Main Body -->
         <main class="p-4 flex-grow-1">
 
-            <!-- Alert Notifikasi -->
             <?php if (!empty($notif_sukses)): ?>
                 <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm d-flex align-items-center gap-2 mb-4" role="alert">
                     <i class="bi bi-check-circle-fill fs-5 text-success"></i>
                     <div><?= htmlspecialchars($notif_sukses) ?></div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php endif; ?>
-
             <?php if (!empty($notif_error)): ?>
                 <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm d-flex align-items-center gap-2 mb-4" role="alert">
                     <i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>
                     <div><?= htmlspecialchars($notif_error) ?></div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php endif; ?>
 
@@ -2788,503 +1992,5 @@ $rekap_avg_capaian = $rekap_total_siswa > 0 ? round($total_capaian_sum / $rekap_
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-const dataJuzHafalan = <?= json_encode($quran_juz, JSON_UNESCAPED_UNICODE) ?>;
-// Opsi khusus Juz 30 (Adh-Dhuha – An-Nas) seperti pada foto referensi teman
-dataJuzHafalan['30_dhuha'] = {
-    nama: 'Juz 30 (Adh-Dhuha – An-Nas)',
-    surah: (dataJuzHafalan['30']?.surah || []).filter(sr => sr.no >= 93)
-};
-
-const santriSetoranProgres = <?= json_encode($santri_setoran_progres, JSON_UNESCAPED_UNICODE) ?>;
-let santriHafalanAktif = null;
-
-function normalizeSurah(str) {
-    return (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
-function pilihSantriUntukHafalan(nama, nis, el) {
-    const parts = (nama || '').trim().split(/\s+/);
-    let inisial = '';
-    if (parts.length > 0 && parts[0]) inisial += parts[0][0].toUpperCase();
-    if (parts.length > 1 && parts[1]) inisial += parts[1][0].toUpperCase();
-    if (!inisial) inisial = 'ST';
-
-    santriHafalanAktif = { nama, nis, inisial };
-
-    document.querySelectorAll('#listSantriHafalan .santri-select-card').forEach(c => c.classList.remove('active'));
-    if (el) el.classList.add('active');
-
-    // Sembunyikan placeholder dan tampilkan area tabel surah hafalan
-    const placeholder = document.getElementById('placeholderHafalan');
-    const areaForm    = document.getElementById('areaFormHafalan');
-    if (placeholder) placeholder.style.display = 'none';
-    if (areaForm)    areaForm.style.display    = 'block';
-
-    const dispNama = document.getElementById('displayNamaSantriHafalan');
-    if (dispNama) dispNama.innerText = nama;
-
-    renderTabelSurahHafalan();
-}
-
-function gantiJuzHafalan(juzNo) {
-    renderTabelSurahHafalan();
-}
-
-function renderTabelSurahHafalan() {
-    const juzSelect = document.getElementById('selectJuzHafalan');
-    const juzKey = juzSelect ? juzSelect.value : '30_dhuha';
-    const surahList = dataJuzHafalan[juzKey]?.surah || [];
-    const tbody = document.getElementById('tbodySurahHafalan');
-    if (!tbody) return;
-
-    tbody.innerHTML = '';
-
-    if (!santriHafalanAktif) return;
-
-    const namaSantri = santriHafalanAktif.nama;
-    const santriProgs = santriSetoranProgres[namaSantri] || {};
-
-    surahList.forEach((sr, idx) => {
-        const norm = normalizeSurah(sr.nama);
-        const prog = santriProgs[norm] || null;
-        const maxAyat = prog ? parseInt(prog.max_ayat || 0) : 0;
-
-        let statusBadge = '';
-        let statusKey = 'belum_setor';
-
-        if (maxAyat >= sr.ayat) {
-            statusBadge = `<span class="badge bg-success-subtle text-success border border-success-subtle fw-bold rounded-pill px-3 py-1.5"><i class="bi bi-check-circle-fill me-1"></i>Selesai</span>`;
-            statusKey = 'selesai';
-        } else if (maxAyat > 0) {
-            statusBadge = `<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle fw-bold rounded-pill px-3 py-1.5"><i class="bi bi-clock-history me-1"></i>Sedang Berjalan</span>`;
-            statusKey = 'sedang_berjalan';
-        } else {
-            statusBadge = `<span class="badge bg-light text-secondary border fw-semibold rounded-pill px-3 py-1.5">Belum Setor</span>`;
-            statusKey = 'belum_setor';
-        }
-
-        const tr = document.createElement('tr');
-        tr.className = 'row-surah-clickable';
-        tr.style.cursor = 'pointer';
-        tr.title = `Klik untuk membuka Lembar Setoran Surah ${sr.nama}`;
-        tr.onclick = function() {
-            bukaModalSetoran(sr.nama, sr.ayat, sr.no, maxAyat, statusKey);
-        };
-
-        tr.innerHTML = `
-            <td class="ps-3 text-muted fw-semibold">${idx + 1}.</td>
-            <td>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="d-inline-flex align-items-center justify-content-center rounded p-1 text-warning-emphasis" style="background:#FEF3C7; width:26px; height:26px; font-size:0.85rem;">
-                        <i class="bi bi-book-half"></i>
-                    </span>
-                    <span class="fw-bold text-dark">${sr.nama}</span>
-                </div>
-            </td>
-            <td class="text-muted small fw-medium">Ayat 1–${sr.ayat}</td>
-            <td class="text-center">${statusBadge}</td>
-            <td class="pe-3 text-center">
-                <button type="button" class="btn btn-sm btn-tahfiz rounded-2 px-2.5 py-1 text-white shadow-sm" style="background:#11756D;" onclick="event.stopPropagation(); bukaModalSetoran('${sr.nama.replace(/'/g, "\\'")}', ${sr.ayat}, ${sr.no}, ${maxAyat}, '${statusKey}')" title="Catat Setoran Surah ${sr.nama}">
-                    <i class="bi bi-plus-lg"></i>
-                </button>
-            </td>
-        `;
-
-        tbody.appendChild(tr);
-    });
-}
-
-function bukaModalSetoran(namaSurah, totalAyat, noSurah, maxAyat, statusKey) {
-    if (!santriHafalanAktif) {
-        alert('Silakan pilih siswa terlebih dahulu.');
-        return;
-    }
-
-    // Set Info Header & Subtitle
-    const elJudul = document.getElementById('modalJudulSurah');
-    const elSub   = document.getElementById('modalSubInfo');
-    if (elJudul) elJudul.innerText = `${noSurah}. Surah ${namaSurah}`;
-    if (elSub) elSub.innerText = `Target: Ayat 1 s/d ${totalAyat}`;
-
-    // Set Santri Info
-    const elNama   = document.getElementById('modalNamaSantri');
-    const elNis    = document.getElementById('modalNisSantri');
-    const elTot    = document.getElementById('modalBadgeTotalAyat');
-    const elAvatar = document.getElementById('modalAvatarSantri');
-    if (elNama) elNama.innerText = santriHafalanAktif.nama;
-    if (elNis) elNis.innerText = 'NIS: ' + (santriHafalanAktif.nis || '-');
-    if (elTot) elTot.innerText = `Total ${totalAyat} Ayat`;
-    if (elAvatar) elAvatar.innerText = santriHafalanAktif.inisial;
-
-    // Set Hidden Inputs
-    const elInpNama  = document.getElementById('modalInputSantriNama');
-    const elInpSurah = document.getElementById('modalInputSurahNama');
-    if (elInpNama) elInpNama.value = santriHafalanAktif.nama;
-    if (elInpSurah) elInpSurah.value = namaSurah;
-
-    // Set Status Alert & Form Inputs
-    const alertContainer = document.getElementById('modalAlertStatus');
-    const inputAwal  = document.getElementById('modalInputAyatAwal');
-    const inputAkhir = document.getElementById('modalInputAyatAkhir');
-
-    if (inputAwal) {
-        inputAwal.min = 1;
-        inputAwal.max = totalAyat;
-    }
-    if (inputAkhir) {
-        inputAkhir.min = 1;
-        inputAkhir.max = totalAyat;
-    }
-
-    if (statusKey === 'sedang_berjalan') {
-        const nextAyat = Math.min(maxAyat + 1, totalAyat);
-        if (alertContainer) {
-            alertContainer.innerHTML = `
-                <div class="alert alert-warning border border-warning-subtle d-flex align-items-center gap-2 py-2 px-3 small rounded-3 mb-0">
-                    <i class="bi bi-clock-history fs-5 text-warning-emphasis"></i>
-                    <div>
-                        <strong>Status: Sedang Berjalan.</strong> Santri telah menyetor sampai <strong>Ayat ${maxAyat}</strong> dari total ${totalAyat} ayat. Disarankan melanjutkan setoran mulai <strong>Ayat ${nextAyat} s/d ${totalAyat}</strong>.
-                    </div>
-                </div>
-            `;
-        }
-        if (inputAwal) inputAwal.value = nextAyat;
-        if (inputAkhir) inputAkhir.value = totalAyat;
-    } else if (statusKey === 'selesai') {
-        if (alertContainer) {
-            alertContainer.innerHTML = `
-                <div class="alert alert-success border border-success-subtle d-flex align-items-center gap-2 py-2 px-3 small rounded-3 mb-0">
-                    <i class="bi bi-check-circle-fill fs-5 text-success"></i>
-                    <div>
-                        <strong>Status: Selesai.</strong> Seluruh <strong>${totalAyat} Ayat</strong> surah ini telah lengkap disetor. Ustadz dapat mencatat tasmi / pengulangan bila santri mengulang hafalan.
-                    </div>
-                </div>
-            `;
-        }
-        if (inputAwal) inputAwal.value = 1;
-        if (inputAkhir) inputAkhir.value = totalAyat;
-    } else {
-        if (alertContainer) {
-            alertContainer.innerHTML = `
-                <div class="alert alert-secondary border d-flex align-items-center gap-2 py-2 px-3 small rounded-3 mb-0">
-                    <i class="bi bi-info-circle-fill fs-5 text-secondary"></i>
-                    <div>
-                        <strong>Status: Belum Setor.</strong> Santri belum memiliki riwayat setoran untuk surah ini.
-                    </div>
-                </div>
-            `;
-        }
-        if (inputAwal) inputAwal.value = 1;
-        if (inputAkhir) inputAkhir.value = totalAyat;
-    }
-
-    if (inputAkhir) {
-        inputAkhir.oninput = function() {
-            if (parseInt(this.value) > totalAyat) this.value = totalAyat;
-        };
-    }
-    if (inputAwal) {
-        inputAwal.oninput = function() {
-            if (parseInt(this.value) > totalAyat) this.value = totalAyat;
-        };
-    }
-
-    // Tampilkan Pop-Up Modal Bootstrap
-    const modalEl = document.getElementById('modalSetoranEksklusif');
-    if (modalEl) {
-        const modalObj = bootstrap.Modal.getOrCreateInstance(modalEl);
-        modalObj.show();
-    }
-}
-
-// Filter Pencarian Santri pada Tab Hafalan
-document.getElementById('cariSantriHafalan')?.addEventListener('input', function() {
-    const val = this.value.toLowerCase();
-    document.querySelectorAll('#listSantriHafalan .santri-select-card').forEach(item => {
-        const text = item.innerText.toLowerCase();
-        item.style.display = text.includes(val) ? 'flex' : 'none';
-    });
-});
-
-// Inisialisasi otomatis jika ada siswa yang difokuskan (misalnya setelah POST error/sukses)
-window.addEventListener('DOMContentLoaded', () => {
-const urlParams = new URLSearchParams(window.location.search);
-    const getSantri = urlParams.get('santri');
-    if (getSantri) {
-        document.querySelectorAll('#listSantriHafalan .santri-select-card').forEach(item => {
-            const nama = item.querySelector('.santri-nama-item')?.innerText;
-            if (nama && nama.toLowerCase().includes(getSantri.toLowerCase())) {
-                item.click();
-            }
-        });
-    }
-});
-
-// ─────────────────────────────────────────────────────────────
-// LOGIKA JAVASCRIPT TAB TARGET HAFALAN
-// ─────────────────────────────────────────────────────────────
-const targetAktifMap = <?= json_encode($target_aktif_map, JSON_UNESCAPED_UNICODE) ?>;
-const targetUrutanOpsi = <?= json_encode($urutan_opsi_target, JSON_UNESCAPED_UNICODE) ?>;
-let santriTargetTerpilih = null;
-
-function setSelectOptionByText(selectEl, textSnippet) {
-    if (!selectEl) return;
-    for (let i = 0; i < selectEl.options.length; i++) {
-        if (selectEl.options[i].text.toLowerCase().includes(textSnippet.toLowerCase())) {
-            selectEl.selectedIndex = i;
-            return;
-        }
-    }
-}
-
-function applyPresetTarget(presetKey, btnEl) {
-    const selAwal  = document.getElementById('targetSurahAwal');
-    const selAkhir = document.getElementById('targetSurahAkhir');
-    if (!selAwal || !selAkhir) return;
-
-    if (presetKey === 'juz30_full') {
-        setSelectOptionByText(selAwal, 'An-Naba');
-        setSelectOptionByText(selAkhir, 'An-Nas');
-    } else if (presetKey === 'juz30_pendek') {
-        setSelectOptionByText(selAwal, 'Adh-Dhuha');
-        setSelectOptionByText(selAkhir, 'An-Nas');
-    } else if (presetKey === 'juz1_full') {
-        setSelectOptionByText(selAwal, 'Al-Fatihah');
-        setSelectOptionByText(selAkhir, 'Al-Baqarah (Ayat 1-141');
-        if (selAkhir.selectedIndex <= 0) setSelectOptionByText(selAkhir, 'Al-Baqarah');
-    } else if (presetKey === 'juz2_full') {
-        setSelectOptionByText(selAwal, 'Al-Baqarah (Ayat 142');
-        setSelectOptionByText(selAkhir, 'Al-Baqarah (Ayat 142');
-    }
-
-    document.querySelectorAll('.preset-pill-btn').forEach(b => b.classList.remove('active'));
-    if (btnEl) btnEl.classList.add('active');
-}
-
-function setDurasiTarget(days, btnEl) {
-    const tglMulaiEl = document.getElementById('targetTanggalMulai');
-    const tglAkhirEl = document.getElementById('targetTanggalAkhir');
-    if (!tglMulaiEl || !tglAkhirEl) return;
-
-    let baseDate = tglMulaiEl.value ? new Date(tglMulaiEl.value) : new Date();
-    if (isNaN(baseDate.getTime())) baseDate = new Date();
-
-    const endDate = new Date(baseDate.getTime() + days * 24 * 60 * 60 * 1000);
-    const yyyy = endDate.getFullYear();
-    const mm = String(endDate.getMonth() + 1).padStart(2, '0');
-    const dd = String(endDate.getDate()).padStart(2, '0');
-    tglAkhirEl.value = `${yyyy}-${mm}-${dd}`;
-
-    document.querySelectorAll('.duration-pill-btn').forEach(b => b.classList.remove('active'));
-    if (btnEl) btnEl.classList.add('active');
-}
-
-function onTanggalMulaiChange() {
-    const activeDurBtn = document.querySelector('.duration-pill-btn.active');
-    if (activeDurBtn) {
-        const text = activeDurBtn.innerText;
-        const match = text.match(/\d+/);
-        if (match) {
-            setDurasiTarget(parseInt(match[0], 10), activeDurBtn);
-        }
-    }
-}
-
-function fokuskanSantri(id) {
-    const card = document.querySelector(`.target-siswa-card[data-id="${id}"]`);
-    if (card) {
-        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        card.click();
-    }
-}
-
-function pilihSantriTarget(id, nama, nis, el) {
-    santriTargetTerpilih = { id, nama, nis };
-
-    // Update border aktif #11756D dan latar #F0FDF9
-    document.querySelectorAll('.target-siswa-card').forEach(card => card.classList.remove('aktif'));
-    if (el) {
-        el.classList.add('aktif');
-    }
-
-    // Sembunyikan empty state dan munculkan form
-    const emptyState = document.getElementById('targetEmptyState');
-    const formArea   = document.getElementById('targetFormArea');
-    if (emptyState) emptyState.style.display = 'none';
-    if (formArea)   formArea.style.display   = 'block';
-
-    // Update ID siswa di input tersembunyi
-    const inputSiswaId = document.getElementById('targetInputSiswaId');
-    if (inputSiswaId) inputSiswaId.value = id;
-
-    // Header info santri terpilih
-    const headerNama = document.getElementById('targetHeaderNama');
-    const headerSub  = document.getElementById('targetHeaderSub');
-    const headerAvatar = document.getElementById('targetHeaderAvatar');
-    if (headerNama) headerNama.textContent = nama;
-    if (headerSub)  headerSub.textContent  = `NIS: ${nis || '-'} • Halaqah <?= htmlspecialchars($halaqah_name) ?>`;
-
-    // Compute initials for header avatar
-    if (headerAvatar) {
-        const words = (nama || '').trim().split(/\s+/);
-        let ini = '';
-        if (words[0]) ini += words[0].charAt(0).toUpperCase();
-        if (words[1]) ini += words[1].charAt(0).toUpperCase();
-        headerAvatar.textContent = ini || 'S';
-    }
-
-    // Tampilkan kotak target aktif santri terpilih jika sudah ada target aktif
-    const targetBox    = document.getElementById('targetAktifSantriBox');
-    const infoSantriNama = document.getElementById('infoTargetSantriNama');
-    const infoAwal     = document.getElementById('infoTargetSurahAwal');
-    const infoAkhir    = document.getElementById('infoTargetSurahAkhir');
-    const infoTanggal  = document.getElementById('infoTargetRentangTanggal');
-
-    const keyId = String(id);
-    if (targetAktifMap && targetAktifMap[keyId]) {
-        const item = targetAktifMap[keyId];
-        if (infoSantriNama) infoSantriNama.textContent = nama;
-        if (infoAwal)    infoAwal.textContent    = item.surah_awal || '-';
-        if (infoAkhir)   infoAkhir.textContent   = item.surah_akhir || '-';
-        if (infoTanggal) infoTanggal.textContent = (item.tanggal_mulai || '') + ' s/d ' + (item.tanggal_akhir || '');
-        if (targetBox)   targetBox.style.display  = 'block';
-
-        // Auto-select dropdown with current target
-        const selAwal  = document.getElementById('targetSurahAwal');
-        const selAkhir = document.getElementById('targetSurahAkhir');
-        const tglMulai = document.getElementById('targetTanggalMulai');
-        const tglAkhir = document.getElementById('targetTanggalAkhir');
-        if (selAwal && item.surah_awal) selAwal.value = item.surah_awal;
-        if (selAkhir && item.surah_akhir) selAkhir.value = item.surah_akhir;
-        if (tglMulai && item.tanggal_mulai) tglMulai.value = item.tanggal_mulai;
-        if (tglAkhir && item.tanggal_akhir) tglAkhir.value = item.tanggal_akhir;
-    } else {
-        if (targetBox) targetBox.style.display = 'none';
-    }
-}
-
-function batalPilihTarget() {
-    santriTargetTerpilih = null;
-
-    // Reset pilihan aktif kartu siswa
-    document.querySelectorAll('.target-siswa-card').forEach(card => card.classList.remove('aktif'));
-
-    // Sembunyikan form dan kembalikan ke empty state
-    const emptyState = document.getElementById('targetEmptyState');
-    const formArea   = document.getElementById('targetFormArea');
-    if (emptyState) emptyState.style.display = 'block';
-    if (formArea)   formArea.style.display   = 'none';
-
-    // Reset nilai form
-    const form = document.getElementById('formTetapkanTarget');
-    if (form) form.reset();
-
-    const inputSiswaId = document.getElementById('targetInputSiswaId');
-    if (inputSiswaId) inputSiswaId.value = '';
-
-    const targetBox = document.getElementById('targetAktifSantriBox');
-    if (targetBox) targetBox.style.display = 'none';
-}
-
-function onSurahAwalChange() {
-    const selAwal  = document.getElementById('targetSurahAwal');
-    const selAkhir = document.getElementById('targetSurahAkhir');
-    if (!selAwal || !selAkhir) return;
-
-    const valAwal = selAwal.value;
-    const idxAwal = targetUrutanOpsi.indexOf(valAwal);
-
-    // Jika surah akhir belum dipilih atau indeksnya lebih kecil dari surah awal, set sama dengan surah awal
-    if (idxAwal !== -1) {
-        const valAkhir = selAkhir.value;
-        const idxAkhir = targetUrutanOpsi.indexOf(valAkhir);
-        if (idxAkhir === -1 || idxAkhir < idxAwal) {
-            selAkhir.value = valAwal;
-        }
-    }
-}
-
-function validasiFormTarget(e) {
-    const inputSiswaId = document.getElementById('targetInputSiswaId');
-    if (!inputSiswaId || !inputSiswaId.value) {
-        alert('Silakan pilih siswa terlebih dahulu di panel kiri.');
-        if (e) e.preventDefault();
-        return false;
-    }
-
-    const selAwal  = document.getElementById('targetSurahAwal');
-    const selAkhir = document.getElementById('targetSurahAkhir');
-    const tglMulai = document.getElementById('targetTanggalMulai');
-    const tglAkhir = document.getElementById('targetTanggalAkhir');
-
-    if (!selAwal || !selAwal.value) {
-        alert('Silakan pilih batas awal hafalan.');
-        selAwal?.focus();
-        if (e) e.preventDefault();
-        return false;
-    }
-
-    if (!selAkhir || !selAkhir.value) {
-        alert('Silakan pilih batas akhir hafalan.');
-        selAkhir?.focus();
-        if (e) e.preventDefault();
-        return false;
-    }
-
-    const idxAwal  = targetUrutanOpsi.indexOf(selAwal.value);
-    const idxAkhir = targetUrutanOpsi.indexOf(selAkhir.value);
-
-    if (idxAwal === -1 || idxAkhir === -1) {
-        alert('Pilihan juz atau surah tidak valid.');
-        if (e) e.preventDefault();
-        return false;
-    }
-
-    if (idxAkhir < idxAwal) {
-        alert('Batas akhir hafalan tidak boleh lebih kecil dari mulai hafalan.');
-        selAkhir.focus();
-        if (e) e.preventDefault();
-        return false;
-    }
-
-    if (tglMulai && tglAkhir && tglMulai.value && tglAkhir.value) {
-        if (tglAkhir.value < tglMulai.value) {
-            alert('Tanggal akhir tidak boleh lebih awal dari tanggal mulai.');
-            tglAkhir.focus();
-            if (e) e.preventDefault();
-            return false;
-        }
-    }
-
-    return true;
-}
-
-// Pencarian Real-Time Siswa Target
-document.getElementById('cariSantriTarget')?.addEventListener('input', function() {
-    const val = this.value.trim().toLowerCase();
-    document.querySelectorAll('.target-siswa-card').forEach(card => {
-        const nama = (card.getAttribute('data-nama') || '').toLowerCase();
-        const nis  = (card.getAttribute('data-nis') || '').toLowerCase();
-        if (nama.includes(val) || nis.includes(val)) {
-            card.style.display = 'flex';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-});
-
-// Inisialisasi otomatis jika ada siswa yang difokuskan (misalnya setelah POST error/sukses)
-window.addEventListener('DOMContentLoaded', () => {
-    const cardAktif = document.querySelector('.target-siswa-card.aktif');
-    if (cardAktif) {
-        const id   = parseInt(cardAktif.getAttribute('data-id'), 10);
-        const nama = cardAktif.getAttribute('data-nama');
-        const nis  = cardAktif.getAttribute('data-nis');
-        pilihSantriTarget(id, nama, nis, cardAktif);
-    }
-});
-</script>
 </body>
 </html>

@@ -98,7 +98,6 @@ $tab_labels = [
     'halaqah'  => 'Kelompok Halaqah',
     'laporan'  => 'Laporan Tahfiz',
     'profil'   => 'Profil Saya',
-    'sandi'    => 'Ubah Kata Sandi',
 ];
 
 // ─────────────────────────────────────────────────────────────
